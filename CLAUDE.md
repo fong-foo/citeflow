@@ -12,6 +12,20 @@
 - 药老（Hermes Agent）负责架构决策 + Agent 提示词，**不负责代码审查**
 - 游景峰拍板产品决策
 
+## 项目历史（重要！）
+每次启动先看 git log 了解项目历史：
+```bash
+cd ~/Desktop/CiteFlow && git log --oneline
+```
+当前进度：
+- Phase 1 ✅ 骨架搭建（9节点+DAG+Validator+条件路由）
+- Phase 2 ✅ Probe 真实实现（6个工具文件+react模式）
+- Phase 3 ⬜ Analyst 真实实现
+- Phase 4 ⬜ Commander 真实实现
+- Phase 5 ⬜ 5个执行Agent逐个替换
+
+详细开发记录：PHASE1_TASK.md、PHASE2_TASK.md、CONTEXT.md
+
 ## 工作流
 1. 收到任务 → 先读 CONTEXT.md 确认上下文
 2. 写代码
