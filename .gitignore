@@ -1,6 +1,9 @@
 # planning-with-files work directory
 .planning/
 
+# CiteFlow idempotency cache
+.checkpoint_cache/
+
 # Dependencies
 node_modules/
 .pnp

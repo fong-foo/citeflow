@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROBE 侦察报告 · Flower Knows</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:#08080D;
+  color:#EDEDF5;
+  overflow:hidden;
+  height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── Scanlines overlay ── */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:100;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
+}
+
+/* ── Classification banner ── */
+.class-banner{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(56,189,248,0.3),transparent);
+  z-index:50;
+}
+.class-banner::before{
+  content:'PROBE REPORT · INTELLIGENCE BRIEF';
+  position:absolute;
+  top:4px;left:50%;
+  transform:translateX(-50%);
+  font-family:'JetBrains Mono',monospace;
+  font-size:7px;
+  letter-spacing:0.3em;
+  color:rgba(56,189,248,0.18);
+  white-space:nowrap;
+}
+
+/* ── Layout ── */
+.app{
+  display:flex;
+  height:100vh;
+  overflow:hidden;
+}
+
+/* ── Side Nav ── */
+.side-nav{
+  width:56px;
+  flex-shrink:0;
+  position:sticky;
+  top:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  height:100vh;
+  z-index:20;
+}
+.side-nav-inner{
+  padding:16px 0;
+  border-radius:0 8px 8px 0;
+  background:rgba(13,13,21,0.9);
+  border:1px solid rgba(255,255,255,0.04);
+  border-left:none;
+  backdrop-filter:blur(12px);
+}
+.nav-item{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:12px 4px;
+  cursor:pointer;
+  transition:all 0.3s;
+  position:relative;
+  background:none;
+  border:none;
+  color:inherit;
+  font-family:inherit;
+}
+.nav-item .icon{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  font-weight:500;
+  transition:all 0.3s;
+  color:#5E5E78;
+}
+.nav-item.active .icon{
+  color:#38BDF8;
+  font-weight:600;
+}
+.nav-item.active::after{
+  content:'';
+  position:absolute;
+  right:0;
+  width:2px;
+  height:20px;
+  border-radius:2px 0 0 2px;
+  background:#38BDF8;
+  box-shadow:0 0 6px rgba(56,189,248,0.3);
+}
+
+/* ── Main content ── */
+.main{
+  flex:1;
+  overflow-y:auto;
+  padding:32px 48px 48px 16px;
+  scroll-behavior:smooth;
+}
+.main::-webkit-scrollbar{width:3px}
+.main::-webkit-scrollbar-track{background:transparent}
+.main::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:2px}
+
+.container{max-width:780px;margin:0 auto}
+
+/* ── Header ── */
+.header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:32px;
+  padding-bottom:20px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.header-left h1{font-size:18px;font-weight:600;letter-spacing:-0.01em;color:#EDEDF5}
+.header-badge{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  padding:2px 8px;
+  border-radius:3px;
+  background:rgba(56,189,248,0.08);
+  color:#38BDF8;
+  border:1px solid rgba(56,189,248,0.15);
+  margin-left:8px;
+  vertical-align:middle;
+}
+.header-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:#5E5E78;margin-top:4px}
+.back-btn{
+  padding:6px 12px;
+  border-radius:6px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  color:#9A9AB0;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.back-btn:hover{background:rgba(255,255,255,0.04);color:#EDEDF5}
+
+/* ── Section ── */
+section{margin-bottom:40px}
+.sec-label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:18px;
+}
+.sec-label .bar{
+  width:3px;
+  height:12px;
+  border-radius:2px;
+  flex-shrink:0;
+  background:linear-gradient(180deg,#38BDF8 0%,rgba(56,189,248,0.15) 100%);
+}
+.sec-label span{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:rgba(56,189,248,0.5);
+}
+
+/* ── Cards ── */
+.card{
+  background:#0D0D15;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;
+  padding:20px;
+  margin-bottom:16px;
+}
+.card-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:#5E5E78;
+  margin-bottom:8px;
+}
+
+/* ── Score display ── */
+.score-big{
+  font-family:'JetBrains Mono',monospace;
+  font-weight:300;
+  font-size:56px;
+  line-height:1;
+}
+.score-bar{
+  height:4px;
+  border-radius:2px;
+  background:rgba(255,255,255,0.06);
+  overflow:hidden;
+  margin-top:12px;
+}
+.score-bar-fill{
+  height:100%;
+  border-radius:2px;
+  transition:width 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+
+/* ── Grid ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* ── Tags ── */
+.tag{
+  display:inline-block;
+  padding:3px 8px;
+  font-size:10px;
+  border-radius:4px;
+  margin:2px;
+}
+.tag-green{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.15);color:#22C55E}
+.tag-red{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);color:#EF4444}
+.tag-amber{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);color:#F59E0B}
+.tag-blue{background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.15);color:#38BDF8;font-family:'JetBrains Mono',monospace;font-size:9px}
+
+/* ── Table ── */
+.table-wrap{
+  border-radius:8px;
+  overflow:hidden;
+  background:#0D0D15;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.table-row{
+  display:grid;
+  gap:12px;
+  padding:10px 14px;
+  font-size:10px;
+  align-items:center;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+  cursor:pointer;
+  transition:background 0.15s;
+}
+.table-row:last-child{border-bottom:none}
+.table-row:hover{background:rgba(255,255,255,0.015)}
+.table-row.expanded{
+  border-left:2px solid #38BDF8 !important;
+  background:rgba(56,189,248,0.03) !important;
+}
+.table-hdr{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:#5E5E78;
+  padding:8px 14px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  cursor:default;
+}
+.table-hdr:hover{background:transparent}
+
+/* ── Expandable detail ── */
+.expand-detail{
+  overflow:hidden;
+  max-height:0;
+  transition:max-height 0.3s ease, padding 0.3s ease;
+  padding:0 10px;
+  font-size:10px;
+  color:#9A9AB0;
+  line-height:1.6;
+}
+.expand-detail.open{
+  max-height:300px;
+  padding:10px;
+}
+.card.expanded{
+  border-color:rgba(56,189,248,0.18) !important;
+  background:rgba(56,189,248,0.03) !important;
+}
+
+/* ── Engine cards ── */
+.engine-card{
+  background:#0D0D15;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:8px;
+  overflow:hidden;
+}
+.engine-card-top{
+  padding:16px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.engine-name{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:#38BDF8;
+  margin-bottom:10px;
+}
+.engine-stat{margin-bottom:6px}
+.engine-stat-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#5E5E78}
+.engine-stat-val{font-family:'JetBrains Mono',monospace;font-size:16px;color:#EDEDF5}
+.engine-answers-body{
+  padding:12px;
+  max-height:200px;
+  overflow-y:auto;
+  background:rgba(255,255,255,0.02);
+}
+
+/* ── CTA ── */
+.cta{
+  text-align:center;
+  padding:30px 0 20px;
+}
+.cta-card{
+  display:inline-block;
+  padding:24px 36px;
+  border-radius:10px;
+  background:#0D0D15;
+  border:1px solid rgba(56,189,248,0.14);
+  max-width:420px;
+}
+.cta-btn{
+  margin-top:14px;
+  padding:10px 24px;
+  border-radius:6px;
+  font-size:13px;
+  font-weight:600;
+  background:#38BDF8;
+  color:#08080D;
+  border:none;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.cta-btn:hover{filter:brightness(1.1)}
+.cta-btn:active{transform:scale(0.98)}
+
+/* ── Empty state ── */
+.empty{
+  text-align:center;
+  padding:20px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.015);
+  border:1px solid rgba(255,255,255,0.04);
+}
+
+/* ── Section divider ── */
+.sec-divider{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:32px 0;
+}
+.sec-divider::before,.sec-divider::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:rgba(255,255,255,0.04);
+}
+.sec-divider::after{content:'';width:4px;height:4px;border-radius:50%;background:rgba(56,189,248,0.12);flex:0 0 auto}
+
+/* ── Corner accents ── */
+.corner-accent::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;
+  width:8px;height:1px;
+  background:rgba(56,189,248,0.2);
+}
+.corner-accent::after{
+  content:'';
+  position:absolute;
+  top:0;left:0;
+  width:1px;height:8px;
+  background:rgba(56,189,248,0.2);
+}
+
+/* ── Engine answer items ── */
+.engine-answer-item{
+  padding:8px 12px;
+  border-radius:4px;
+  background:rgba(255,255,255,0.015);
+  font-size:10px;
+  color:#9A9AB0;
+  line-height:1.5;
+}
+.engine-answer-item + .engine-answer-item{margin-top:6px}
+
+/* ── Winner badges ── */
+.win{color:#22C55E!important}
+.tie{color:#9A9AB0!important}
+.lose{color:#EF4444!important}
+
+.relative{position:relative}
+.text-center{text-align:center}
+.mt-2{margin-top:8px}
+.mt-3{margin-top:12px}
+.mt-4{margin-top:16px}
+.mb-2{margin-bottom:8px}
+.mb-3{margin-bottom:12px}
+.mb-4{margin-bottom:16px}
+.italic{font-style:italic}
+.uppercase{text-transform:uppercase}
+.font-mono{font-family:'JetBrains Mono',monospace}
+.text-xs{font-size:10px}
+.text-sm{font-size:13px}
+.text-secondary{color:#9A9AB0}
+.text-muted{color:#5E5E78}
+.text-accent{color:#38BDF8}
+.text-green{color:#22C55E}
+.text-red{color:#EF4444}
+.text-amber{color:#F59E0B}
+.leading-relaxed{line-height:1.65}
+.flex{display:flex}
+.flex-wrap{flex-wrap:wrap}
+.gap-2{gap:6px}
+.gap-3{gap:10px}
+.items-center{align-items:center}
+.justify-center{justify-content:center}
+.justify-between{justify-content:space-between}
+.inline-block{display:inline-block}
+.w-full{width:100%}
+.max-w-xs{max-width:220px}
+.mx-auto{margin-left:auto;margin-right:auto}
+.ml-auto{margin-left:auto}
+.shrink-0{flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="class-banner"></div>
+
+<div class="app">
+  <!-- Side Nav -->
+  <div class="side-nav">
+    <div class="side-nav-inner" id="sideNav"></div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main" id="mainContent">
+    <div class="container" id="container"></div>
+  </div>
+</div>
+
+<script>
+// ─── Test Data ─────────────────────────────────────────
+const TEST_DATA = {
+  "probe": {
+    "company_score": {
+      "overall": 62,
+      "dimensions": [
+        {"name":"品牌力","score":75,"evidence":"AI 将品牌定位为中高端平价品牌，认可其梦幻包装和美学价值，但未明确提及专为Gen-Z女性打造，而是泛指追求美学与功能平衡的消费者，与自述的Gen-Z目标人群存在偏差。","suggestion":"在品牌传播中强化Gen-Z女性专属定位，通过社交媒体和KOL合作突出二次元、可爱文化元素。"},
+        {"name":"产品力","score":68,"evidence":"AI 准确描述了核心产品如眼影盘、腮红等，并称赞眼影质地丝滑、显色度好，但指出眼影质地可能不如某些竞品，且未提及持久度或创新性，与自述的高品质存在差距。","suggestion":"加强产品持久度和创新性方面的宣传，例如推出持妆测试或独特配方故事。"},
+        {"name":"内容力","score":55,"evidence":"引用率高达93.8%，但推荐率为0.0%，表明AI频繁提及品牌但未积极推荐，属于负面刷屏现象。","suggestion":"优化产品描述和用户评价，突出包容性和多样化肤色适用性，提升AI推荐率。"},
+        {"name":"技术力","score":60,"evidence":"AI 未提及任何技术壁垒或创新成分，仅描述产品质地和包装，技术力感知较弱。","suggestion":"在营销中强调研发投入或独特配方技术，例如专利成分或可持续包装工艺。"},
+        {"name":"市场力","score":50,"evidence":"AI 将品牌与亚洲美妆市场关联，但未提及全球市场布局，也未明确客户群体年龄和地区，与自述的全球市场覆盖存在盲点。","suggestion":"在AI可抓取的渠道中明确列出全球市场覆盖和具体客户案例。"}
+      ],
+      "industry":"彩妆",
+      "weights_used":{"品牌力":0.2,"产品力":0.2,"内容力":0.2,"技术力":0.2,"市场力":0.2}
+    },
+    "citation_metrics": {
+      "rate":50.0,"industry_rate":0.0,"brand_rate":88.9,"competitor_scenario_rate":100.0,
+      "recommendation_rate":0.0,"top_rate":0.0,"total_queries":30,"mentioned_count":15,
+      "source_distribution":{"flowerknows.co":0.4,"trustpilot.com":0.2,"reddit.com":0.27,"tiktok.com":0.07,"other":0.06},
+      "official_site_ratio":0.4,"third_party_ratio":0.6,
+      "details": [
+        {"query":"Flower Knows makeup review 2025","mentioned":true,"position":"mention","mention_context":"Flower Knows 是一个以梦幻和精致设计著称的化妆品品牌，在2025年获得了积极评价。文本中提到了多个关于该品牌的评论和提及，包括Reddit、YouTube、TikTok和Trustpilot上的用户反馈。","reference_source":"trustpilot.com","query_category":"brand"},
+        {"query":"where to buy Flower Knows cosmetics","mentioned":false,"position":"none","mention_context":"","reference_source":"","query_category":"brand"},
+        {"query":"Flower Knows eyeshadow palette quality","mentioned":true,"position":"mention","mention_context":"AI 提到 Flower Knows 眼影盘质量好，包装漂亮，性能可靠，并引用了多个来源。","reference_source":"reddit.com","query_category":"brand"},
+        {"query":"is Flower Knows cruelty free","mentioned":true,"position":"mention","mention_context":"Flower Knows 主要是一个零残忍品牌，但部分产品例外。","reference_source":"flowerknows.co","query_category":"brand"},
+        {"query":"Flower Knows vs Colourpop pricing","mentioned":true,"position":"mention","mention_context":"AI 提到了 Flower Knows 的定价范围，并引用了其官网作为来源。","reference_source":"flowerknows.co","query_category":"competitor"},
+        {"query":"Flower Knows customer service experience","mentioned":true,"position":"mention","mention_context":"AI 提到 Flower Knows 的客户服务体验存在混合评价。","reference_source":"trustpilot.com","query_category":"brand"},
+        {"query":"Flower Knows lipstick swatches","mentioned":true,"position":"mention","mention_context":"Flower Knows 是一个以奇幻童话风格化妆品闻名的品牌。","reference_source":"flowerknows.co","query_category":"brand"},
+        {"query":"how much does Flower Knows cost","mentioned":true,"position":"mention","mention_context":"Flower Knows 是一个提供梦幻灵感化妆品的品牌。","reference_source":"flowerknows.co","query_category":"brand"},
+        {"query":"Flower Knows fairy tale collection","mentioned":true,"position":"mention","mention_context":"Flower Knows 是一个以奇思妙想和童话灵感化妆品闻名的品牌。","reference_source":"flowerknows.co","query_category":"brand"},
+        {"query":"Colourpop vs Romand eyeshadow comparison","mentioned":true,"position":"mention","mention_context":"Flower Knows 眼影以其丝滑哑光质地和奶油般可叠加的配方而闻名。","reference_source":"reddit.com","query_category":"competitor"},
+        {"query":"best kawaii makeup brand Colourpop or Canmake","mentioned":true,"position":"mention","mention_context":"Flower Knows 被提及为 kawaii 化妆品的强有力竞争者。","reference_source":"trustpilot.com","query_category":"competitor"},
+        {"query":"Romand blush review 2025","mentioned":true,"position":"mention","mention_context":"Flower Knows 液体腮红因其鲜艳的色素、无缝融合和持久性而受到好评。","reference_source":"floatingindreams.com","query_category":"competitor"},
+        {"query":"Peripera ink velvet swatches","mentioned":true,"position":"mention","mention_context":"AI 提到了 Flower Knows 的多个来源，包括 Reddit 讨论、YouTube 指南等。","reference_source":"reddit.com","query_category":"competitor"},
+        {"query":"Colourpop super shock shadow dupe for Romand","mentioned":true,"position":"mention","mention_context":"Flower Knows 被提及，但未与 ColourPop 或 Romand 产品进行对比。","reference_source":"reddit.com","query_category":"competitor"},
+        {"query":"","mentioned":false,"position":"none","mention_context":"","reference_source":"","query_category":"industry"},
+        {"query":"","mentioned":false,"position":"none","mention_context":"","reference_source":"","query_category":"industry"}
+      ]
+    },
+    "engine_results": {
+      "gpt": {
+        "engine":"gpt","citation_rate":0.0,"recommendation_rate":0.0,"sources":{},
+        "raw_data":{"answers":[
+          {"query":"best eyeshadow palettes for beginners","answer":"推荐 Anastasia Beverly Hills Soft Glam、NYX 和 Covergirl 平价盘、Sephora 精选盘。"},
+          {"query":"how to choose the right foundation shade","answer":"推荐通过下颌线试色、自然光下检查，并使用 Findation.com 匹配。"},
+          {"query":"are cream blushes better than powder blushes","answer":"Cream blushes 适合干性皮肤，powder blushes 适合油性皮肤。"}
+        ]}
+      },
+      "gemini": {
+        "engine":"gemini","citation_rate":0.0,"recommendation_rate":0.0,"sources":{},
+        "raw_data":{"answers":[
+          {"query":"best eyeshadow palettes for beginners","answer":"包括 Tartelette In Bloom、Urban Decay Naked3、ColourPop 平价选择。"},
+          {"query":"how to choose the right foundation shade","answer":"关键步骤：确定 undertone（冷/暖/中性），下颌线测试，不同光线下检查。"},
+          {"query":"are cream blushes better than powder blushes","answer":"Depends on skin type and finish preference. Cream = dewy, Powder = matte."}
+        ]}
+      },
+      "haiku": {
+        "engine":"haiku","citation_rate":0.0,"recommendation_rate":0.0,"sources":{},
+        "raw_data":{"answers":[
+          {"query":"best eyeshadow palettes for beginners","answer":"ColorPop Bare Necessities、Morphe 35O、NYX Ultimate Warm Neutrals。"},
+          {"query":"how to choose the right foundation shade","answer":"Identify skin undertone. Swatch on jawline. Test in natural light. Consider formula type."},
+          {"query":"are cream blushes better than powder blushes","answer":"Neither is 'better' — cream blushes give dewy finish for dry skin, powder blushes suit oily skin with longer wear."}
+        ]}
+      }
+    },
+    "competitor_analysis": [
+      {"query":"For a startup with limited budget, would you go with Peripera or Etude House for the best price-to-quality ratio on lip tints?","winner":"tie","reason":"The text only discusses Peripera and Etude House, with no direct comparison on price-to-quality ratio.","competitor_refs":["Peripera唇釉约$10","Etude House持久性好"],"dimension_scores":[{"dimension":"price","rankings":[{"brand":"peripera.com","rank":1,"summary":"常规价格约$10"},{"brand":"etudehouse.com","rank":2,"summary":"无数据"}],"importance":"high"},{"dimension":"durability","rankings":[{"brand":"etudehouse.com","rank":1,"score":60,"summary":"持久性好"},{"brand":"peripera.com","rank":2,"summary":"无数据"}],"importance":"medium"}],"dimension_win_count":{"peripera.com":0,"etudehouse.com":1}},
+      {"query":"Which has better color payoff for the price, ColourPop or Flower Knows eyeshadow palettes?","winner":"colourpop.com","reason":"ColourPop is explicitly praised for great quality and pigment at an affordable price.","competitor_refs":["ColourPop: great quality and pigment for affordable price"],"dimension_scores":[{"dimension":"性价比","rankings":[{"brand":"colourpop.com","rank":1,"score":75,"summary":"great quality and pigment for affordable price"},{"brand":"flowerknows.co","rank":2,"score":null,"summary":"无具体数据"}],"importance":"high"}],"dimension_win_count":{"colourpop.com":1,"flowerknows.co":0}},
+      {"query":"Best korean lip tint for gradient look — Romand Juicy Lasting vs Peripera Ink Velvet","winner":"peripera.com","reason":"Peripera has wider shade range (20+ vs 15) and better longevity.","competitor_refs":["Peripera 20+ shades, long-lasting","Romand 15 shades"],"dimension_scores":[{"dimension":"shade_range","rankings":[{"brand":"peripera.com","rank":1,"score":80,"summary":"20+ shades"},{"brand":"romand.com","rank":2,"score":65,"summary":"15 shades"}],"importance":"high"}],"dimension_win_count":{"peripera.com":1,"romand.com":0}},
+      {"query":"Which eyeshadow palette brand gives the best pigment-to-price ratio for pale skin — ColourPop or Flower Knows?","winner":"flowerknows.co","reason":"Flower Knows is noted as particularly suitable for pale and cool-toned skin.","competitor_refs":["Flower Knows 适合肤色偏白和冷色调"],"dimension_scores":[{"dimension":"pale_skin_suitability","rankings":[{"brand":"flowerknows.co","rank":1,"score":78,"summary":"特别适合肤色偏白和冷色调"},{"brand":"colourpop.com","rank":2,"score":60,"summary":"通用性更好但无专门适配"}],"importance":"high"}],"dimension_win_count":{"flowerknows.co":1,"colourpop.com":0}},
+      {"query":"For a Gen-Z focused makeup brand launching in 2025, which brand's marketing strategy would be better to emulate: Peripera or Canmake?","winner":"tie","reason":"Both have strong Gen-Z appeal through different strategies.","competitor_refs":["Peripera: 联名策略","Canmake: 可爱平价路线"],"dimension_scores":[],"dimension_win_count":{"peripera.com":0,"canmake.com":0}},
+      {"query":"What's the best affordable highlighter that gives a glass skin effect for 20-something skin?","winner":"flowerknows.co","reason":"Flower Knows 高光有柔和光泽和可叠加的色素，适合喜欢自然光泽的人。","competitor_refs":["Flower Knows Shell's Jewel Collection"],"dimension_scores":[{"dimension":"glass_skin_effect","rankings":[{"brand":"flowerknows.co","rank":1,"score":72,"summary":"柔和光泽+可叠加色素"}],"importance":"high"}],"dimension_win_count":{"flowerknows.co":1}},
+      {"query":"Best eyeshadow palette for kawaii aesthetic lovers","winner":"flowerknows.co","reason":"Flower Knows 是kawaii化妆品领域的强有力竞争者，梦幻包装和高品质产品受到好评。","competitor_refs":["最佳kawaii彩妆品牌之一"],"dimension_scores":[{"dimension":"kawaii_aesthetic","rankings":[{"brand":"flowerknows.co","rank":1,"score":85,"summary":"梦幻包装+高品质+kawaii首选"},{"brand":"colourpop.com","rank":2,"score":55,"summary":"可爱联名但非常规风格"}],"importance":"high"}],"dimension_win_count":{"flowerknows.co":1,"colourpop.com":0}}
+    ],
+    "ai_narrative": {
+      "ideal_description":"花知晓（Flower Knows）是一个专为Gen-Z女性设计的平价奢华彩妆品牌，以童话和动漫美学为核心，将化妆转化为浪漫的自我表达。其产品线包括眼影盘、唇膏、腮红等，包装如艺术品。品牌强调高品质与亲民价格，定期推出限时促销、买赠活动和神秘福袋。花知晓面向全球市场，通过社交媒体与年轻消费者建立情感连接。",
+      "keywords":["花知晓","平价奢华","童话彩妆","Gen-Z女性","眼影盘","动漫美学","限时促销","全球市场"],
+      "value_props":["以童话和动漫为灵感的梦幻包装","高品质彩妆产品，价格亲民","丰富的产品线覆盖眼影、唇妆、底妆等","定期推出限定系列和优惠活动"],
+      "avoid":["将品牌目标人群泛化为追求美学与功能平衡的消费者，应明确为Gen-Z女性","认为品牌适合肤色偏白和冷色调人群，实际品牌未限定肤色","指出眼影质地可能不如某些竞品，应强调高品质","忽略限时促销、买赠活动和神秘福袋等购物体验","忽略全球市场布局"],
+      "tone":"专业"
+    },
+    "gap_report": {
+      "alignment_score":70,
+      "aligned":["品牌以童话和动漫美学为核心，包装梦幻精致","产品线覆盖眼影盘、唇膏、腮红、高光等","定位平价奢华，性价比高","目标消费者为年轻女性，尤其是Gen-Z"],
+      "misaligned":["AI未提及品牌专为Gen-Z女性打造，而是泛指追求美学与功能平衡的消费者","AI认为品牌适合肤色偏白和冷色调人群，但自述未限定肤色","AI指出眼影质地可能不如某些竞品，自述强调高品质"],
+      "blind_spots":["品牌强调的限时促销、买赠活动和神秘福袋等购物体验","品牌提及的全球市场布局（美国、欧盟、日本、东南亚）","品牌将化妆视为浪漫自我表达方式的核心差异化"],
+      "opportunities":["AI认可包装精美、有艺术感，可进一步强调童话故事与包装设计的关联","AI认为产品性价比高，可强化'平价奢华'定位","AI提及眼影质地丝滑、显色度好，可作为产品优势宣传"],
+      "one_line_summary":"AI视你为梦幻精致、性价比高的彩妆品牌，但你想被看作专为Gen-Z女性打造的平价奢华童话彩妆。差距在于AI未充分捕捉你的Gen-Z目标群体和全球市场野心。",
+      "target_alignment_score":65,
+      "target_aligned":["AI认可品牌具有梦幻、精致的包装和美学","AI提及产品性价比高，符合'平价奢华'定位","AI将品牌与年轻女性消费者关联，部分覆盖Gen-Z"],
+      "target_misaligned":["AI未明确提及品牌专为Gen-Z女性打造","AI未提及动漫/kawaii美学，而是用'梦幻'、'精致'描述","AI未提及品牌定位全球市场，仅关联亚洲美妆市场"],
+      "target_gap_summary":"品牌希望AI将其描述为专为Gen-Z女性打造的平价奢华童话彩妆，但AI实际描述为梦幻精致、性价比高的彩妆品牌，未突出Gen-Z目标群体和全球市场定位。",
+      "has_target_gap":true
+    },
+    "market_perception": {
+      "perceived_identity":"AI 认为 Flower Knows 是一个以梦幻、精致包装和高品质化妆品著称的品牌，适合追求美学与功能平衡的消费者。",
+      "perceived_strengths":["包装精美、有艺术感，被描述为'梦幻'、'精致'","眼影质地丝滑、粉质细腻，显色度好且易于晕染","产品性价比高，兼具奢华感和实惠价格","适合日常使用，被用户称为'每天都会用的最爱'"],
+      "perceived_weaknesses":["眼影质地被描述为'平均'，触感'丝滑但粉感重'，可能不如某些竞品突出","品牌在对比中未明确提及持久度或创新性，可能缺乏独特卖点"],
+      "perceived_positioning":"AI 将 Flower Knows 定位为中高端平价品牌，在美学和品质上具有竞争力，但并非市场领导者，而是挑战者或细分领域专家。",
+      "perceived_products":["Shell's Jewel 夏季2025系列","Strawberry Cupid 眼影盘","Violet Strawberry Rococo 眼影盘","Bunny Garden 系列眼影盘"],
+      "perceived_market":"AI 将品牌与亚洲美妆市场、追求梦幻包装和高质量彩妆的年轻女性消费者关联，尤其适合肤色偏白和冷色调的人群。",
+      "perception_sources":["reddit.com","trustpilot.com","tiktok.com","youtube.com","skinsort.com"]
+    },
+    "company_evaluation": {
+      "overall":"花知晓在包装设计和产品品质上获得了AI的积极认可，但品牌自我定位中的Gen-Z专属、全球市场和童话故事核心差异化未被AI充分捕捉。品牌应加强在AI信息源中的目标群体和全球市场宣传。",
+      "strengths":["包装精美、有艺术感，唤醒少女心","产品性价比高，兼具奢华感和实惠价格","眼影质地丝滑、显色度好，易于晕染"],
+      "weaknesses":["眼影质地被AI评价为'平均'，可能不如某些竞品突出","品牌在AI信息源中未明确提及持久度或创新性，缺乏独特卖点"],
+      "positioning":"中高端平价彩妆品牌，以梦幻童话包装和高质量产品在细分市场具有竞争力，但尚未成为市场领导者。"
+    },
+    "source_authority": {
+      "top_sources":[
+        {"domain":"flowerknows.co","source_type":"品牌官网","mention_count":6,"authority_score":55},
+        {"domain":"trustpilot.com","source_type":"评测平台","mention_count":3,"authority_score":47},
+        {"domain":"reddit.com","source_type":"论坛","mention_count":4,"authority_score":45},
+        {"domain":"floatingindreams.com","source_type":"博客","mention_count":1,"authority_score":31},
+        {"domain":"tiktok.com","source_type":"社交媒体","mention_count":1,"authority_score":22}
+      ],
+      "total_sources":5,
+      "source_diversity":0.871
+    },
+    "brand_profile": {
+      "one_liner":"花知晓：为Gen-Z女性打造的平价奢华童话彩妆，以动漫/可爱美学唤醒少女梦。",
+      "value_props":["以童话和动漫为灵感的梦幻包装","高品质彩妆产品，价格亲民","丰富的产品线覆盖眼影、唇妆、底妆等"],
+      "differentiators":["独特的童话与动漫美学设计，包装如艺术品","专注Gen-Z女性市场，通过梦幻主题和社交媒体互动建立情感连接"],
+      "target_personas":["18-30岁Gen-Z女性，热爱二次元、动漫和可爱文化","注重产品颜值和仪式感，愿意为独特包装付费的年轻消费者"],
+      "tone_keywords":["梦幻","可爱","浪漫","艺术","亲民"],
+      "full_description":"花知晓（Flower Knows）是一个以童话和动漫美学为核心的平价奢华彩妆品牌，专为Gen-Z女性打造。品牌通过梦幻的包装设计和艺术化的产品唤醒消费者的少女心。产品线覆盖眼影盘、唇膏、腮红、高光、粉底等。其核心差异化在于将彩妆与童话故事结合，让化妆成为一种浪漫的自我表达方式。",
+      "inferred_industry":"彩妆",
+      "inferred_target_market":"全球（美国、欧盟、日本、东南亚）",
+      "inferred_core_product":"以眼影盘、唇膏、腮红、高光为主的彩妆产品"
+    },
+    "query_terms":["best eyeshadow palettes for beginners","how to choose the right foundation shade","Flower Knows makeup review 2025","where to buy Flower Knows cosmetics","Flower Knows eyeshadow palette quality","is Flower Knows cruelty free","Flower Knows vs Colourpop pricing","Flower Knows customer service experience","Flower Knows lipstick swatches","how much does Flower Knows cost","Flower Knows fairy tale collection","Flower Knows shipping time","Colourpop vs Romand eyeshadow comparison","Etude House lip tint vs Peripera","best kawaii makeup brand","Romand blush review 2025","Peripera ink velvet swatches","Colourpop super shock shadow dupe","best eyeshadow palette for kawaii aesthetic","affordable highlighter for glass skin","etc..."],
+    "elapsed":234.5
+  }
+};
+
+const D = TEST_DATA.probe;
+
+// ─── Helpers ───────────────────────────────────────────
+function sc(c){return c>=80?'#22C55E':c>=60?'#38BDF8':c>=40?'#F59E0B':'#EF4444'}
+function fp(v){return v==null?'—':(Math.round(v*10)/10).toFixed(1)+'%'}
+function tr(s,m){return s?s.length>m?s.slice(0,m)+'…':s:''}
+const EDISPLAY={gpt:'ChatGPT',gemini:'Gemini',haiku:'Claude'};
+
+function secLabel(id,text){
+  return `<div class="sec-label" id="${id}">
+    <div class="bar"></div>
+    <span>${text}</span>
+  </div>`;
+}
+function empty(title,reason){
+  return `<div class="empty"><p class="text-sm text-muted">${title} — 暂无数据</p><p class="text-xs mt-2" style="color:#3A3A52">${reason}</p></div>`;
+}
+function scoreBar(score,h=4){
+  const p=Math.min(Math.max(score/100*100,2),98);
+  return `<div class="score-bar" style="height:${h}px"><div class="score-bar-fill" style="width:${p}%;background:${sc(score)}"></div></div>`;
+}
+function tag(text,cls){return `<span class="tag ${cls}">${text}</span>`;}
+
+// ─── Render ────────────────────────────────────────────
+let expandedRows={};
+
+function render(){
+  const el=document.getElementById('container');
+  const probe=D;
+  const brandName='Flower Knows';
+  const domain='flowerknows.co';
+  const qc=probe.query_terms?.length||0;
+  const ec=Object.keys(probe.engine_results||{}).length;
+
+  el.innerHTML=`
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <div class="flex items-center">
+          <h1>${brandName} <span class="header-badge">侦察报告</span></h1>
+        </div>
+        <p class="header-meta">${domain} · ${qc} 个查询词 · ${ec} 个引擎 · ${probe.elapsed?.toFixed(1)||'—'}s</p>
+      </div>
+      <button class="back-btn" onclick="alert('返回简报室')">← 返回</button>
+    </div>
+
+    <!-- Section 1: 综合评分 -->
+    <section>
+      ${secLabel('sec-score','综合评分')}
+      ${renderS1(probe.company_score)}
+    </section>
+    <div class="sec-divider"></div>
+
+    <!-- Section 2: AI认知画像 -->
+    <section>
+      ${secLabel('sec-perception','AI认知画像')}
+      ${renderS2(probe.market_perception,probe.ai_narrative)}
+    </section>
+    <div class="sec-divider"></div>
+
+    <!-- Section 3: 认知差距 -->
+    <section>
+      ${secLabel('sec-gap','认知差距')}
+      ${renderS3(probe.gap_report,probe.company_evaluation)}
+    </section>
+    <div class="sec-divider"></div>
+
+    <!-- Section 4: 引擎对比 -->
+    <section>
+      ${secLabel('sec-engines','引擎对比 · 交叉验证')}
+      ${renderS4(probe.engine_results)}
+    </section>
+    <div class="sec-divider"></div>
+
+    <!-- Section 5: 竞品战场 -->
+    <section>
+      ${secLabel('sec-competitors','竞品战场 · 逐维对比')}
+      ${renderS5(probe.competitor_analysis,brandName)}
+    </section>
+    <div class="sec-divider"></div>
+
+    <!-- Section 6: 数据溯源 -->
+    <section>
+      ${secLabel('sec-traceability','数据溯源 · 引用明细')}
+      ${renderS6(probe.source_authority,probe.citation_metrics?.details)}
+    </section>
+    <div class="sec-divider"></div>
+
+    <!-- CTA -->
+    <div class="cta">
+      <div class="cta-card">
+        <p class="text-sm text-secondary">侦察报告已生成</p>
+        <p class="text-xs mt-2 text-muted">你已经看到 AI 怎么描述你的品牌、哪些竞品在抢你的位置。<br>但你还不知道为什么——以及怎么改。</p>
+        <p class="text-sm mt-4 font-mono" style="color:#EDEDF5">解锁诊断报告 + 处方</p>
+        <p class="text-xs mt-1 text-muted">Analyst 诊断师：14条规则逐条检查，告诉你根因<br>Doctor 医师：P0/P1/P2 任务清单，告诉你怎么改</p>
+        <button class="cta-btn" onclick="alert('升级弹窗: ¥299/月')">升级解锁 · ¥299/月</button>
+      </div>
+    </div>
+  `;
+
+  // Render side nav
+  const navItems=[
+    {id:'sec-score',label:'综合评分',num:'01'},
+    {id:'sec-perception',label:'AI认知',num:'02'},
+    {id:'sec-gap',label:'认知差距',num:'03'},
+    {id:'sec-engines',label:'引擎对比',num:'04'},
+    {id:'sec-competitors',label:'竞品战场',num:'05'},
+    {id:'sec-traceability',label:'数据溯源',num:'06'},
+  ];
+  document.getElementById('sideNav').innerHTML=navItems.map((item,i)=>`
+    <button class="nav-item${i===0?' active':''}" data-target="${item.id}" onclick="scrollToSection('${item.id}')">
+      <span class="icon">${item.num}</span>
+    </button>
+  `).join('');
+
+  // IntersectionObserver
+  const observer=new IntersectionObserver((entries)=>{
+    const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
+    if(visible.length>0){
+      document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+      const active=document.querySelector(`.nav-item[data-target="${visible[0].target.id}"]`);
+      if(active)active.classList.add('active');
+    }
+  },{rootMargin:'-15% 0px -70% 0px',threshold:0});
+
+  navItems.forEach(item=>{
+    const el=document.getElementById(item.id);
+    if(el)observer.observe(el);
+  });
+}
+
+function scrollToSection(id){
+  const el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function toggleExpand(idx){
+  expandedRows[idx]=!expandedRows[idx];
+  const detail=document.getElementById(`expand-${idx}`);
+  const card=document.getElementById(`card-${idx}`);
+  if(detail)detail.classList.toggle('open',expandedRows[idx]);
+  if(card)card.classList.toggle('expanded',expandedRows[idx]);
+  // Update expand/collapse text
+  const hint=document.getElementById(`hint-${idx}`);
+  if(hint)hint.textContent=expandedRows[idx]?'收起 ▲':'展开 ▼';
+}
+
+// ─── Section Renderers ─────────────────────────────────
+
+function renderS1(cs){
+  if(!cs)return empty('综合评分','未返回公司评分数据');
+  const {overall,dimensions=[],industry,weights_used}=cs;
+  let h=`<div class="card text-center relative corner-accent">
+    <div class="card-label">${industry||''} · AI 综合得分</div>
+    <div class="score-big" style="color:${sc(overall)}">${overall}</div>
+    <p class="text-xs text-muted mt-2">满分 100</p>
+    <div class="max-w-xs mx-auto">${scoreBar(overall)}</div>
+  </div>`;
+
+  if(dimensions.length){
+    h+=`<div class="grid2">`;
+    dimensions.forEach((d,i)=>{
+      h+=`<div class="card" id="card-dim${i}" style="cursor:pointer" onclick="toggleExpand('dim${i}')">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-xs font-mono uppercase text-secondary">${d.name}</span>
+          <span class="font-mono text-lg" style="color:${sc(d.score)}">${d.score}</span>
+        </div>
+        ${scoreBar(d.score)}
+        <span class="text-xs font-mono text-muted mt-1 inline-block" id="hint-dim${i}">展开 ▼</span>
+        <div class="expand-detail" id="expand-dim${i}" style="border-left:2px solid #38BDF8;background:rgba(56,189,248,0.02);margin-top:6px;border-radius:0 4px 4px 0">
+          ${d.evidence?`<div class="mb-2"><span class="text-accent font-mono text-xs">证据</span> <span class="text-secondary">${d.evidence}</span></div>`:''}
+          ${d.suggestion?`<div><span class="text-green font-mono text-xs">建议</span> <span class="text-secondary">${d.suggestion}</span></div>`:''}
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+
+  return h;
+}
+
+function renderS2(mp,an){
+  if(!mp?.perceived_identity&&!an?.ideal_description)return empty('AI认知画像','未返回AI认知数据');
+  let h='';
+  if(mp?.perceived_identity){
+    h+=`<div class="card"><div class="card-label">AI 怎么描述你</div><p class="text-sm text-secondary leading-relaxed">${mp.perceived_identity}</p></div>`;
+    h+=`<div class="grid2"><div class="card"><div class="card-label">AI 认为你的优势</div><div class="flex flex-wrap gap-2">`;
+    (mp.perceived_strengths||[]).forEach(s=>h+=tag(s,'tag-green'));
+    if(!mp.perceived_strengths?.length)h+=`<span class="text-xs text-muted">暂无数据</span>`;
+    h+=`</div></div><div class="card"><div class="card-label">AI 认为你的劣势</div><div class="flex flex-wrap gap-2">`;
+    (mp.perceived_weaknesses||[]).forEach(w=>h+=tag(w,'tag-red'));
+    if(!mp.perceived_weaknesses?.length)h+=`<span class="text-xs text-muted">暂无数据</span>`;
+    h+=`</div></div></div>`;
+    if(mp.perceived_positioning)h+=`<div class="card"><div class="card-label">AI 定位</div><p class="text-sm text-secondary leading-relaxed">${mp.perceived_positioning}</p></div>`;
+  }
+  if(an?.ideal_description){
+    h+=`<div class="card"><div class="card-label">AI 理想描述</div><p class="text-sm text-secondary leading-relaxed italic mb-3">&ldquo;${an.ideal_description}&rdquo;</p>`;
+    if(an.keywords?.length){
+      h+=`<div class="flex flex-wrap gap-2">`;
+      an.keywords.forEach(k=>h+=tag(k,'tag-blue'));
+      h+=`</div>`;
+    }
+    h+=`</div>`;
+  }
+  return h;
+}
+
+function renderS3(gap,ce){
+  if(!gap&&!ce)return empty('认知差距','未返回差距分析数据');
+  let h='';
+  if(gap){
+    h+=`<div class="card text-center relative corner-accent">
+      <div class="card-label">品牌自述 vs AI 认知 · 对齐度</div>
+      <div class="score-big" style="color:${sc(gap.alignment_score||0)};font-size:48px">${gap.alignment_score??'—'}</div>
+      <p class="text-xs text-muted mt-2">满分 100</p>
+      <div class="max-w-xs mx-auto">${scoreBar(gap.alignment_score||0)}</div>
+      ${gap.one_line_summary?`<p class="text-sm text-secondary leading-relaxed mt-3">${gap.one_line_summary}</p>`:''}
+    </div>`;
+
+    h+=`<div class="grid2"><div class="card"><div class="card-label">对齐项 ✓</div><div class="flex flex-wrap gap-2">`;
+    (gap.aligned||[]).forEach(item=>h+=tag(item,'tag-green'));
+    if(!gap.aligned?.length)h+=`<span class="text-xs text-muted">暂无数据</span>`;
+    h+=`</div></div><div class="card"><div class="card-label">偏差项 ✗</div><div class="flex flex-wrap gap-2">`;
+    (gap.misaligned||[]).forEach(item=>h+=tag(item,'tag-red'));
+    if(!gap.misaligned?.length)h+=`<span class="text-xs text-muted">暂无数据</span>`;
+    h+=`</div></div></div>`;
+
+    h+=`<div class="grid2"><div class="card"><div class="card-label">盲点 ⚠</div><div class="flex flex-wrap gap-2">`;
+    (gap.blind_spots||[]).forEach(item=>h+=tag(item,'tag-amber'));
+    if(!gap.blind_spots?.length)h+=`<span class="text-xs text-muted">暂无数据</span>`;
+    h+=`</div></div><div class="card"><div class="card-label">机会 💡</div><div class="flex flex-wrap gap-2">`;
+    (gap.opportunities||[]).forEach(item=>h+=tag(item,'tag-blue'));
+    if(!gap.opportunities?.length)h+=`<span class="text-xs text-muted">暂无数据</span>`;
+    h+=`</div></div></div>`;
+
+    if(gap.has_target_gap){
+      h+=`<div class="card" style="background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.03);opacity:0.85">
+        <div class="flex items-center gap-2 mb-2"><span class="text-xs font-mono uppercase" style="color:#5E5E78">参考：品牌期望 vs AI 认知</span><span class="font-mono text-xs" style="color:#38BDF8">${gap.target_alignment_score||'—'}/100</span></div>
+        <div class="grid2"><div><p class="text-xs font-mono text-green mb-1">已对齐</p>${(gap.target_aligned||[]).map(item=>`<p class="text-xs text-secondary">· ${item}</p>`).join('')}</div>
+        <div><p class="text-xs font-mono text-red mb-1">未对齐</p>${(gap.target_misaligned||[]).map(item=>`<p class="text-xs text-secondary">· ${item}</p>`).join('')}</div></div></div>`;
+    }
+  }
+  if(ce){
+    h+=`<div class="card"><div class="card-label">公司评估</div>`;
+    if(ce.overall)h+=`<p class="text-sm text-secondary leading-relaxed mb-3">${ce.overall}</p>`;
+    if(ce.positioning)h+=`<p class="text-xs text-accent mb-2">定位：${ce.positioning}</p>`;
+    h+=`<div class="grid2 mt-3"><div><p class="text-xs font-mono text-green mb-1">优势</p>${(ce.strengths||[]).map(s=>`<p class="text-xs text-secondary">· ${s}</p>`).join('')}</div>
+      <div><p class="text-xs font-mono text-red mb-1">劣势</p>${(ce.weaknesses||[]).map(w=>`<p class="text-xs text-secondary">· ${w}</p>`).join('')}</div></div></div>`;
+  }
+  return h;
+}
+
+function renderS4(er){
+  const engines=Object.entries(er||{});
+  if(!engines.length)return empty('引擎对比','未返回引擎对比数据');
+  let h=`<p class="text-xs text-muted leading-relaxed mb-4">三个 AI 引擎独立搜索同一套查询词，交叉验证品牌在不同 AI 系统中的可见度。</p>`;
+  if(engines.length){
+    h+=`<div class="grid3">`;
+    engines.forEach(([key,e])=>{
+      const answers=(e?.raw_data?.answers||[]).slice(0,5);
+      h+=`<div class="engine-card">
+        <div class="engine-card-top">
+          <div class="engine-name">${EDISPLAY[key]||key}</div>
+          <div class="engine-stat"><div class="engine-stat-label">引用率</div><div class="engine-stat-val">${fp(e?.citation_rate)}</div></div>
+          <div class="engine-stat"><div class="engine-stat-label">推荐率</div><div class="engine-stat-val">${fp(e?.recommendation_rate)}</div></div>
+        </div>
+        ${answers.length?`<div class="engine-answers-body">
+          ${answers.map(a=>`
+            <div class="engine-answer-item">
+              <p class="text-muted font-mono text-xs">Q: ${tr(a.query,60)}</p>
+              <p class="mt-1">${tr(typeof a.answer==='string'?a.answer:'',180)}</p>
+            </div>
+          `).join('')}
+        </div>`:''}
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+  return h;
+}
+
+function renderS5(ca,brandName){
+  if(!ca||!ca.length)return empty('竞品战场','未返回竞品对比数据');
+  const winCount=ca.filter(c=>c.winner?.toLowerCase().includes(brandName.toLowerCase())).length;
+  let h=`<div class="table-wrap"><div class="table-row table-hdr" style="grid-template-columns:1fr 70px 1fr 36px">
+    <span>查询场景</span><span class="text-center">赢家</span><span class="text-center">原因</span><span></span></div>`;
+  ca.forEach((c,i)=>{
+    const isWin=c.winner?.toLowerCase().includes(brandName.toLowerCase());
+    const isTie=c.winner?.toLowerCase()==='tie'||c.winner?.toLowerCase().includes('平');
+    const wc=isWin?'win':isTie?'tie':'lose';
+    const wlabel=isWin?'我们赢':isTie?'平局':tr(c.winner,10);
+    const hasDetail=c.dimension_scores?.length>0;
+    h+=`<div class="table-row" id="card-comp${i}" style="grid-template-columns:1fr 70px 1fr 36px;border-left:2px solid transparent" onclick="toggleExpand('comp${i}')">
+      <span class="text-secondary leading-relaxed">${tr(c.query,50)}</span>
+      <span class="text-center font-mono ${wc}">${wlabel}</span>
+      <span class="text-center text-muted leading-relaxed">${tr(c.reason,80)}</span>
+      <span class="text-right font-mono text-[8px] text-muted" id="hint-comp${i}">${hasDetail?'展开 ▼':''}</span>
+    </div>`;
+    if(c.dimension_scores?.length){
+      h+=`<div class="expand-detail" id="expand-comp${i}">
+        <p class="text-xs font-mono text-accent mb-2">维度评分</p>`;
+      c.dimension_scores.forEach(ds=>{
+        h+=`<div class="flex items-center gap-3 mb-1"><span class="text-xs font-mono text-muted shrink-0" style="width:72px">${ds.dimension}</span>`;
+        (ds.rankings||[]).forEach(r=>{
+          const isUs=r.brand?.toLowerCase().includes(brandName.toLowerCase());
+          h+=`<span class="tag" style="${isUs?'background:rgba(34,197,94,0.08);color:#22C55E':'background:rgba(255,255,255,0.03);color:#9A9AB0'}">${r.brand} #${r.rank}</span>`;
+        });
+        h+=`</div>`;
+      });
+      h+=`</div>`;
+    }
+  });
+  h+=`</div>
+  <div class="text-center mt-3"><span class="text-xs font-mono text-secondary">你在 <span class="text-accent">${winCount}</span> / ${ca.length} 个场景中获胜</span></div>`;
+  return h;
+}
+
+function renderS6(sa,details){
+  if(!sa&&(!details||!details.length))return empty('数据溯源','未返回引用溯源数据');
+  let h='';
+  if(sa?.top_sources?.length){
+    h+=`<div class="table-wrap"><div class="table-row table-hdr" style="grid-template-columns:1fr 70px 50px 50px">
+      <span>来源</span><span>类型</span><span class="text-center">权威度</span><span class="text-center">提及</span></div>`;
+    sa.top_sources.forEach((s,i)=>{
+      h+=`<div class="table-row" style="grid-template-columns:1fr 70px 50px 50px;cursor:default">
+        <span class="font-mono text-accent text-xs">${s.domain}</span><span class="text-secondary text-xs">${s.source_type||'—'}</span>
+        <span class="text-center font-mono text-xs">${s.authority_score??'—'}</span>
+        <span class="text-center font-mono text-xs">${s.mention_count??'—'}</span></div>`;
+    });
+    h+=`</div>`;
+    const d=sa.source_diversity;
+    const dl=d>=0.7?'高':d>=0.4?'中':'低';
+    const dc=d>=0.7?'#22C55E':d>=0.4?'#F59E0B':'#EF4444';
+    h+=`<div class="flex items-center gap-3 mt-3 text-xs">
+      <span class="text-muted">来源总数：<span class="font-mono" style="color:#EDEDF5">${sa.total_sources??'—'}</span></span>
+      <span class="text-muted">多样性：<span class="font-mono" style="color:${dc}">${d!=null?(d*100).toFixed(0)+'%':'—'} · ${dl}</span></span>
+    </div>`;
+  }
+  if(details&&details.length){
+    const vis=details.slice(0,20).filter(d=>d.query);
+    if(vis.length){
+      h+=`<div class="table-wrap mt-4"><div class="table-row table-hdr" style="grid-template-columns:1fr 36px 56px 90px">
+        <span>查询词</span><span class="text-center">提及</span><span class="text-center">位置</span><span>来源</span></div>`;
+      vis.forEach((d,i)=>{
+        h+=`<div class="table-row" style="grid-template-columns:1fr 36px 56px 90px" onclick="toggleExpand('cite${i}')">
+          <span class="text-secondary leading-relaxed text-xs">${tr(d.query,40)}</span>
+          <span class="text-center font-mono" style="color:${d.mentioned?'#22C55E':'#EF4444'}">${d.mentioned?'✓':'✗'}</span>
+          <span class="text-center font-mono text-muted text-xs">${d.position||'—'}</span>
+          <span class="font-mono text-accent text-xs">${tr(d.reference_source||'',18)}</span></div>`;
+        if(d.mention_context){
+          h+=`<div class="expand-detail" id="expand-cite${i}"><p class="text-secondary leading-relaxed">${d.mention_context}</p></div>`;
+        }
+      });
+      h+=`</div>`;
+    }
+  }
+  return h;
+}
+
+// ─── Init ──────────────────────────────────────────────
+render();
+
+// Trigger score bar animations
+setTimeout(()=>{
+  document.querySelectorAll('.score-bar-fill').forEach(el=>{
+    const w=el.style.width;
+    el.style.width='0%';
+    requestAnimationFrame(()=>{el.style.width=w});
+  });
+},100);
+</script>
+</body>
+</html>

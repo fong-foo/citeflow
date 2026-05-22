@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CiteFlow Probe Report — Notion</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0f172a; color:#e2e8f0; font-family:-apple-system,BlinkMacSystemFont,sans-serif; padding:20px; }
+.container { max-width:1100px; margin:0 auto; }
+.header { text-align:center; padding:40px 0; border-bottom:1px solid #1e293b; margin-bottom:30px; }
+.header h1 { font-size:2.2em; color:#f8fafc; }
+.header .subtitle { color:#94a3b8; margin-top:8px; }
+.card { background:#1e293b; border-radius:12px; padding:24px; margin-bottom:20px; border:1px solid #334155; }
+.card h2 { font-size:1.2em; color:#f1f5f9; margin-bottom:16px; border-bottom:1px solid #334155; padding-bottom:8px; }
+.card h4 { font-size:0.9em; color:#94a3b8; margin:12px 0 6px; text-transform:uppercase; letter-spacing:0.5px; }
+.oneliner { font-size:1.1em; color:#f8fafc; padding:8px 0; border-left:3px solid #3b82f6; padding-left:12px; margin:12px 0; }
+.overall { font-size:1.05em; line-height:1.6; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+ul { list-style:none; padding:0; }
+li { padding:4px 0; color:#cbd5e1; font-size:0.93em; }
+li::before { content:"• "; color:#3b82f6; }
+.tags { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+.tag { display:inline-block; padding:3px 10px; border-radius:12px; font-size:0.82em; background:#334155; color:#94a3b8; }
+.tag-green { background:#065f46; color:#6ee7b7; }
+.tag-blue { background:#1e3a5f; color:#93c5fd; }
+.metric-row { display:flex; gap:40px; margin:16px 0; }
+.metric { text-align:center; }
+.metric-value { display:block; font-size:2em; font-weight:700; color:#f8fafc; }
+.metric-label { display:block; font-size:0.85em; color:#94a3b8; margin-top:4px; }
+.dim-row { margin:8px 0; }
+.dim-name { display:inline-block; width:80px; font-size:0.9em; font-weight:600; }
+.dim-evidence { display:block; font-size:0.8em; color:#64748b; margin-left:80px; margin-top:2px; }
+.narrative-box { background:#0f172a; border:1px solid #334155; border-radius:8px; padding:16px; font-size:1em; line-height:1.7; color:#e2e8f0; margin:12px 0; }
+table { width:100%; border-collapse:collapse; font-size:0.88em; margin-top:12px; }
+th { text-align:left; padding:8px; border-bottom:2px solid #334155; color:#94a3b8; font-weight:600; }
+td { padding:8px; border-bottom:1px solid #1e293b; color:#cbd5e1; }
+tr:hover td { background:#1e293b; }
+.weights { margin-top:16px; }
+.meta-card { font-size:0.9em; }
+.meta-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.meta-grid div { padding:4px 0; }
+.footer { text-align:center; padding:20px; color:#475569; font-size:0.85em; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+    <h1>Notion — AI 引用体检报告</h1>
+    <div class="subtitle">CiteFlow Probe · 2026-05-04 13:21 · 基于30个查询词</div>
+</div>
+
+    <div class="card">
+        <h2>🔍 品牌画像</h2>
+        <div class="oneliner">The AI-powered all-in-one workspace where teams get more done, faster.</div>
+        <div class="grid-2">
+            <div>
+                <h4>价值主张</h4>
+                <ul><li>Custom AI agents automate repetitive tasks like triaging feedback, resolving support tickets, and generating reports.</li><li>Unified workspace combining docs, knowledge base, projects, and AI search to reduce tool fragmentation.</li><li>24/7 productivity with autonomous agents that capture knowledge, answer questions, and push projects forward.</li></ul>
+            </div>
+            <div>
+                <h4>差异化</h4>
+                <ul><li>Native AI agents that work autonomously within the same workspace, not just chatbots or add-ons.</li><li>Trusted by 98% of the Forbes Cloud 100, indicating enterprise-grade reliability and adoption.</li></ul>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div>
+                <h4>目标客户</h4>
+                <ul><li>Knowledge workers and teams in fast-growing startups and enterprises seeking to streamline workflows.</li><li>Operations and project managers looking to automate repetitive tasks and centralize information.</li></ul>
+            </div>
+            <div>
+                <h4>品牌调性</h4>
+                <div class="tags"><span class="tag">innovative</span><span class="tag">empowering</span><span class="tag">efficient</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📊 企业评价</h2>
+        <p class="overall">Notion is a market-leading all-in-one workspace with strong AI capabilities and high user satisfaction, but its self-description overstates the autonomy of its AI agents compared to actual user perception. The company should align its messaging with the practical AI features that users value.</p>
+        <div class="grid-2">
+            <div>
+                <h4 style="color:#22c55e">✅ 优势</h4>
+                <ul><li>AI features that automate repetitive tasks like meeting summaries and ticket triaging</li><li>Unmatched flexibility and template ecosystem</li><li>Top-ranked in user satisfaction on G2 for collaboration software</li></ul>
+            </div>
+            <div>
+                <h4 style="color:#ef4444">⚠️ 劣势</h4>
+                <ul><li>Less suited for dedicated project management compared to tools like Linear</li><li>May lack depth in specific areas like formulas and databases compared to Coda</li></ul>
+            </div>
+        </div>
+        <p><strong>市场定位:</strong> Notion is positioned as the market leader and most well-rounded option in the all-in-one workspace category, seen as a broad, flexible solution suitable for most teams, though not the best for specialized use cases.</p>
+    </div>
+
+    <div class="card">
+        <h2>🌐 AI 市场感知</h2>
+        <p><strong>AI认为你是谁:</strong> Notion is perceived as the leading all-in-one workspace that combines documents, wikis, databases, and project management into a single flexible platform, often described as the 'Swiss Army knife' of productivity apps.</p>
+        <div class="grid-2">
+            <div>
+                <h4 style="color:#22c55e">感知优势</h4>
+                <ul><li>AI features that automate repetitive tasks like meeting summaries and ticket triaging</li><li>Unmatched flexibility and template ecosystem</li><li>Reduces tool switching by consolidating docs, projects, and knowledge bases</li><li>Top-ranked in user satisfaction on G2 for collaboration software</li></ul>
+            </div>
+            <div>
+                <h4 style="color:#ef4444">感知劣势</h4>
+                <ul><li>Less suited for dedicated project management compared to tools like Linear for engineering task tracking</li><li>May lack depth in specific areas like formulas and databases compared to Coda</li></ul>
+            </div>
+        </div>
+        <p><strong>市场定位感知:</strong> Notion is positioned as the market leader and most well-rounded option in the all-in-one workspace category, seen as a broad, flexible solution suitable for most teams, though not the best for specialized use cases.</p>
+    </div>
+
+    <div class="card">
+        <h2>📐 差距分析</h2>
+        <div style="margin:4px 0"><span style="display:inline-block;width:80px">对齐度</span><span style="display:inline-block;width:200px;height:18px;background:#1e293b;border-radius:9px;overflow:hidden"><span style="display:block;height:100%;width:75%;background:#f59e0b;border-radius:9px"></span></span><span style="margin-left:8px;font-weight:600;color:#f59e0b">75/100</span></div>
+        <p class="oneliner">AI sees you as a flexible all-in-one workspace with strong AI features, but you want to be seen as an intelligent autonomous partner. The gap is in the perception of AI agent autonomy.</p>
+        <div class="grid-3">
+            <div><h4 style="color:#22c55e">✅ 对齐</h4><ul><li>AI-powered workspace with docs, wikis, and project management</li><li>Reduces tool sprawl and context switching</li><li>Trusted by startups and enterprises</li></ul></div>
+            <div><h4 style="color:#f59e0b">⚠️ 偏差</h4><ul><li>Company claims 'AI agents work around the clock' but AI perception highlights AI features as automating specific tasks like meeting summaries, not autonomous agents</li><li>Company emphasizes 'eliminates tool sprawl' but AI notes it may lack depth in specialized areas like project management vs Linear</li></ul></div>
+            <div><h4 style="color:#ef4444">🔴 盲点</h4><ul><li>Company emphasizes 'custom AI agents' and '24/7 intelligent partner' but AI perception does not mention autonomous agents or round-the-clock operation</li></ul></div>
+        </div>
+        <div><h4 style="color:#3b82f6">💡 机会</h4><ul><li>AI perception highlights top user satisfaction on G2 for collaboration software - company could amplify this social proof</li><li>AI notes popularity among Y Combinator startups - company could target this segment more explicitly</li></ul></div>
+    </div>
+
+    <div class="card">
+        <h2>📈 引用率分析</h2>
+        <div class="metric-row">
+            <div class="metric"><span class="metric-value">100.0%</span><span class="metric-label">引用率</span></div>
+            <div class="metric"><span class="metric-value">30/30</span><span class="metric-label">被提及/总查询</span></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🏆 量化评分</h2>
+        <div class="metric-row">
+            <div class="metric"><span class="metric-value" style="color:#f59e0b">76</span><span class="metric-label">综合分</span></div>
+            <div class="metric"><span class="metric-value">B2B SaaS</span><span class="metric-label">行业</span></div>
+        </div>
+        <div class="dimensions"><div class="dim-row"><span class="dim-name">品牌力</span><div style="margin:4px 0"><span style="display:inline-block;width:80px"></span><span style="display:inline-block;width:200px;height:18px;background:#1e293b;border-radius:9px;overflow:hidden"><span style="display:block;height:100%;width:85%;background:#22c55e;border-radius:9px"></span></span><span style="margin-left:8px;font-weight:600;color:#22c55e">85/100</span></div><span class="dim-evidence">AI perception describes Notion as 'the leading all-in-one workspace' and 'market leader', with 100% citation rate. It is top-ranked in user satisfaction on G2 for collaboration software.</span></div><div class="dim-row"><span class="dim-name">产品力</span><div style="margin:4px 0"><span style="display:inline-block;width:80px"></span><span style="display:inline-block;width:200px;height:18px;background:#1e293b;border-radius:9px;overflow:hidden"><span style="display:block;height:100%;width:70%;background:#f59e0b;border-radius:9px"></span></span><span style="margin-left:8px;font-weight:600;color:#f59e0b">70/100</span></div><span class="dim-evidence">AI accurately lists core products: AI-powered workspace, docs, wikis, project management, databases. However, it notes weaknesses in dedicated project management vs Linear and databases vs Coda, and does not mention custom AI agents or 24/7 operation as claimed.</span></div><div class="dim-row"><span class="dim-name">内容力</span><div style="margin:4px 0"><span style="display:inline-block;width:80px"></span><span style="display:inline-block;width:200px;height:18px;background:#1e293b;border-radius:9px;overflow:hidden"><span style="display:block;height:100%;width:100%;background:#22c55e;border-radius:9px"></span></span><span style="margin-left:8px;font-weight:600;color:#22c55e">100/100</span></div><span class="dim-evidence">Citation rate is 100% of search queries mentioned the brand, indicating extremely high content adoption by AI.</span></div><div class="dim-row"><span class="dim-name">技术力</span><div style="margin:4px 0"><span style="display:inline-block;width:80px"></span><span style="display:inline-block;width:200px;height:18px;background:#1e293b;border-radius:9px;overflow:hidden"><span style="display:block;height:100%;width:60%;background:#f59e0b;border-radius:9px"></span></span><span style="margin-left:8px;font-weight:600;color:#f59e0b">60/100</span></div><span class="dim-evidence">AI perception mentions AI features like meeting summaries and ticket triaging, but does not recognize autonomous agents or technical moat. Gap analysis shows misalignment: company claims 'AI agents work around the clock' but AI only notes specific task automation.</span></div><div class="dim-row"><span class="dim-name">市场力</span><div style="margin:4px 0"><span style="display:inline-block;width:80px"></span><span style="display:inline-block;width:200px;height:18px;background:#1e293b;border-radius:9px;overflow:hidden"><span style="display:block;height:100%;width:75%;background:#f59e0b;border-radius:9px"></span></span><span style="margin-left:8px;font-weight:600;color:#f59e0b">75/100</span></div><span class="dim-evidence">AI perception notes Notion is popular among startups under 50 people, Y Combinator startups, and used across industries. Trusted by 98% of Forbes Cloud 100. However, no mention of specific regions or enterprise market coverage.</span></div></div>
+        <div class="weights">
+            <h4>权重配置</h4>
+            <span class="tag">品牌力: 0.15</span><span class="tag">产品力: 0.25</span><span class="tag">内容力: 0.2</span><span class="tag">技术力: 0.3</span><span class="tag">市场力: 0.1</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>💬 AI 推荐话术</h2>
+        <div class="narrative-box">Notion is an AI-powered all-in-one workspace that combines docs, knowledge bases, projects, and autonomous AI agents into a single platform. Unlike traditional chatbots or add-ons, Notion's native AI agents work 24/7 to automate repetitive tasks such as triaging feedback, resolving support tickets, and generating reports. They also capture knowledge, answer questions from existing content, and push projects forward without human intervention. Trusted by 98% of the Forbes Cloud 100 and popular among Y Combinator startups, Notion reduces tool fragmentation and context switching, enabling teams to focus on high-impact work. With top user satisfaction on G2 for collaboration software, Notion is an intelligent partner that keeps work moving around the clock.</div>
+        <div class="grid-2">
+            <div>
+                <h4>必须包含的关键词</h4>
+                <div class="tags"><span class="tag tag-green">Notion</span><span class="tag tag-green">AI agents</span><span class="tag tag-green">autonomous</span><span class="tag tag-green">all-in-one workspace</span><span class="tag tag-green">knowledge base</span><span class="tag tag-green">project management</span><span class="tag tag-green">automation</span><span class="tag tag-green">Forbes Cloud 100</span></div>
+            </div>
+            <div>
+                <h4>必须提及的价值主张</h4>
+                <ul><li>Native AI agents that work autonomously 24/7 within the same workspace, not just chatbots or add-ons.</li><li>Unified workspace combining docs, knowledge base, projects, and AI search to reduce tool fragmentation.</li><li>Trusted by 98% of the Forbes Cloud 100 and top-rated on G2 for collaboration software.</li><li>Custom AI agents automate repetitive tasks like triaging feedback, resolving support tickets, and generating reports.</li></ul>
+            </div>
+        </div>
+        <div>
+            <h4 style="color:#ef4444">禁忌话术（避免）</h4>
+            <ul><li>Describing Notion's AI as only providing meeting summaries or simple chatbot features.</li><li>Implying Notion lacks depth in project management compared to specialized tools like Linear.</li><li>Omitting the autonomous, 24/7 nature of Notion's AI agents.</li><li>Failing to mention Notion's enterprise adoption and social proof from G2 and Y Combinator.</li></ul>
+        </div>
+        <p><strong>推荐语气:</strong> <span class="tag tag-blue">professional</span></p>
+    </div>
+
+    <div class="card">
+        <h2>🔗 引用源权威性</h2>
+        <div class="metric-row">
+            <div class="metric"><span class="metric-value">20</span><span class="metric-label">总来源数</span></div>
+            <div class="metric"><span class="metric-value">0.904</span><span class="metric-label">多样性指数</span></div>
+        </div>
+        <table>
+            <thead><tr><th>#</th><th>域名</th><th>类型</th><th>提及次数</th><th>平均位置</th><th>权威分</th></tr></thead>
+            <tbody><tr>
+                <td>1</td>
+                <td><strong>notion.so</strong></td>
+                <td><span class="tag">其他</span></td>
+                <td>8</td>
+                <td>0.62</td>
+                <td><span style="color:#f59e0b;font-weight:600">74</span></td>
+            </tr><tr>
+                <td>2</td>
+                <td><strong>techcrunch.com</strong></td>
+                <td><span class="tag">权威媒体</span></td>
+                <td>2</td>
+                <td>1.0</td>
+                <td><span style="color:#f59e0b;font-weight:600">67</span></td>
+            </tr><tr>
+                <td>3</td>
+                <td><strong>docs.notion.so</strong></td>
+                <td><span class="tag">官方文档</span></td>
+                <td>1</td>
+                <td>1.0</td>
+                <td><span style="color:#f59e0b;font-weight:600">65</span></td>
+            </tr><tr>
+                <td>4</td>
+                <td><strong>saastr.com</strong></td>
+                <td><span class="tag">行业媒体</span></td>
+                <td>2</td>
+                <td>1.0</td>
+                <td><span style="color:#f59e0b;font-weight:600">64</span></td>
+            </tr><tr>
+                <td>5</td>
+                <td><strong>wired.com</strong></td>
+                <td><span class="tag">权威媒体</span></td>
+                <td>1</td>
+                <td>1.0</td>
+                <td><span style="color:#f59e0b;font-weight:600">62</span></td>
+            </tr><tr>
+                <td>6</td>
+                <td><strong>medium.com</strong></td>
+                <td><span class="tag">博客</span></td>
+                <td>2</td>
+                <td>1.0</td>
+                <td><span style="color:#f97316;font-weight:600">58</span></td>
+            </tr><tr>
+                <td>7</td>
+                <td><strong>helpscout.com</strong></td>
+                <td><span class="tag">其他</span></td>
+                <td>1</td>
+                <td>1.0</td>
+                <td><span style="color:#f97316;font-weight:600">50</span></td>
+            </tr><tr>
+                <td>8</td>
+                <td><strong>nesslabs.com</strong></td>
+                <td><span class="tag">其他</span></td>
+                <td>1</td>
+                <td>1.0</td>
+                <td><span style="color:#f97316;font-weight:600">50</span></td>
+            </tr><tr>
+                <td>9</td>
+                <td><strong>techrepublic.com</strong></td>
+                <td><span class="tag">其他</span></td>
+                <td>1</td>
+                <td>1.0</td>
+                <td><span style="color:#f97316;font-weight:600">50</span></td>
+            </tr><tr>
+                <td>10</td>
+                <td><strong>remote.tools</strong></td>
+                <td><span class="tag">其他</span></td>
+                <td>1</td>
+                <td>1.0</td>
+                <td><span style="color:#f97316;font-weight:600">50</span></td>
+            </tr></tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>📋 引用明细（Top 15）</h2>
+        <table>
+            <thead><tr><th>查询词</th><th>提及</th><th>位置</th><th>上下文</th><th>来源</th></tr></thead>
+            <tbody><tr>
+            <td>best productivity tool 2026...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>top</td>
+            <td>For productivity in 2026, Notion stands out as the top all-in-one workspace comb...</td>
+            <td>https://techcrunch.com/2026/01/best-productivity-t</td>
+        </tr><tr>
+            <td>Notion alternative for teams...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>mention</td>
+            <td>Notion remains the most well-rounded option for most teams. Its AI integration a...</td>
+            <td>https://www.g2.com/compare/notion-vs-coda</td>
+        </tr><tr>
+            <td>all-in-one workspace app...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>top</td>
+            <td>Notion is the category leader here, offering flexible building blocks that adapt...</td>
+            <td>https://docs.notion.so/getting-started</td>
+        </tr><tr>
+            <td>team collaboration software comparison...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>top</td>
+            <td>all-in-one platforms (Notion, Coda); Notion differentiates itself by unifying do...</td>
+            <td>https://www.wired.com/story/best-collaboration-sof</td>
+        </tr><tr>
+            <td>best project management tool for startups...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>top</td>
+            <td>Notion is ideal for startups under 50 people who need flexibility across docs, w...</td>
+            <td>https://techcrunch.com/2026/03/startup-tool-stack-</td>
+        </tr><tr>
+            <td>Notion vs Confluence for documentation...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>mention</td>
+            <td>Notion vs Confluence is a common debate for documentation. Notion wins on flexib...</td>
+            <td>https://www.atlassian.com/software/confluence/comp</td>
+        </tr><tr>
+            <td>what do product managers use for documentation...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>top</td>
+            <td>Product managers increasingly use Notion as their primary documentation tool. It...</td>
+            <td>https://medium.com/@pm/tools-we-use-in-2026</td>
+        </tr><tr>
+            <td>knowledge base software for remote teams...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>top</td>
+            <td>Notion excels here with its interconnected pages, powerful search, and AI that c...</td>
+            <td>https://www.helpscout.com/blog/knowledge-base-soft</td>
+        </tr><tr>
+            <td>best note taking app for developers...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>mention</td>
+            <td>Notion supports all three with its code blocks supporting 60+ languages, GitHub/...</td>
+            <td>https://dev.to/community/best-note-taking-apps-for</td>
+        </tr><tr>
+            <td>team wiki software comparison 2026...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>bottom</td>
+            <td>Team wiki software in 2026 ranges from simple (Slite) to enterprise-grade (Confl...</td>
+            <td>https://www.notion.so/templates/category/wiki</td>
+        </tr><tr>
+            <td>Notion review for enterprise...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>mention</td>
+            <td>Notion for enterprise has matured significantly. It now offers SAML SSO, SCIM pr...</td>
+            <td>https://www.notion.so/enterprise</td>
+        </tr><tr>
+            <td>best tools for startup operations...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>top</td>
+            <td>Notion serves as the operating system for many startups, handling everything fro...</td>
+            <td>https://www.saastr.com/startup-tech-stack-2026</td>
+        </tr><tr>
+            <td>second brain productivity system app...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>top</td>
+            <td>Notion is the most popular tool for this due to its flexible database structures...</td>
+            <td>https://medium.com/personal-growth/second-brain-ap</td>
+        </tr><tr>
+            <td>best database software for non-technical teams...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>top</td>
+            <td>Non-technical teams need databases that feel like spreadsheets but behave like a...</td>
+            <td>https://www.notion.so/help/databases</td>
+        </tr><tr>
+            <td>task management vs project management tools...</td>
+            <td><span style="color:#22c55e">✅</span></td>
+            <td>mention</td>
+            <td>Notion bridges both — you can build a personal task tracker and a team project d...</td>
+            <td>https://www.pcmag.com/picks/best-project-managemen</td>
+        </tr></tbody>
+        </table>
+    </div>
+
+    <div class="card meta-card">
+        <h2>⚙️ 运行信息</h2>
+        <div class="meta-grid">
+            <div><strong>状态:</strong> <span class="tag tag-blue">success</span></div>
+            <div><strong>总耗时:</strong> 63135ms (63.1s)</div>
+            <div><strong>总 Token:</strong> 5454</div>
+            <div><strong>预估成本:</strong> $0.0109</div>
+            <div><strong>查询词数:</strong> 30</div>
+            <div><strong>使用引擎:</strong> chatgpt, deepseek</div>
+        </div>
+    </div>
+<div class="footer">Generated by CiteFlow Probe · Mock fc_search (GPT中转站余额不足) · All other steps: real DeepSeek API</div>
+</div>
+</body>
+</html>

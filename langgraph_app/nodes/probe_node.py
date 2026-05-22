@@ -39,6 +39,20 @@ from langgraph_app.state import (
 logger = NodeLogger("Probe")
 breaker = CircuitBreaker(max_failures=5)
 
+# ── Progress callback (set by api.py to pipe real-time logs to frontend) ──
+_progress_callback = None
+
+def set_progress_callback(cb):
+    global _progress_callback
+    _progress_callback = cb
+
+def _emit_progress(message: str, msg_type: str = "info"):
+    if _progress_callback:
+        try:
+            _progress_callback(message, msg_type)
+        except Exception:
+            pass
+
 BATCH_SIZE = 5
 BATCH_DELAY = 0.0
 
@@ -159,6 +173,7 @@ async def _probe_core(state: dict) -> dict:
     brand_task = None
     if not _done("probe_brand"):
         brand_task = asyncio.create_task(_stream_brand(ui))
+        _emit_progress("开始扫描品牌官网...", "info")
 
     # light 模式：快速推断产品类别（只抓首页title，≈1s），避免退化到 "consumer products"
     effective_industry = ui.get("industry", "")
@@ -184,14 +199,20 @@ async def _probe_core(state: dict) -> dict:
     else:
         expanded_queries = ck["probe_search_p1"]["data"]["queries"]
 
+    _emit_progress(f"查询词生成完成 · {len(expanded_queries)}个查询词", "success")
+
     # 提取查询字符串给 fc_search，保留分类信息给 _stream_cite
     expanded_query_strs = [q["query"] if isinstance(q, dict) else q for q in expanded_queries]
     query_categories = {q["query"]: q.get("category", "industry") for q in expanded_queries if isinstance(q, dict)}
 
     # light 模式：只保留 A 类查询（industry），最多 10 个
     if mode == "light":
+        brand_lower = ui.get("brand_name", "").lower()
         a_class_queries = [q for q in expanded_queries
                            if isinstance(q, dict) and q.get("category") == "industry"]
+        # 硬防线：从 A 类中剔除任何包含品牌名的查询（防止 LLM 不遵守"不提品牌名"的指令）
+        a_class_queries = [q for q in a_class_queries
+                           if brand_lower not in q["query"].lower()]
         expanded_queries = a_class_queries[:10]
         expanded_query_strs = [q["query"] for q in expanded_queries]
         bc_query_strs = expanded_query_strs  # light 模式 A 类直接跑搜索流
@@ -206,11 +227,14 @@ async def _probe_core(state: dict) -> dict:
 
     search_task = None if _done("probe_search_p1") else asyncio.create_task(
         _stream_search_phase1(ui, bc_query_strs))
+    if search_task:
+        _emit_progress(f"搜索引擎扫描启动 · {len(bc_query_strs)}个查询", "info")
 
     # light 模式跳过完整竞品流（用 Haiku 从搜索结果提取替代，见汇总阶段）
     comp_task = None
     if mode == "full" and not _done("probe_competitor"):
         comp_task = asyncio.create_task(_stream_competitor(ui))
+        _emit_progress("竞品对比流启动", "info")
 
     # 提取 A 类查询词（DeepSeek 统一生成，三引擎共用同一套词）
     a_class_query_strs = [q["query"] for q in expanded_queries
@@ -221,13 +245,15 @@ async def _probe_core(state: dict) -> dict:
     if mode == "full" and ENABLE_MULTI_ENGINE and not _done("probe_multi_engine"):
         multi_engine_task = asyncio.create_task(
             _stream_multi_engine_search(ui, a_class_query_strs, query_categories))
+        _emit_progress("多引擎交叉验证启动 · GPT+Gemini+Haiku", "info")
 
     # 等待品牌流
+    page_text = ""
     if brand_task:
         try:
-            bp, brand_error = await asyncio.wait_for(brand_task, timeout=TIMEOUT_BRAND)
+            bp, brand_error, page_text = await asyncio.wait_for(brand_task, timeout=TIMEOUT_BRAND)
         except asyncio.TimeoutError:
-            bp, brand_error = _brand_timeout_fallback(ui)
+            bp, brand_error, page_text = _brand_timeout_fallback(ui)
             errors["probe_brand_timeout"] = f"超时 ({TIMEOUT_BRAND}s)"
             logger.log("[brand流] → 超时，使用降级方案", "warn")
         else:
@@ -236,9 +262,14 @@ async def _probe_core(state: dict) -> dict:
             else:
                 _save("probe_brand", bp.model_dump())
             logger.log(f"[brand流] → {bp.one_liner[:60] if bp else 'fallback'}")
+        if bp and bp.one_liner:
+            _emit_progress(f"品牌画像完成 ✓ · {bp.one_liner[:80]}", "success")
+        else:
+            _emit_progress("品牌画像完成 ✓（降级方案）", "success")
     else:
         bp = BrandProfile(**ck["probe_brand"]["data"])
         brand_error = None
+        page_text = ""
         logger.log("[brand流] → 从检查点恢复")
 
     # inferred_* 优先级：bp推断结果 → 用户输入 → 默认值
@@ -286,6 +317,9 @@ async def _probe_core(state: dict) -> dict:
                 })
             logger.log(f"[搜索流P1] → {sr_data['ok']} ok / {sr_data['skipped']} skipped / "
                        f"{sr_data['failed']} failed | {search_tokens} tokens")
+            _emit_progress(
+                f"搜索引擎扫描完成 · {sr_data['ok']}成功 {sr_data['skipped']}跳过 {sr_data['failed']}失败",
+                "success" if sr_data['ok'] > 0 else "error")
     else:
         sd = ck["probe_search_p1"]["data"]
         queries = sd["queries"]
@@ -310,8 +344,20 @@ async def _probe_core(state: dict) -> dict:
         all_ddg_snippets = []
 
     circuit_open = breaker.is_open()
+    logger.log(f"[Probe启动] mode={mode}, 熔断器状态={'OPEN' if circuit_open else 'CLOSED'} "
+               f"(failures={breaker.failure_count}/{breaker.max_failures})")
+
+    # 竞品提取（Haiku 从搜索提取竞品名，与 P2 并行跑，用于竞品流兜底）
+    competitor_mentions_task = None
+    if not search_timed_out and mode == "full":
+        competitor_mentions_task = asyncio.create_task(
+            _extract_competitor_mentions(search_results, ui.get("brand_name", ""), ui.get("domain", ""),
+                                         website_text=page_text))
+        _emit_progress("竞品识别启动 · Haiku从搜索结果提取竞品", "info")
 
     # ── Level 2: 搜索流 Phase 2 — light 模式跳过 mm_gap ──
+    _mentions_awaited = False
+    _competitor_mentions: list[dict] = []
     if mode == "light":
         # light 模式：跳过 market_mirror + gap_analysis，使用空默认值
         market_perception = MarketPerception(
@@ -340,7 +386,8 @@ async def _probe_core(state: dict) -> dict:
             cite_task = None
         else:
             cite_task = None if _done("probe_cite") else asyncio.create_task(
-                _stream_cite(queries, classified_queries, search_results, ui, mode="light"))
+                _stream_cite(queries, classified_queries, search_results, ui, mode="light",
+                             competitors=ui.get("competitors", [])))
 
         # light 模式 cite wait（需在此处 await，不在 full 模式的 else 分支内）
         if cite_task:
@@ -362,6 +409,7 @@ async def _probe_core(state: dict) -> dict:
                     })
                 cite_rate = citation_metrics.rate
                 logger.log(f"[LIGHT P2-cite] → {citation_metrics.mentioned_count}/{citation_metrics.total_queries} mentioned ({cite_rate:.1f}%)")
+                _emit_progress(f"引用率分析完成 · {cite_rate:.0f}% 提及率 · {citation_metrics.mentioned_count}/{citation_metrics.total_queries}提及", "success")
         elif _done("probe_cite"):
             cd = ck["probe_cite"]["data"]
             cite_details = [CitationDetail(**d) for d in cd["cite_details"]]
@@ -397,11 +445,22 @@ async def _probe_core(state: dict) -> dict:
         cite_task = None
     else:
         # full 模式：市场镜像 + 差距分析 + 引用率分析
+        # 先等竞品提取完成，以便 citation 分析时同步检查竞品
+        pre_cite_competitors: list[str] = []
+        if competitor_mentions_task:
+            try:
+                pre_mentions = await competitor_mentions_task
+                pre_cite_competitors = [c["brand"] for c in pre_mentions if c.get("brand")][:5]
+                _mentions_awaited = True
+                _competitor_mentions = pre_mentions
+            except Exception:
+                pre_cite_competitors = []
         target_pos = ui.get("target_positioning", "")
         mm_gap_task = None if _done("probe_mm_gap") else asyncio.create_task(
             _stream_mm_gap(ui, search_results, all_ddg_snippets, bp, target_pos))
         cite_task = None if _done("probe_cite") else asyncio.create_task(
-            _stream_cite(queries, classified_queries, search_results, ui, mode="full"))
+            _stream_cite(queries, classified_queries, search_results, ui, mode="full",
+                         competitors=pre_cite_competitors))
 
         # 等 market_mirror + gap_analysis
         if mm_gap_task:
@@ -421,6 +480,7 @@ async def _probe_core(state: dict) -> dict:
                         "company_evaluation": company_evaluation.model_dump(),
                     })
                 logger.log(f"[搜索流P2-mm_gap] → alignment={gap_report.alignment_score}/100")
+                _emit_progress(f"市场镜像+差距分析完成 · 认知对齐度 {gap_report.alignment_score}%", "success")
         else:
             md = ck["probe_mm_gap"]["data"]
             mp = md["mp_dict"]
@@ -470,6 +530,7 @@ async def _probe_core(state: dict) -> dict:
                            f"A:{citation_metrics.industry_rate:.1f}% B:{citation_metrics.brand_rate:.1f}% C:{citation_metrics.competitor_scenario_rate:.1f}% | "
                            f"official={citation_metrics.official_site_ratio:.2f} | "
                            f"sa={source_authority.total_sources if source_authority else 0} sources")
+                _emit_progress(f"引用率分析完成 · A类{cite_rate:.0f}% 提及率 · {citation_metrics.mentioned_count}/{citation_metrics.total_queries}提及", "success")
         elif _done("probe_cite"):
             cd = ck["probe_cite"]["data"]
             cite_details = [CitationDetail(**d) for d in cd["cite_details"]]
@@ -502,6 +563,8 @@ async def _probe_core(state: dict) -> dict:
                         "cs": cs.model_dump() if cs else None,
                     })
                 logger.log(f"[LIGHT P3] → score={cs.overall if cs else 'N/A'}/100")
+                if cs:
+                    _emit_progress(f"综合评分完成 · {cs.overall}/100", "success")
         elif _done("probe_scorer_light"):
             sd = ck["probe_scorer_light"]["data"]
             cs = CompanyScore(**sd["cs"]) if sd["cs"] else None
@@ -533,6 +596,8 @@ async def _probe_core(state: dict) -> dict:
                 })
             logger.log(f"[搜索流P3] → score={cs.overall if cs else 'N/A'}/100 | "
                        f"narrative={len(an.keywords) if an else 0} keywords")
+            if cs:
+                _emit_progress(f"综合评分完成 · {cs.overall}/100", "success")
     else:
         sd = ck["probe_scorer_narrative"]["data"]
         cs = CompanyScore(**sd["cs"]) if sd["cs"] else None
@@ -568,6 +633,7 @@ async def _probe_core(state: dict) -> dict:
                 logger.log(f"[竞品流] → {len(comp_results)} comparisons | "
                            f"{sum(len(sr) for sr in comp_search_results)} search results | "
                            f"{comp_tokens} tokens")
+                _emit_progress(f"竞品对比完成 · {len(comp_results)}项对比", "success")
         elif _done("probe_competitor"):
             cd = ck["probe_competitor"]["data"]
             comp_results = [CompetitorResult(**r) for r in cd["comp_results"]]
@@ -583,6 +649,37 @@ async def _probe_core(state: dict) -> dict:
         comp_results = []
         comp_tokens = 0
         comp_statuses = {}
+
+    # 兜底：用户未指定竞品时，用 Haiku 从搜索提取的竞品名重新跑竞品流
+    if mode == "full" and not comp_results and _competitor_mentions:
+        fallback_names = [c["brand"] for c in _competitor_mentions if c.get("brand")][:5]
+        if fallback_names:
+            _emit_progress(f"竞品识别完成 · {len(_competitor_mentions)}个竞品: {', '.join(fallback_names)}", "success")
+            logger.log(f"[竞品流] 用户未指定竞品，Haiku兜底竞品: {fallback_names}")
+            fb_ui = dict(ui)
+            fb_ui["competitors"] = fallback_names
+            try:
+                fb_result = await asyncio.wait_for(
+                    _stream_competitor(fb_ui), timeout=TIMEOUT_COMPETITOR)
+            except asyncio.TimeoutError:
+                errors["probe_competitor_fallback_timeout"] = f"超时 ({TIMEOUT_COMPETITOR}s)"
+                logger.log("[竞品流-兜底] → 超时", "warn")
+            else:
+                comp_results = fb_result["comp_results"]
+                comp_tokens = fb_result["comp_tokens"]
+                comp_statuses = fb_result["comp_statuses"]
+                if fb_result.get("error"):
+                    errors["probe_competitor"] = fb_result["error"]
+                else:
+                    _save("probe_competitor", {
+                        "comp_results": [r.model_dump() for r in comp_results],
+                        "comp_tokens": comp_tokens,
+                        "comp_statuses": comp_statuses,
+                        "source": "haiku_fallback",
+                    })
+                logger.log(f"[竞品流-兜底] → {len(comp_results)} comparisons | {comp_tokens} tokens")
+    elif mode == "full" and not comp_results and not _competitor_mentions:
+        logger.log("[竞品流] 无竞品数据（用户未指定且搜索超时无法提取）", "warn")
 
     # ── Level 4: 等多引擎流（full 模式）───────────────────
     if mode == "full":
@@ -604,6 +701,7 @@ async def _probe_core(state: dict) -> dict:
                     }})
                 logger.log(f"[多引擎流] → {len(engine_results)} engines: "
                            f"{', '.join(f'{k}={v.citation_rate:.0f}%' for k, v in engine_results.items())}")
+                _emit_progress(f"多引擎交叉验证完成 · {len(engine_results)}引擎", "success")
         elif _done("probe_multi_engine"):
             md = ck["probe_multi_engine"]["data"]["engine_results"]
             engine_results = {k: EngineResult(**v) for k, v in md.items()}
@@ -644,6 +742,10 @@ async def _probe_core(state: dict) -> dict:
                 industry_details.append(cd)
             if industry_details:
                 citation_metrics.details = list(citation_metrics.details) + industry_details
+
+    # ── 竞品 per-dimension 指标聚合（在 A/B/C 三类数据齐全后）──
+    citation_metrics.competitor_metrics = _aggregate_competitor_metrics(
+        citation_metrics.details)
 
     # ── 汇总 ─────────────────────────────────────────────
     elapsed_ms = int((time.time() - start_time) * 1000)
@@ -706,16 +808,31 @@ async def _probe_core(state: dict) -> dict:
 
     logger.log(f"[{mode.upper()}] Done in {elapsed_ms}ms | cite_rate={cite_rate:.1f}% | "
                f"score={cs.overall if cs else 'N/A'}/100 | tokens={total_tokens}")
+    _emit_progress("侦察数据采集完成 ✓ · 正在生成侦察报告...", "success")
 
     # 成功后清理磁盘缓存（失败/partial 时保留，供下次重试用）
     if not partial and _task_id:
         _cache_clear(_task_id)
 
-    # 用 Haiku 从搜索结果提取竞品提及（约 ¥0.03），light/full 均执行
-    competitor_mentions = []
-    if not search_timed_out:
-        competitor_mentions = await _extract_competitor_mentions(
-            search_results, ui.get("brand_name", ""), ui.get("domain", ""))
+    # 用 Haiku 从搜索结果+官网提取竞品提及，light/full 均执行
+    # 即使搜索超时，只要有官网文本就尝试提取（官网常含竞品对比/行业语境）
+    competitor_mentions = _competitor_mentions  # 优先用已缓存的结果
+    if not competitor_mentions and not _mentions_awaited and (not search_timed_out or page_text):
+        if competitor_mentions_task is not None:
+            try:
+                competitor_mentions = await competitor_mentions_task
+            except Exception:
+                competitor_mentions = []
+        else:
+            logger.log(f"[竞品提取] 开始，search_timed_out={search_timed_out}, "
+                       f"search_results数量={len(search_results) if search_results else 0}, "
+                       f"官网文本={'有' if page_text else '无'}")
+            competitor_mentions = await _extract_competitor_mentions(
+                search_results if not search_timed_out else [],
+                ui.get("brand_name", ""), ui.get("domain", ""),
+                website_text=page_text)
+    elif not competitor_mentions and not search_timed_out:
+        logger.log("[竞品提取] 已在前置步骤完成，复用缓存结果")
 
     return {
         **state,
@@ -733,7 +850,7 @@ async def _probe_core(state: dict) -> dict:
 
 async def _stream_brand(ui: dict) -> tuple:
     """品牌流：brand_profiler。完全独立，不依赖其他流。
-    Returns: (BrandProfile | None, error_str | None)
+    Returns: (BrandProfile | None, error_str | None, page_text: str)
     """
     bp_data = {}
     try:
@@ -744,6 +861,7 @@ async def _stream_brand(ui: dict) -> tuple:
 
     # 记录官网爬取状态
     crawl_info = bp_data.get("_crawl_status", {})
+    page_text = bp_data.get("_page_text", "")
     if crawl_info:
         if crawl_info.get("success"):
             logger.log(f"[brand流] 官网爬取成功: {crawl_info['pages_ok']}/4页, {crawl_info['total_chars']}字符")
@@ -759,7 +877,7 @@ async def _stream_brand(ui: dict) -> tuple:
             bp.inferred_target_market = ui.get("target_market", "")
         if not bp.inferred_core_product:
             bp.inferred_core_product = ui.get("core_product", "")
-        return bp, None
+        return bp, None, page_text
     except Exception as e:
         # 极端情况：fallback 后仍然无法构造 BrandProfile
         bp = BrandProfile(
@@ -771,7 +889,7 @@ async def _stream_brand(ui: dict) -> tuple:
             inferred_target_market=ui.get("target_market", ""),
             inferred_core_product=ui.get("core_product", ""),
         )
-        return bp, str(e)
+        return bp, str(e), page_text
 
 
 async def _stream_search_phase1(ui: dict, expanded_queries: list[str]) -> dict:
@@ -905,10 +1023,12 @@ async def _stream_mm_gap(ui: dict, search_results: list, all_ddg_snippets: list,
 
 
 async def _stream_cite(queries: list[str], classified_queries: list[dict],
-                        search_results: list, ui: dict, mode: str = "full") -> tuple:
+                        search_results: list, ui: dict, mode: str = "full",
+                        competitors: list[str] | None = None) -> tuple:
     """搜索流 Phase 2 分支 B: citation_analyzer ×N → citation_rate + 分类统计 + 引用源分布。
     需要 search_results，不依赖品牌流。
     mode="light" 时跳过 source_authority 和 competitor_citation 提取（省成本）。
+    competitors: 可选竞品品牌名列表，传入后引用分析会同步检查每个竞品的提及情况。
     Returns: (cite_details, CitationMetrics, source_authority, error)
     """
     error = None
@@ -918,6 +1038,7 @@ async def _stream_cite(queries: list[str], classified_queries: list[dict],
             search_results=search_results,
             brand_name=ui["brand_name"],
             domain=ui["domain"],
+            competitors=competitors or [],
         )
     except Exception as e:
         logger.log(f"citation_analyzer batch failed: {e}", "warn")
@@ -931,6 +1052,7 @@ async def _stream_cite(queries: list[str], classified_queries: list[dict],
     # ── 总体引用率（提及率）+ 推荐率 ──────────────────
     mentioned_count = sum(1 for d in cite_details if d.mentioned)
     cite_rate = (mentioned_count / len(cite_details) * 100) if cite_details else 0.0
+    mention_rate = cite_rate  # 全局提及率，在 cite_rate 被 industry_rate 覆盖前保存
 
     recommended_positions = {"top", "middle", "bottom"}
     recommended_count = sum(1 for d in cite_details if d.position in recommended_positions)
@@ -962,6 +1084,17 @@ async def _stream_cite(queries: list[str], classified_queries: list[dict],
     brand_rate = (cat_mentioned["brand"] / cat_counts["brand"] * 100) if cat_counts["brand"] > 0 else 0.0
     competitor_rate = (cat_mentioned["competitor"] / cat_counts["competitor"] * 100) if cat_counts["competitor"] > 0 else 0.0
 
+    # 按类别统计推荐率（只有 top/middle/bottom 算推荐，B类不参与）
+    cat_recommended = {"industry": 0, "brand": 0, "competitor": 0}
+    for d in cite_details:
+        cat = d.query_category
+        if d.position in recommended_positions:
+            cat_recommended[cat] += 1
+
+    a_recommendation_rate = (cat_recommended["industry"] / cat_counts["industry"] * 100) if cat_counts["industry"] > 0 else 0.0
+    c_recommendation_rate = (cat_recommended["competitor"] / cat_counts["competitor"] * 100) if cat_counts["competitor"] > 0 else 0.0
+    # B类不计算推荐率
+
     # 引用率一律用 A 类（行业查询词），B/C 类不参与引用率计算
     cite_rate = industry_rate
 
@@ -980,6 +1113,7 @@ async def _stream_cite(queries: list[str], classified_queries: list[dict],
 
     citation_metrics = CitationMetrics(
         rate=round(cite_rate, 1),
+        mention_rate=round(mention_rate, 1),
         total_queries=len(cite_details),
         mentioned_count=mentioned_count,
         details=cite_details,
@@ -993,6 +1127,8 @@ async def _stream_cite(queries: list[str], classified_queries: list[dict],
         brand_mentioned=cat_mentioned["brand"],
         competitor_mentioned=cat_mentioned["competitor"],
         recommendation_rate=round(recommendation_rate, 1),
+        a_recommendation_rate=round(a_recommendation_rate, 1),
+        c_recommendation_rate=round(c_recommendation_rate, 1),
         recommended_count=recommended_count,
         top_rate=round(top_rate, 1),
         top_count=top_count,
@@ -1012,6 +1148,53 @@ async def _stream_cite(queries: list[str], classified_queries: list[dict],
             logger.log(f"source_authority failed: {e}", "warn")
 
     return cite_details, citation_metrics, sa, error
+
+
+def _aggregate_competitor_metrics(cite_details: list) -> dict[str, dict]:
+    """从 cite_details 中聚合每个竞品的 per-category 指标。
+    在所有 cite_details（B/C + A 类合并后）上调用，确保 industry_rate 等有真实数据。
+    """
+    recommended_positions = {"top", "middle", "bottom"}
+    competitor_metrics: dict[str, dict] = {}
+    all_competitor_names: set[str] = set()
+    for d in cite_details:
+        for c_name in (getattr(d, "competitor_mentions", None) or {}):
+            all_competitor_names.add(c_name)
+
+    for comp_name in all_competitor_names:
+        comp_cat_counts = {"industry": 0, "brand": 0, "competitor": 0}
+        comp_cat_mentioned = {"industry": 0, "brand": 0, "competitor": 0}
+        comp_cat_recommended = {"industry": 0, "brand": 0, "competitor": 0}
+        comp_top_count = 0
+        comp_total_mentioned = 0
+
+        for d in cite_details:
+            cm = (getattr(d, "competitor_mentions", None) or {}).get(comp_name)
+            if cm is None:
+                continue
+            cat = getattr(d, "query_category", "industry")
+            comp_cat_counts[cat] += 1
+            if cm.get("is_mentioned"):
+                comp_cat_mentioned[cat] += 1
+                comp_total_mentioned += 1
+                pos = cm.get("position", "none")
+                if pos in recommended_positions:
+                    comp_cat_recommended[cat] += 1
+                if pos == "top":
+                    comp_top_count += 1
+
+        comp_industry_rate = (comp_cat_mentioned["industry"] / comp_cat_counts["industry"] * 100) if comp_cat_counts["industry"] > 0 else 0.0
+        comp_recommendation_rate = (comp_cat_recommended["industry"] / comp_cat_counts["industry"] * 100) if comp_cat_counts["industry"] > 0 else 0.0
+        comp_top_rate = (comp_top_count / comp_cat_counts["industry"] * 100) if comp_cat_counts["industry"] > 0 else 0.0
+
+        competitor_metrics[comp_name] = {
+            "industry_rate": round(comp_industry_rate, 1),
+            "recommendation_rate": round(comp_recommendation_rate, 1),
+            "top_rate": round(comp_top_rate, 1),
+            "mention_count": comp_total_mentioned,
+        }
+
+    return competitor_metrics
 
 
 async def _stream_scorer_narrative(bp: BrandProfile | None, mp_dict: dict,
@@ -1089,35 +1272,65 @@ async def _stream_scorer_light(bp: BrandProfile | None, mp_dict: dict,
     return cs, None, score_error, None
 
 
-async def _extract_competitor_mentions(search_results: list, brand_name: str, domain: str, top_n: int = 5) -> list[dict]:
-    """用 Haiku 从搜索结果中提取被提及的竞品品牌名。
+async def _extract_competitor_mentions(search_results: list, brand_name: str, domain: str, top_n: int = 5, website_text: str = "") -> list[dict]:
+    """用 Haiku 从搜索结果+官网内容中提取被提及的竞品品牌名。
     约 ¥0.03 成本，比正则可靠得多。失败时降级为空列表。
+
+    同时读取 GPT 合成回答(answer)、搜索引擎原始片段(raw_citations)和官网文本，
+    避免 GPT 因"聚焦目标品牌"而遗漏竞品信息。
     Returns: [{"brand": "Casetify", "mention_count": 12}, ...]
     """
     from langgraph_app.tools.engines.chatgpt_api import call_api
     from langgraph_app.config import CLAUDE_HAIKU_CONFIG
 
     combined_text = ""
+    skipped_errors = 0
+    skipped_empty = 0
+
+    # 1) 官网文本优先（官网常涉及行业语境、竞品对比页、合作伙伴等）
+    if website_text and website_text.strip():
+        combined_text += f"[WEBSITE CONTENT]\n{website_text[:6000]}\n\n"
+
+    # 2) 搜索结果的 GPT 合成回答 + SERP 原始片段
     for sr in search_results:
         if not sr or isinstance(sr, Exception):
+            skipped_errors += 1
             continue
         answer = sr.get("answer", "")
         if answer:
             combined_text += answer + "\n---\n"
+        else:
+            skipped_empty += 1
+        # 追加搜索引擎原始片段（未经 GPT 过滤，天然包含竞品名）
+        raw_citations = sr.get("raw_citations", [])
+        if raw_citations:
+            for rc in raw_citations[:5]:  # 每条结果取前5个片段
+                title = rc.get("title", "")
+                snippet = rc.get("snippet", "")
+                if title or snippet:
+                    combined_text += f"[SERP] {title} | {snippet}\n"
+
+    logger.log(f"[竞品提取] 输入 {len(search_results)} 条搜索结果 + {'有' if website_text else '无'}官网文本 | "
+               f"错误/空={skipped_errors} | 无answer={skipped_empty} | "
+               f"合并文本长度={len(combined_text)}")
+    if combined_text.strip():
+        logger.log(f"[竞品提取] 合并文本前300字: {combined_text[:300]}")
 
     if not combined_text.strip():
+        logger.log("[竞品提取] 合并文本为空，跳过 Haiku 调用", "warn")
         return []
 
     prompt = (
-        f'Extract brand/company names mentioned in the search results below.\n'
+        f'Extract brand/company names mentioned in the text below (website content + search results).\n'
         f'Exclude the brand being analyzed: "{brand_name}"\n'
         f'Exclude website/platform names: Reddit, YouTube, Google, TikTok, Trustpilot.\n'
         f'Return a JSON array sorted by mention frequency, max {top_n} items:\n'
         f'[{{"brand": "BrandName", "mention_count": N}}]\n\n'
         f'Rules:\n'
+        f'- Both the website content and search results are valid sources for brand extraction\n'
         f'- Count actual mentions of each brand across all search results\n'
         f'- Merge different spellings of the same brand (e.g. "Casetify" / "CASETiFY")\n'
-        f'- Only include brands with >= 2 mentions\n'
+        f'- Only include brands with >= 1 mentions\n'
         f'- If no competitor brands found, return empty array []\n\n'
         f'Search results:\n{combined_text[:15000]}'
     )
@@ -1126,6 +1339,7 @@ async def _extract_competitor_mentions(search_results: list, brand_name: str, do
     try:
         resp = call_api(messages, CLAUDE_HAIKU_CONFIG, temperature=0.1)
         content = resp["choices"][0]["message"]["content"]
+        logger.log(f"[竞品提取] Haiku 原始返回(前500字): {content[:500]}")
         import json
         if "```" in content:
             content = content.split("```")[1]
@@ -1133,15 +1347,26 @@ async def _extract_competitor_mentions(search_results: list, brand_name: str, do
                 content = content[4:]
         result = json.loads(content.strip())
         if isinstance(result, list):
-            return [{"brand": r["brand"], "mention_count": r["mention_count"]}
-                    for r in result if r.get("brand")]
+            brands = [{"brand": r["brand"], "mention_count": r["mention_count"]}
+                      for r in result if r.get("brand")]
+            logger.log(f"[竞品提取] Haiku 成功提取 {len(brands)} 个竞品: "
+                       f"{[b['brand'] for b in brands[:5]]}")
+            return brands
+        logger.log(f"[竞品提取] Haiku 返回非列表: {type(result)} | 内容: {str(result)[:200]}", "warn")
+        return []
     except Exception as e:
-        logger.log(f"Haiku 竞品提取失败，降级为空: {e}", "warn")
+        logger.log(f"[竞品提取] Haiku 调用/解析失败: {e}", "warn")
         return []
 
 
 async def _quick_industry_hint(domain: str) -> str:
-    """极低成本行业推断：只抓首页 <title> 和 og:description，≈1s。失败返回空字符串。"""
+    """极低成本行业推断：只抓首页 <title> 和 og:description，≈1s。失败返回空字符串。
+
+    修复要点：
+    - title 拆分后取**第二部分**（描述），不是第一部分（品牌名）
+    - og:description 取核心关键词，不返回完整营销文案
+    - 不返回品牌名本身
+    """
     if not domain:
         return ""
     import re
@@ -1158,29 +1383,48 @@ async def _quick_industry_hint(domain: str) -> str:
                 return ""
             html = resp.text
 
-            # 优先从 og:description 提取（通常比 title 更具描述性）
-            og_match = re.search(r'<meta[^>]+property="og:description"[^>]+content="([^"]+)"', html, re.IGNORECASE)
-            if not og_match:
-                og_match = re.search(r"<meta[^>]+property='og:description'[^>]+content='([^']+)'", html, re.IGNORECASE)
-            if og_match:
-                desc = og_match.group(1).strip()
-                # 取第一句话（通常包含产品类别）
-                sent = desc.split(".")[0].split("。")[0].strip()
-                if len(sent) > 10:
-                    return sent
-
-            # 回退：从 <title> 提取
+            # 优先从 <title> 提取第二部分（描述），品牌名通常是第一部分
             match = re.search(r'<title>(.*?)</title>', html, re.IGNORECASE)
+            title_hint = ""
             if match:
                 title = match.group(1).strip()
                 for sep in (" - ", " | ", " — ", " · ", " :: "):
                     if sep in title:
-                        first = title.split(sep)[0].strip()
-                        # 第一个部分通常是 "BrandName ProductCategory"，取它
-                        if len(first) > 3:
-                            return first
-                if len(title) > 3:
-                    return title
+                        parts = [p.strip() for p in title.split(sep)]
+                        # 第一部分通常是品牌名，取后面的描述部分
+                        if len(parts) >= 2:
+                            desc_parts = parts[1:]
+                            # 过滤太短的片段（可能是标签）
+                            meaningful = [p for p in desc_parts if len(p) > 3]
+                            if meaningful:
+                                title_hint = " ".join(meaningful)
+                                break
+                if not title_hint and len(title) > 3:
+                    # 无分隔符 → 整个 title 可能就是品牌名+描述，取后段
+                    title_hint = title
+
+            # 其次从 og:description 提取关键词
+            og_match = re.search(r'<meta[^>]+property="og:description"[^>]+content="([^"]+)"', html, re.IGNORECASE)
+            if not og_match:
+                og_match = re.search(r"<meta[^>]+property='og:description'[^>]+content='([^']+)'", html, re.IGNORECASE)
+            og_hint = ""
+            if og_match:
+                desc = og_match.group(1).strip()
+                # 取第一句话，但剥离常见的营销前缀
+                sent = desc.split(".")[0].split("。")[0].strip()
+                # 去掉 "Discover/Shop/Welcome to/Explore + 品牌名" 前缀
+                cleaned = re.sub(r'^(Discover|Shop|Welcome to|Explore|Find|Browse)\s+(the\s+)?\S+\s+', '', sent, flags=re.IGNORECASE)
+                # 去掉品牌名（大写开头的专有名词，通常在开头）
+                cleaned = re.sub(r'^[A-Z][a-z]+(\s+[A-Z][a-z]+)?\s*[,:]\s*', '', cleaned)
+                cleaned = re.sub(r'^[A-Z][a-z]+(\s+[A-Z][a-z]+)?\s*\|\s*', '', cleaned)
+                if len(cleaned) > 10:
+                    og_hint = cleaned
+
+            # 合并：优先 title 的描述部分（更结构化），og 作为补充
+            if title_hint and len(title_hint) > 3:
+                return title_hint
+            if og_hint:
+                return og_hint
     except Exception:
         pass
     return ""
@@ -1367,6 +1611,7 @@ async def _batch_fc_search(queries: list[str], brand_name: str, brand_domain: st
     async def _search_one(idx: int, q: str):
         async with sem:
             if breaker.is_open():
+                logger.log(f"[fc_search] 熔断器已开，跳过查询 #{idx}: {q[:60]}", "warn")
                 return
             # 磁盘幂等缓存检查
             key = _make_key("fc_search", q, brand_name, brand_domain)
@@ -1382,11 +1627,14 @@ async def _batch_fc_search(queries: list[str], brand_name: str, brand_domain: st
                     if _task_id:
                         _cache_set(_task_id, key, result)
                 elif isinstance(result, dict) and result.get("error"):
+                    logger.log(f"[fc_search] #{idx} 失败: {result.get('error','')[:100]}", "warn")
                     breaker.record_failure()
                 else:
+                    logger.log(f"[fc_search] #{idx} 返回非dict/异常结果: {type(result)}", "warn")
                     breaker.record_failure()
                 results[idx] = result
             except Exception as e:
+                logger.log(f"[fc_search] #{idx} 异常: {e}", "warn")
                 breaker.record_failure()
                 results[idx] = e
 
@@ -1396,7 +1644,8 @@ async def _batch_fc_search(queries: list[str], brand_name: str, brand_domain: st
 
 
 async def _batch_analyze_citations(queries: list[str], search_results: list,
-                                    brand_name: str, domain: str) -> list:
+                                    brand_name: str, domain: str,
+                                    competitors: list[str] | None = None) -> list:
     """批量 citation 分析，3 并发 + 批次间隔。"""
     sem = asyncio.Semaphore(BATCH_SIZE)
     details = [None] * len(search_results)
@@ -1421,6 +1670,7 @@ async def _batch_analyze_citations(queries: list[str], search_results: list,
                     analyze, "citation",
                     text=answer_text,
                     brand_name=brand_name, domain=domain,
+                    competitors=competitors or [],
                 )
                 cd = CitationDetail(
                     query=q,
@@ -1428,6 +1678,7 @@ async def _batch_analyze_citations(queries: list[str], search_results: list,
                     position=detail.get("position", "none"),
                     mention_context=detail.get("mention_context", ""),
                     reference_source=detail.get("reference_source", ""),
+                    competitor_mentions=detail.get("competitor_mentions", {}),
                 )
                 details[idx] = cd
                 if _task_id:
@@ -1519,7 +1770,7 @@ def _brand_timeout_fallback(ui: dict) -> tuple:
         inferred_target_market=ui.get("target_market", ""),
         inferred_core_product=ui.get("core_product", ""),
     )
-    return bp, None
+    return bp, None, ""
 
 
 def _mm_gap_timeout_defaults() -> tuple:

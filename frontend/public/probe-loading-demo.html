@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROBE 侦察兵 · 执行中 — 视觉验收</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #08080D;
+    --surface: #0D0D15;
+    --accent: #38BDF8;
+    --accent-glow: #7DD3FC;
+    --primary: #EDEDF5;
+    --secondary: #9A9AB0;
+    --muted: #5E5E78;
+    --success: #22C55E;
+    --danger: #EF4444;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--primary);
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Background: measurement grid + noise ── */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+    background-image:
+      linear-gradient(rgba(56,189,248,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,189,248,0.25) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  /* ── Ambient glow behind console ── */
+  .ambient-glow {
+    position: fixed;
+    width: 1000px;
+    height: 700px;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(ellipse at center, rgba(56,189,248,0.025) 0%, transparent 70%);
+    filter: blur(40px);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     CONTAINER — SIGINT Console Frame
+     ═══════════════════════════════════════════════════════════ */
+  .console {
+    position: relative;
+    z-index: 1;
+    width: 920px;
+    height: 660px;
+    display: flex;
+    flex-direction: column;
+    background: #08080D;
+    /* outer border — subtle */
+    border: 1px solid rgba(255,255,255,0.06);
+    /* inner glow edge */
+    box-shadow:
+      0 0 0 1px rgba(56,189,248,0.03),
+      0 0 120px rgba(56,189,248,0.03),
+      0 0 40px rgba(0,0,0,0.6),
+      inset 0 0 120px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+
+  /* ── Corner brackets on the console frame ── */
+  .console::before,
+  .console::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .console::before {
+    /* top-left + top-right corners */
+    top: 6px; left: 6px; right: 6px;
+    height: 1px;
+    background: linear-gradient(90deg,
+      rgba(56,189,248,0.2) 0%, rgba(56,189,248,0.2) 16px,
+      transparent 16px, transparent calc(100% - 16px),
+      rgba(56,189,248,0.2) calc(100% - 16px), rgba(56,189,248,0.2) 100%
+    );
+  }
+  .console::after {
+    /* bottom-left + bottom-right corners */
+    bottom: 6px; left: 6px; right: 6px;
+    height: 1px;
+    background: linear-gradient(90deg,
+      rgba(56,189,248,0.12) 0%, rgba(56,189,248,0.12) 16px,
+      transparent 16px, transparent calc(100% - 16px),
+      rgba(56,189,248,0.12) calc(100% - 16px), rgba(56,189,248,0.12) 100%
+    );
+  }
+
+  /* vertical corner brackets done via two small elements */
+  .console-corner-tl, .console-corner-tr,
+  .console-corner-bl, .console-corner-br {
+    position: absolute;
+    width: 1px;
+    height: 16px;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .console-corner-tl { top: 6px; left: 6px;
+    background: linear-gradient(180deg, rgba(56,189,248,0.2) 0%, transparent 100%); }
+  .console-corner-tr { top: 6px; right: 6px;
+    background: linear-gradient(180deg, rgba(56,189,248,0.2) 0%, transparent 100%); }
+  .console-corner-bl { bottom: 6px; left: 6px;
+    background: linear-gradient(0deg, rgba(56,189,248,0.12) 0%, transparent 100%); }
+  .console-corner-br { bottom: 6px; right: 6px;
+    background: linear-gradient(0deg, rgba(56,189,248,0.12) 0%, transparent 100%); }
+
+  /* ═══════════════════════════════════════════════════════════
+     CLASSIFICATION BANNER
+     ═══════════════════════════════════════════════════════════ */
+  .classification-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 10px;
+    padding: 0 24px;
+    flex-shrink: 0;
+    background: rgba(56,189,248,0.04);
+    border-bottom: 1px solid rgba(56,189,248,0.06);
+  }
+  .class-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    color: rgba(56,189,248,0.45);
+    text-transform: uppercase;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     TOP BAR — Mission Header
+     ═══════════════════════════════════════════════════════════ */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 48px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.006) 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  /* Status indicator — breathing dot */
+  .status-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #22C55E;
+    box-shadow: 0 0 4px rgba(34,197,94,0.5), 0 0 8px rgba(34,197,94,0.2);
+    animation: statusBreath 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes statusBreath {
+    0%, 100% { opacity: 0.7; box-shadow: 0 0 3px rgba(34,197,94,0.4), 0 0 6px rgba(34,197,94,0.15); }
+    50% { opacity: 1; box-shadow: 0 0 5px rgba(34,197,94,0.7), 0 0 12px rgba(34,197,94,0.3); }
+  }
+  .topbar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6B6B8A;
+  }
+  .topbar-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .timer-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(56,189,248,0.35);
+    margin-bottom: 2px;
+  }
+  .topbar-timer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    color: #38BDF8;
+    text-shadow:
+      0 0 4px rgba(56,189,248,0.4),
+      0 0 20px rgba(56,189,248,0.18),
+      0 0 60px rgba(56,189,248,0.06);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     CONTENT — Left / Right Split
+     ═══════════════════════════════════════════════════════════ */
+  .content {
+    flex: 1;
+    display: flex;
+    gap: 0;
+    padding: 18px 20px;
+    min-height: 0;
+  }
+  .left-col {
+    width: 44%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 0;
+    padding-right: 18px;
+    border-right: 1px solid rgba(255,255,255,0.04);
+  }
+  .right-col {
+    width: 56%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding-left: 18px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     CARDS — Tactical Dossier Style
+     ═══════════════════════════════════════════════════════════ */
+  .dossier {
+    position: relative;
+    padding: 18px 18px 18px 22px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.008) 100%);
+    border: 1px solid rgba(255,255,255,0.045);
+    overflow: hidden;
+  }
+  /* Left accent bar */
+  .dossier::before {
+    content: "";
+    position: absolute;
+    top: 12px;
+    left: 0;
+    width: 2px;
+    height: calc(100% - 24px);
+    background: linear-gradient(180deg,
+      rgba(56,189,248,0.3) 0%,
+      rgba(56,189,248,0.08) 50%,
+      rgba(56,189,248,0.3) 100%
+    );
+  }
+  /* Top-right hash mark */
+  .dossier::after {
+    content: "///////";
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 6px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.07);
+    pointer-events: none;
+  }
+
+  /* ── Brand card header ── */
+  .dossier-target {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(56,189,248,0.35);
+    margin-bottom: 10px;
+  }
+  .dossier-brand {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #E8E8F0;
+    margin-bottom: 3px;
+  }
+  .dossier-domain {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #5E5E78;
+    margin-bottom: 18px;
+  }
+
+  /* ── Fields with ruled dividers ── */
+  .field {
+    display: flex;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.025);
+  }
+  .field:last-child { border-bottom: none; }
+  .field-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(56,189,248,0.3);
+    width: 72px;
+    flex-shrink: 0;
+  }
+  .field-value {
+    font-size: 12px;
+    line-height: 1.5;
+    color: #A0A0B8;
+    flex: 1;
+  }
+  .field-value:empty::after {
+    content: "—";
+    color: rgba(255,255,255,0.2);
+  }
+
+  /* ── Scan Config Card ── */
+  .query-type {
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    position: relative;
+    background: rgba(255,255,255,0.012);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .query-type:last-child { margin-bottom: 0; }
+  .query-type::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+  }
+  .query-type.qt-a::before { background: linear-gradient(180deg, rgba(56,189,248,0.5), rgba(56,189,248,0.1)); }
+  .query-type.qt-b::before { background: linear-gradient(180deg, rgba(34,197,94,0.5), rgba(34,197,94,0.1)); }
+  .query-type.qt-c::before { background: linear-gradient(180deg, rgba(245,158,11,0.5), rgba(245,158,11,0.1)); }
+  .qt-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .qt-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #B0B0C8;
+  }
+  .qt-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #5E5E78;
+    background: rgba(255,255,255,0.03);
+    padding: 1px 7px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .qt-explain {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: rgba(255,255,255,0.2);
+    padding-left: 2px;
+  }
+  .config-footer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+  }
+  .config-footer span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: #6B6B8A;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     SIGINT DATA FEED — Terminal-style intercepted signals
+     ═══════════════════════════════════════════════════════════ */
+  .sigint-feed {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Feed header */
+  .sigint-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 10px 0;
+    flex-shrink: 0;
+  }
+  .sigint-header-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(56,189,248,0.3);
+  }
+  .sigint-header-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: rgba(34,197,94,0.45);
+  }
+  .sigint-header-status .blink {
+    animation: sigintBlink 0.8s step-end infinite;
+  }
+  @keyframes sigintBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* Feed body */
+  .sigint-body {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255,255,255,0.003) 2px,
+        rgba(255,255,255,0.003) 4px
+      );
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* Top gradient mask — deeper fade for radar-screen feel */
+  .sigint-body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    z-index: 10;
+    pointer-events: none;
+    background: linear-gradient(180deg,
+      #08080D 0%,
+      rgba(8,8,13,0.85) 40%,
+      transparent 100%
+    );
+  }
+
+  /* CRT scan line — slowly sweeps down */
+  .sigint-body::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    z-index: 11;
+    pointer-events: none;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(56,189,248,0.06) 20%,
+      rgba(56,189,248,0.1) 50%,
+      rgba(56,189,248,0.06) 80%,
+      transparent 100%
+    );
+    animation: scanLineSweep 4s linear infinite;
+  }
+  @keyframes scanLineSweep {
+    0% { top: 0%; }
+    100% { top: 100%; }
+  }
+
+  .sigint-list {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sigint-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #3A3A52;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Message rows ── */
+  .sigint-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 4px 8px;
+    animation: sigintMsgIn 0.25s ease-out;
+    position: relative;
+  }
+  .sigint-msg::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 8px;
+    right: 8px;
+    height: 1px;
+    background: rgba(255,255,255,0.015);
+  }
+  @keyframes sigintMsgIn {
+    from { opacity: 0; transform: translateX(6px); background: rgba(56,189,248,0.03); }
+    to   { opacity: 1; transform: translateX(0); background: transparent; }
+  }
+
+  .sigint-msg-stamp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    width: 38px;
+    flex-shrink: 0;
+    color: #5E5E78;
+    padding-top: 1px;
+  }
+
+  .sigint-msg-marker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    width: 14px;
+    flex-shrink: 0;
+    text-align: center;
+    padding-top: 1px;
+  }
+  .sigint-msg-marker.info    { color: #6B6B8A; }
+  .sigint-msg-marker.success { color: #2D8A4E; }
+  .sigint-msg-marker.error   { color: #9B3030; }
+
+  .sigint-msg-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    line-height: 1.45;
+    flex: 1;
+  }
+  .sigint-msg-text.info    { color: #8A8AA0; }
+  .sigint-msg-text.success { color: #4CAF6E; }
+  .sigint-msg-text.error   { color: #D94A4A; }
+
+  /* ── Feed counter ── */
+  .sigint-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0 0 0;
+    flex-shrink: 0;
+  }
+  .sigint-footer-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: #5E5E78;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     PIPELINE — Tactical Phase Tracker
+     ═══════════════════════════════════════════════════════════ */
+  .pipeline-wrap {
+    flex-shrink: 0;
+    padding: 0 20px 14px 20px;
+  }
+  .pipeline {
+    display: flex;
+    align-items: center;
+    padding: 14px 24px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.012) 0%, rgba(255,255,255,0.004) 100%);
+    border: 1px solid rgba(255,255,255,0.04);
+    position: relative;
+  }
+  /* Top edge accent line */
+  .pipeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 40px;
+    right: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(56,189,248,0.08), transparent);
+  }
+
+  .phase-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
+
+  /* ── Phase dot with radar ping ── */
+  .phase-dot-wrap {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .phase-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+  }
+  .phase-dot.done {
+    background: #22C55E;
+    box-shadow: 0 0 4px rgba(34,197,94,0.5);
+  }
+  .phase-dot.active {
+    background: #38BDF8;
+    box-shadow: 0 0 6px rgba(56,189,248,0.6), 0 0 14px rgba(56,189,248,0.2);
+  }
+  .phase-dot.pending {
+    background: #2A2A40;
+    box-shadow: none;
+  }
+
+  /* Radar ping ring for active phase */
+  .radar-ping {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(56,189,248,0.3);
+    animation: radarPing 2s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes radarPing {
+    0% { transform: scale(0.6); opacity: 0.8; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+
+  .phase-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    transition: color 0.6s ease;
+  }
+  .phase-label.done { color: #4A7A5A; }
+  .phase-label.active { color: #7DD3FC; }
+  .phase-label.pending { color: #3A3A52; }
+
+  /* ── Inter-phase connector ── */
+  .phase-connector {
+    height: 1px;
+    flex: 1;
+    min-width: 30px;
+    transition: background 0.8s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .phase-connector.done {
+    background: rgba(34,197,94,0.15);
+  }
+  .phase-connector.done::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(34,197,94,0.35) 0%, rgba(34,197,94,0.08) 100%);
+  }
+  .phase-connector.pending {
+    background: rgba(255,255,255,0.06);
+  }
+  /* Pulse on the active connector */
+  .phase-connector.active-edge {
+    background: rgba(56,189,248,0.08);
+  }
+  .phase-connector.active-edge::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 30%;
+    background: linear-gradient(90deg, rgba(56,189,248,0.25), transparent);
+    animation: connectorPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes connectorPulse {
+    0%, 100% { left: 0%; opacity: 0.4; }
+    50% { left: 70%; opacity: 1; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     CONTROLS
+     ═══════════════════════════════════════════════════════════ */
+  .controls {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 7px 14px;
+    background: rgba(13,13,21,0.94);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+  }
+  .controls .speed-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.18);
+    margin-right: 6px;
+  }
+  .controls button {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    color: #6B6B88;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .controls button:hover {
+    background: rgba(56,189,248,0.1);
+    border-color: rgba(56,189,248,0.2);
+    color: #9AD5F8;
+  }
+  .controls button.active {
+    background: rgba(56,189,248,0.14);
+    border-color: rgba(56,189,248,0.25);
+    color: #38BDF8;
+    box-shadow: 0 0 8px rgba(56,189,248,0.08);
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient-glow"></div>
+
+<div class="console">
+  <!-- Corner bracket elements -->
+  <div class="console-corner-tl"></div>
+  <div class="console-corner-tr"></div>
+  <div class="console-corner-bl"></div>
+  <div class="console-corner-br"></div>
+
+  <!-- Classification Banner -->
+  <div class="classification-bar">
+    <span class="class-label">SIGINT // ACTIVE MISSION</span>
+    <span class="class-label">PROBE RECON // CLASSIFIED</span>
+  </div>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="status-dot"></span>
+      <span class="topbar-label">PROBE 侦察兵 · 执行中</span>
+    </div>
+    <div class="topbar-right">
+      <span class="timer-label">MISSION ELAPSED</span>
+      <span class="topbar-timer" id="timer">00:00.0</span>
+    </div>
+  </div>
+
+  <!-- Content: Left-Right Split -->
+  <div class="content">
+    <!-- Left Column 44% -->
+    <div class="left-col">
+      <!-- Brand Dossier -->
+      <div class="dossier">
+        <p class="dossier-target">// TARGET DOSSIER</p>
+        <p class="dossier-brand" id="brandName">UGREEN</p>
+        <p class="dossier-domain" id="domain">ugreen.com</p>
+
+        <div class="field">
+          <span class="field-label">核心产品</span>
+          <span class="field-value" id="coreProduct">充电宝、数据线、充电器</span>
+        </div>
+        <div class="field">
+          <span class="field-label">目标市场</span>
+          <span class="field-value" id="targetMarket">北美、欧洲</span>
+        </div>
+        <div class="field">
+          <span class="field-label">竞品</span>
+          <span class="field-value" id="competitors">Anker · Baseus · Belkin</span>
+        </div>
+        <div class="field">
+          <span class="field-label">目标定位</span>
+          <span class="field-value" id="targetPositioning">全球领先的消费电子配件品牌</span>
+        </div>
+      </div>
+
+      <!-- Scan Config Card -->
+      <div class="dossier">
+        <p class="dossier-target">// MISSION PARAMETERS</p>
+
+        <div class="query-type qt-a">
+          <div class="qt-header">
+            <span class="qt-label">A类查询 · 行业通用搜索</span>
+            <span class="qt-count">10 个</span>
+          </div>
+          <p class="qt-explain">→ 测试AI是否认识你的品类</p>
+        </div>
+
+        <div class="query-type qt-b">
+          <div class="qt-header">
+            <span class="qt-label">B类查询 · 品牌直接搜索</span>
+            <span class="qt-count">10 个</span>
+          </div>
+          <p class="qt-explain">→ 测试AI怎么描述你的品牌</p>
+        </div>
+
+        <div class="query-type qt-c">
+          <div class="qt-header">
+            <span class="qt-label">C类查询 · 竞品对比搜索</span>
+            <span class="qt-count">10 个</span>
+          </div>
+          <p class="qt-explain">→ 测试AI推荐你还是推荐竞品</p>
+        </div>
+
+        <div class="config-footer">
+          <span>引擎：ChatGPT · Gemini · Claude</span>
+          <span>预计耗时：3-5 min</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column 56% -->
+    <div class="right-col">
+      <div class="sigint-feed">
+        <!-- Feed header -->
+        <div class="sigint-header">
+          <span class="sigint-header-label">// INTERCEPT LOG</span>
+          <span class="sigint-header-status">LIVE<span class="blink">_</span></span>
+        </div>
+
+        <!-- Feed body -->
+        <div class="sigint-body" id="sigintBody">
+          <div class="sigint-list" id="sigintList">
+            <div class="sigint-empty">AWAITING INTERCEPT DATA...</div>
+          </div>
+        </div>
+
+        <!-- Feed footer -->
+        <div class="sigint-footer">
+          <span class="sigint-footer-count" id="sigintCount">SIGNALS: 0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Pipeline -->
+  <div class="pipeline-wrap">
+    <div class="pipeline" id="pipeline">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <span class="speed-label">TIMESCALE:</span>
+  <button onclick="setSpeed(1)" class="active" id="btn1x">1×</button>
+  <button onclick="setSpeed(2)" id="btn2x">2×</button>
+  <button onclick="setSpeed(5)" id="btn5x">5×</button>
+  <button onclick="setSpeed(10)" id="btn10x">10×</button>
+  <button onclick="setSpeed(30)" id="btn30x">30×</button>
+  <button onclick="togglePause()" id="btnPause">⏯ PAUSE</button>
+  <button onclick="resetTimer()">↺ RESET</button>
+</div>
+
+<script>
+// ─── MOCK_MESSAGES (brand names hardcoded for v1 demo) ───
+const MOCK_MESSAGES = [
+  // 阶段1：品牌扫描（0-20秒）
+  { time: 3, text: "开始扫描品牌官网...", type: "info" },
+  { time: 6, text: "抓取官网结构化数据 · 识别到 12 个页面", type: "info" },
+  { time: 10, text: "提取品牌实体：品牌名、产品线、价值主张", type: "info" },
+  { time: 14, text: "品牌画像完成 · 识别到核心产品线 4 条", type: "success" },
+  { time: 17, text: "行业定位：消费电子 → 手机配件 → 环保手机壳", type: "info" },
+  { time: 20, text: "品牌扫描阶段完成 ✓", type: "success" },
+
+  // 阶段2：查询生成（20-35秒）
+  { time: 22, text: "DeepSeek 查询词生成引擎启动...", type: "info" },
+  { time: 25, text: "A类查询完成 · 10个行业通用词", type: "success" },
+  { time: 28, text: "B类查询完成 · 10个品牌直接词", type: "success" },
+  { time: 30, text: "C类查询完成 · 10个竞品对比词", type: "success" },
+  { time: 35, text: "查询词生成完成 ✓ · 共30个查询词", type: "success" },
+
+  // 阶段3：ChatGPT引擎搜索（35-150秒）
+  { time: 38, text: "ChatGPT引擎启动 · 开始搜索...", type: "info" },
+  { time: 42, text: "ChatGPT · A1/10 · \"best eco friendly phone case\"", type: "info" },
+  { time: 46, text: "ChatGPT · 品牌被提及 ✓ · 位置：第3位", type: "success" },
+  { time: 50, text: "ChatGPT · A2/10 · \"top sustainable phone case brands\"", type: "info" },
+  { time: 54, text: "ChatGPT · 品牌未提及 ✗", type: "error" },
+  { time: 58, text: "ChatGPT · A3/10 · \"biodegradable phone case review\"", type: "info" },
+  { time: 62, text: "ChatGPT · 品牌被提及 ✓ · 位置：第5位", type: "success" },
+  { time: 66, text: "ChatGPT · A4/10 · \"phone case buying guide 2026\"", type: "info" },
+  { time: 70, text: "ChatGPT · 品牌未提及 ✗", type: "error" },
+  { time: 74, text: "ChatGPT · A5/10 · \"eco friendly tech accessories\"", type: "info" },
+  { time: 78, text: "ChatGPT · 品牌被提及 ✓ · 位置：第2位", type: "success" },
+  { time: 82, text: "ChatGPT · A类查询完成 · 引用率 40%", type: "info" },
+  { time: 85, text: "ChatGPT · 开始搜索B类查询...", type: "info" },
+  { time: 88, text: "ChatGPT · B1/10 · \"UGREEN review\"", type: "info" },
+  { time: 91, text: "ChatGPT · 品牌被提及 ✓ · 推荐位置：顶部", type: "success" },
+  { time: 94, text: "ChatGPT · B2/10 · \"UGREEN quality\"", type: "info" },
+  { time: 97, text: "ChatGPT · 品牌被提及 ✓ · 推荐位置：中部", type: "success" },
+  { time: 100, text: "ChatGPT · B3/10 · \"is UGREEN worth it\"", type: "info" },
+  { time: 103, text: "ChatGPT · 品牌被提及 ✓ · 推荐位置：顶部", type: "success" },
+  { time: 106, text: "ChatGPT · B类查询完成 · 引用率 80%", type: "success" },
+  { time: 109, text: "ChatGPT · 开始搜索C类查询...", type: "info" },
+  { time: 112, text: "ChatGPT · C1/10 · \"UGREEN vs Anker\"", type: "info" },
+  { time: 115, text: "ChatGPT · 品牌被提及 ✓ · 竞品Anker也被提及", type: "info" },
+  { time: 118, text: "ChatGPT · C2/10 · \"UGREEN vs Baseus\"", type: "info" },
+  { time: 121, text: "ChatGPT · 品牌被提及 ✓ · 竞品Baseus也被提及", type: "info" },
+  { time: 124, text: "ChatGPT · C3/10 · \"best phone case brands\"", type: "info" },
+  { time: 127, text: "ChatGPT · 品牌未提及 ✗ · 竞品Casetify被提及", type: "error" },
+  { time: 130, text: "ChatGPT · C类查询完成 · 引用率 60%", type: "info" },
+  { time: 135, text: "ChatGPT引擎搜索完成 ✓ · 总引用率 55%", type: "success" },
+  { time: 138, text: "ChatGPT · 推荐率 35% · 头部引用率 15%", type: "info" },
+
+  // 阶段3：Gemini引擎搜索（150-250秒）
+  { time: 142, text: "Gemini引擎启动 · 开始搜索...", type: "info" },
+  { time: 146, text: "Gemini · A1/10 · \"best eco friendly phone case\"", type: "info" },
+  { time: 150, text: "Gemini · 品牌未提及 ✗", type: "error" },
+  { time: 154, text: "Gemini · A2/10 · \"top sustainable phone case brands\"", type: "info" },
+  { time: 158, text: "Gemini · 品牌被提及 ✓ · 位置：第7位", type: "success" },
+  { time: 162, text: "Gemini · A3/10 · \"biodegradable phone case review\"", type: "info" },
+  { time: 166, text: "Gemini · 品牌未提及 ✗", type: "error" },
+  { time: 170, text: "Gemini · A类查询完成 · 引用率 20%", type: "info" },
+  { time: 174, text: "Gemini · 开始搜索B类查询...", type: "info" },
+  { time: 178, text: "Gemini · B1/10 · \"UGREEN review\"", type: "info" },
+  { time: 182, text: "Gemini · 品牌被提及 ✓ · 推荐位置：中部", type: "success" },
+  { time: 186, text: "Gemini · B2/10 · \"UGREEN quality\"", type: "info" },
+  { time: 190, text: "Gemini · 品牌被提及 ✓ · 推荐位置：底部", type: "success" },
+  { time: 194, text: "Gemini · B类查询完成 · 引用率 70%", type: "success" },
+  { time: 198, text: "Gemini · 开始搜索C类查询...", type: "info" },
+  { time: 202, text: "Gemini · C1/10 · \"UGREEN vs Anker\"", type: "info" },
+  { time: 206, text: "Gemini · 品牌被提及 ✓ · 竞品Anker也被提及", type: "info" },
+  { time: 210, text: "Gemini · C2/10 · \"best phone case brands\"", type: "info" },
+  { time: 214, text: "Gemini · 品牌未提及 ✗ · 竞品Casetify被提及", type: "error" },
+  { time: 218, text: "Gemini · C类查询完成 · 引用率 50%", type: "info" },
+  { time: 225, text: "Gemini引擎搜索完成 ✓ · 总引用率 42%", type: "success" },
+  { time: 228, text: "Gemini · 推荐率 28% · 头部引用率 10%", type: "info" },
+
+  // 阶段3：Claude引擎搜索（250-320秒）
+  { time: 232, text: "Claude引擎启动 · 开始搜索...", type: "info" },
+  { time: 236, text: "Claude · A1/10 · \"best eco friendly phone case\"", type: "info" },
+  { time: 240, text: "Claude · 品牌被提及 ✓ · 位置：第4位", type: "success" },
+  { time: 244, text: "Claude · A2/10 · \"top sustainable phone case brands\"", type: "info" },
+  { time: 248, text: "Claude · 品牌未提及 ✗", type: "error" },
+  { time: 252, text: "Claude · A类查询完成 · 引用率 30%", type: "info" },
+  { time: 256, text: "Claude · 开始搜索B类查询...", type: "info" },
+  { time: 260, text: "Claude · B1/10 · \"UGREEN review\"", type: "info" },
+  { time: 264, text: "Claude · 品牌被提及 ✓ · 推荐位置：顶部", type: "success" },
+  { time: 268, text: "Claude · B类查询完成 · 引用率 75%", type: "success" },
+  { time: 272, text: "Claude · 开始搜索C类查询...", type: "info" },
+  { time: 276, text: "Claude · C1/10 · \"UGREEN vs Anker\"", type: "info" },
+  { time: 280, text: "Claude · 品牌被提及 ✓ · 竞品Anker也被提及", type: "info" },
+  { time: 284, text: "Claude · C类查询完成 · 引用率 55%", type: "info" },
+  { time: 290, text: "Claude引擎搜索完成 ✓ · 总引用率 48%", type: "success" },
+  { time: 293, text: "Claude · 推荐率 32% · 头部引用率 12%", type: "info" },
+
+  // 阶段4：竞品分析（320-340秒）
+  { time: 298, text: "三引擎搜索完成 · 开始竞品分析...", type: "info" },
+  { time: 302, text: "竞品识别：Casetify、Pela、Wildflower、Burga", type: "info" },
+  { time: 306, text: "场景1/9 · \"best eco friendly phone case\" · 对比中...", type: "info" },
+  { time: 310, text: "场景1完成 · 你的品牌排名第3 · Casetify排名第1", type: "info" },
+  { time: 314, text: "场景5/9 · \"sustainable phone accessories\" · 对比中...", type: "info" },
+  { time: 318, text: "场景5完成 · 你的品牌排名第2 · Pela排名第1", type: "success" },
+  { time: 322, text: "9个场景逐维度对比完成 ✓", type: "success" },
+
+  // 阶段5：报告生成（340-360秒）
+  { time: 326, text: "综合评分计算中...", type: "info" },
+  { time: 330, text: "A类引用率：30% · B类引用率：75% · C类引用率：55%", type: "info" },
+  { time: 334, text: "Gap分析：品牌自述 vs AI认知差距...", type: "info" },
+  { time: 338, text: "AI认知画像生成中...", type: "info" },
+  { time: 342, text: "引用来源权威度分析...", type: "info" },
+  { time: 346, text: "报告生成完成 ✓", type: "success" },
+  { time: 350, text: "综合评分：67/100 · 行业引用率：30%", type: "info" },
+  { time: 355, text: "侦察任务完成 · 正在生成侦察报告...", type: "success" },
+];
+
+const PHASES = [
+  { label: "品牌扫描", threshold: 20 },
+  { label: "查询生成", threshold: 35 },
+  { label: "引擎搜索", threshold: 280 },
+  { label: "竞品分析", threshold: 310 },
+  { label: "报告生成", threshold: Infinity },
+];
+
+const PREFIX_MARKERS = { info: "▸", success: "✓", error: "✗" };
+
+// ─── State ───
+let elapsed = 0;
+let speed = 1;
+let paused = false;
+let lastTick = 0;
+let rafId = null;
+
+// ─── Pipeline Render ───
+function buildPipeline() {
+  const container = document.getElementById("pipeline");
+  let phaseIdx = PHASES.findIndex(p => elapsed < p.threshold);
+  if (phaseIdx === -1) phaseIdx = PHASES.length - 1;
+
+  container.innerHTML = PHASES.map((phase, i) => {
+    const done = i < phaseIdx;
+    const active = i === phaseIdx;
+    const status = done ? "done" : active ? "active" : "pending";
+
+    // Connector: between i and i+1
+    let connectorClass = "pending";
+    if (i < phaseIdx) {
+      connectorClass = "done";
+    } else if (i === phaseIdx) {
+      connectorClass = "active-edge";
+    }
+
+    const connector = i < PHASES.length - 1
+      ? `<div class="phase-connector ${connectorClass}"></div>`
+      : "";
+
+    const radarPing = active ? '<span class="radar-ping"></span>' : '';
+
+    return `
+      <div class="phase-item">
+        <div class="phase-dot-wrap">
+          <span class="phase-dot ${status}"></span>
+          ${radarPing}
+        </div>
+        <span class="phase-label ${status}">${phase.label}</span>
+      </div>
+      ${connector}
+    `;
+  }).join("");
+}
+
+// ─── Data Feed Render ───
+function buildDataFeed() {
+  const list = document.getElementById("sigintList");
+  const countEl = document.getElementById("sigintCount");
+  const visible = MOCK_MESSAGES.filter(m => m.time <= elapsed);
+  const recent = visible.slice(-15);
+
+  countEl.textContent = `SIGNALS: ${visible.length}`;
+
+  if (recent.length === 0) {
+    list.innerHTML = '<div class="sigint-empty">AWAITING INTERCEPT DATA...</div>';
+    return;
+  }
+
+  list.innerHTML = recent.map((msg, i) => `
+    <div class="sigint-msg" style="animation-delay:${i * 0.015}s">
+      <span class="sigint-msg-stamp">${formatTime(msg.time)}</span>
+      <span class="sigint-msg-marker ${msg.type}">${PREFIX_MARKERS[msg.type]}</span>
+      <span class="sigint-msg-text ${msg.type}">${msg.text}</span>
+    </div>
+  `).join("");
+
+  list.scrollTop = list.scrollHeight;
+}
+
+// ─── Timer Render ───
+function updateTimer() {
+  document.getElementById("timer").textContent = formatElapsed(elapsed);
+}
+
+function formatElapsed(s) {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  const tenths = Math.floor((s % 1) * 10);
+  return `${String(m).padStart(2, "0")}:${String(Math.floor(sec)).padStart(2, "0")}.${tenths}`;
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+}
+
+// ─── Main Loop ───
+function tick(ts) {
+  if (lastTick === 0) lastTick = ts;
+  const dt = (ts - lastTick) / 1000;
+  lastTick = ts;
+
+  if (!paused) {
+    elapsed += dt * speed;
+    updateTimer();
+    buildDataFeed();
+    buildPipeline();
+  }
+
+  rafId = requestAnimationFrame(tick);
+}
+
+// ─── Controls ───
+function setSpeed(s) {
+  speed = s;
+  document.querySelectorAll(".controls button[id^='btn']").forEach(b => b.classList.remove("active"));
+  const btnMap = { 1: "btn1x", 2: "btn2x", 5: "btn5x", 10: "btn10x", 30: "btn30x" };
+  const target = document.getElementById(btnMap[s]);
+  if (target) target.classList.add("active");
+}
+
+function togglePause() {
+  paused = !paused;
+  const btn = document.getElementById("btnPause");
+  btn.textContent = paused ? "▶ RESUME" : "⏯ PAUSE";
+  if (!paused) lastTick = 0;
+}
+
+function resetTimer() {
+  elapsed = 0;
+  lastTick = 0;
+  updateTimer();
+  buildDataFeed();
+  buildPipeline();
+}
+
+// ─── Start ───
+buildPipeline();
+buildDataFeed();
+rafId = requestAnimationFrame(tick);
+</script>
+</body>
+</html>

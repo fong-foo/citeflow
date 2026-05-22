@@ -1,0 +1,20 @@
+{
+  "domain": "yeswelder.com",
+  "brand_name": "YesWelder",
+  "industry": "焊接设备（Welding Equipment）",
+  "target_market": "美国、加拿大、英国、澳洲、欧洲",
+  "core_product": "多工艺焊机（MIG/TIG/Stick/Plasma）、焊接面罩、焊接配件",
+  "target_positioning": "预算友好的专业焊接设备品牌，让业余爱好者和小企业也能用上高质量焊接设备",
+  "seed_queries": [
+    "best budget welder",
+    "welding equipment for beginners",
+    "affordable MIG welder",
+    "TIG welder under 500",
+    "welding helmet auto darkening"
+  ],
+  "competitors": [
+    "lincolnelectric.com",
+    "millerwelds.com",
+    "esab.com"
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "paper_id": "005",
+  "arxiv": "2601.00912",
+  "title": "The Discovery Gap: How Product Hunt Startups Vanish in LLM Organic Discovery Queries",
+  "date_read": "2026-05-10",
+  "last_reviewed": "2026-05-20",
+  "confidence": "high",
+  "extracted_strategies": [
+    {
+      "id": "005-01",
+      "name": "先建SEO基础，再优化AI",
+      "category": "战略",
+      "confidence": "high",
+      "source_section": "Section 3.3",
+      "what": "GEO得分与实际发现率没有相关性。不要直接优化AI发现，先建SEO基础",
+      "why": "传统SEO信号（引用域名、社区存在）预测AI可见性，反过来不成立",
+      "how": "先做好：高质量外链建设、Reddit/Quora社区参与、行业媒体露出——这些自然提升AI引用",
+      "template": null,
+      "applicable_to": ["所有品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "SEO→AI的溢出效应，比直接'AI优化'更可靠",
+      "how_to_verify": "先追踪SEO指标（引用域名数、品牌搜索量），再对比AI引用率变化"
+    },
+    {
+      "id": "005-02",
+      "name": "社区存在建设",
+      "category": "社区建设",
+      "confidence": "high",
+      "source_section": "Section 3.4",
+      "what": "在Reddit、Quora、行业论坛建立品牌存在",
+      "why": "Reddit存在是预测AI发现式查询可见性的关键信号",
+      "how": "在相关subreddit（如r/BuyItForLife、行业专属版块）参与讨论、发布AMA、回答用户问题",
+      "template": "templates/reddit-presence.md",
+      "applicable_to": ["所有品牌"],
+      "industries": ["all"],
+      "platforms": ["reddit", "quora"],
+      "regions": ["all"],
+      "expected_impact": "提升发现式查询中的出现概率",
+      "how_to_verify": "在AI中搜索品类+场景查询，检查你的品牌是否出现在回答中"
+    },
+    {
+      "id": "005-03",
+      "name": "不要满足于按名查询的99%识别率",
+      "category": "战略",
+      "confidence": "high",
+      "source_section": "Section 3.1-3.2",
+      "what": "ChatGPT按名查询识别率99.4%，但发现式查询仅3.32%。这是真正的战场",
+      "why": "按名查询=用户已经知道你。发现式查询=新客户获取，这才是增长来源",
+      "how": "针对品类词+场景词（如'best budget welder for beginners'）检查AI中你的存在",
+      "template": null,
+      "applicable_to": ["所有品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "将发现式查询识别率从3%提升到有意义的水平",
+      "how_to_verify": "对比按名查询和发现式查询的AI可见性差距"
+    }
+  ],
+  "key_data": {
+    "name_query_recognition": {"ChatGPT": "99.4%", "Perplexity": "94.3%"},
+    "discovery_query_success": {"ChatGPT": "3.32%", "Perplexity": "8.29%"},
+    "geo_score_vs_discovery": "无相关性——GEO得分不能反映实际发现率",
+    "predictive_signals": "引用域名数、Product Hunt排名、Reddit存在"
+  },
+  "warning": "GEO得分不能完全反映实际效果，需要实际测试验证（论文5, Section 3.3）"
+}

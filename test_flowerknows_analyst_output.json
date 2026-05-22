@@ -1,0 +1,143 @@
+{
+  "three_layer_chain": {
+    "observation": "引用率20.0%低于行业P25（30%），A类引用率20.0%，B类100.0%，C类50.0%。三引擎A类引用率：gpt=20%，gemini=10%，haiku=20%。官网引用占比44%，第三方56%。来源多样性0.876，共4个来源。",
+    "explanation": "品牌在直接查询中表现优异（B类100%），但在行业通用查询（A类）中引用率低，且三引擎数据一致偏低，说明品牌在行业内容生态中缺乏存在感。官网是主要引用源，但第三方来源仅4个，缺乏权威评测平台（如G2、Capterra）的背书。AI认知偏差显示，AI将品牌定位为中高端，但品牌希望强调平价奢华和二次元美学，定位错位导致AI在行业查询中不主动推荐。",
+    "implication": "如果不提升行业内容存在感和纠正AI认知偏差，品牌将长期依赖直接搜索流量，无法在'best makeup brands'等通用查询中被AI推荐，增长空间受限。"
+  },
+  "diagnosis": {
+    "core_problem": "品牌在行业通用查询中隐形，AI认知与品牌自述存在定位偏差",
+    "problem_detail": "A类引用率仅20%，三引擎均低于行业P25，说明品牌在行业内容生态中缺位。AI认为品牌是中高端，但品牌希望强调平价奢华和二次元美学，导致AI在回答行业问题时未将品牌纳入考虑。官网引用占比44%说明品牌依赖自有内容，但缺乏第三方权威源支撑。",
+    "severity": "critical"
+  },
+  "actions": [],
+  "competitor_gap": {
+    "losing_dimensions": [
+      {
+        "dimension": "deeper skin tone inclusivity",
+        "gap": 10,
+        "direction": "positive",
+        "confidence": "low",
+        "severity": "warning"
+      }
+    ],
+    "winning_dimensions": [
+      {
+        "dimension": "shimmer and glitters",
+        "gap": null,
+        "direction": "positive",
+        "confidence": "low",
+        "qualitative": "Flower Knows得分80，高于竞品，但数据不足无法量化差距",
+        "severity": "info"
+      },
+      {
+        "dimension": "pigmentation",
+        "gap": null,
+        "direction": "positive",
+        "confidence": "low",
+        "qualitative": "Flower Knows得分75，但竞品数据缺失",
+        "severity": "info"
+      }
+    ],
+    "root_cause": "竞品对比数据中47%维度证据不足，无法有效提炼根因。现有数据表明品牌在深肤色包容性上略有优势（gap=+10），但整体缺乏足够对比数据。",
+    "counter_strategy": "补充竞品对比数据，重点关注市场存在感和品牌历史等维度，同时利用现有优势（闪粉、显色度）加强内容营销。"
+  },
+  "one_line_verdict": "品牌在直接查询中表现优秀，但行业通用查询中隐形，需通过内容生态建设和定位校准提升AI可见性",
+  "engine_comparison": {
+    "best_engine": "gpt",
+    "worst_engine": "gemini",
+    "citation_rate_diff": 10,
+    "recommendation_rate_diff": 20,
+    "consistency": "medium",
+    "per_engine": {
+      "gpt": {
+        "citation_rate": 20,
+        "recommendation_rate": 20,
+        "top_sources": [
+          "reddit.com"
+        ]
+      },
+      "gemini": {
+        "citation_rate": 10,
+        "recommendation_rate": 0,
+        "top_sources": []
+      },
+      "haiku": {
+        "citation_rate": 20,
+        "recommendation_rate": 0,
+        "top_sources": [
+          "reddit.com"
+        ]
+      }
+    }
+  },
+  "engine_insights": [
+    "GPT和Haiku的A类引用率均为20%，但GPT有20%推荐率，Haiku为0%，说明GPT更倾向于推荐品牌，而Haiku仅引用不推荐",
+    "Gemini引用率最低（10%），推荐率为0%，品牌在Gemini的行业查询中几乎完全隐形",
+    "三引擎主要来源均为Reddit，缺乏权威评测平台引用，品牌在行业内容生态中依赖单一社区"
+  ],
+  "engine_recommendations": [
+    "GPT（主力引擎）：加强Reddit社区内容运营，同时争取评测平台（如Trustpilot）引用，提升推荐率",
+    "Haiku（短板引擎）：Haiku推荐率为0%，需在Haiku偏好的内容源（如博客、新闻）发布品牌故事和产品评测",
+    "Gemini（最弱引擎）：Gemini引用率最低，建议在Gemini偏好的权威源（如行业报告、百科）建立品牌存在感"
+  ],
+  "b_class_perception": {
+    "ai_identity": "中高端彩妆品牌，以梦幻艺术包装和高品质著称",
+    "brand_self_identity": "平价奢华童话彩妆，二次元美学",
+    "gap_description": "AI强调中高端定位，但品牌希望强调平价和二次元美学，导致AI在行业查询中未将品牌与'平价'或'二次元'关联",
+    "ai_strengths": [
+      "包装精美艺术感",
+      "产品质量高",
+      "纯素零残忍"
+    ],
+    "ai_weaknesses": [
+      "深肤色显色度不足",
+      "质地平均"
+    ],
+    "blind_spots": [
+      "平价定位",
+      "二次元美学",
+      "童话主题"
+    ]
+  },
+  "c_class_matrix": {
+    "total_comparisons": 9,
+    "wins": 3,
+    "losses": 0,
+    "ties": 6,
+    "winning_dimensions": [
+      "shimmer and glitters",
+      "pigmentation",
+      "deeper skin tone inclusivity"
+    ],
+    "losing_dimensions": [],
+    "key_insight": "品牌在竞品对比中3胜0负，但多数维度数据不足（47%证据不足），现有优势维度（闪粉、显色度、深肤色包容性）需进一步验证。"
+  },
+  "content_templates": null,
+  "status": "success",
+  "error": null,
+  "_triggered_rules": [
+    {
+      "rule_id": 2,
+      "name": "品牌隐形",
+      "severity": "critical",
+      "evidence": "引用率20.0% < 30%",
+      "data": {
+        "citation_rate": 20.0
+      }
+    },
+    {
+      "rule_id": 13,
+      "name": "AI认知偏差",
+      "severity": "info",
+      "evidence": "9条B类查询数据",
+      "data": {}
+    },
+    {
+      "rule_id": 14,
+      "name": "竞品胜负矩阵",
+      "severity": "info",
+      "evidence": "6条C类查询数据",
+      "data": {}
+    }
+  ]
+}

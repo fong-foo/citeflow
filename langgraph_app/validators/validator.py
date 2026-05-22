@@ -1,5 +1,23 @@
 # validator.py — 通用节点输出验证器
-# Phase 1: 基础结构验证，不依赖具体 Pydantic Model
+# Phase 1: 基础结构验证 + Phase 3: Pydantic Model 验证 + LLM 重试
+
+from pydantic import BaseModel, ValidationError
+
+
+def validate_llm_output(raw_json: dict, expected_model: type[BaseModel], node_name: str) -> dict:
+    """验证 LLM 返回的 JSON 是否符合 Pydantic Model。
+
+    Returns: {"valid": bool, "errors": list[str], "parsed": BaseModel|None}
+    """
+    try:
+        parsed = expected_model(**raw_json)
+        return {"valid": True, "errors": [], "parsed": parsed}
+    except ValidationError as e:
+        errors = []
+        for err in e.errors():
+            field = " → ".join(str(loc) for loc in err["loc"])
+            errors.append(f"{field}: {err['msg']} (got: {err.get('input', 'N/A')})")
+        return {"valid": False, "errors": errors, "parsed": None}
 
 
 def validate_node_output(node_name: str, output: dict, expected_model=None) -> dict:

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ScanDiagnosisSummary } from "@/components/scan-diagnosis-summary";
 import { ScanPrescriptionSteps } from "@/components/scan-prescription-steps";
 import { ScanCompetitorChart, type ChartLine } from "@/components/scan-competitor-chart";
@@ -19,7 +19,8 @@ interface Props {
   brandName: string;
   lastScanTime: string;
   onViewReport: () => void;
-  onUpgrade: () => void;
+  onUpgrade: (feature?: "probe" | "analyst" | "doctor") => void;
+  onNavigateToStep?: (step: "analyst" | "doctor") => void;
 }
 
 const STEPS = [
@@ -27,6 +28,42 @@ const STEPS = [
   { id: "probe", label: "Probe 侦察兵" },
   { id: "analyst", label: "Analyst 诊断师" },
   { id: "doctor", label: "Doctor 处方" },
+];
+
+const DASH_NAV_GROUPS = [
+  {
+    id: "overview",
+    label: "品牌概览",
+    items: [
+      { id: "dash-score", label: "综合评分" },
+      { id: "dash-citation", label: "引用率分析" },
+      { id: "dash-competitors", label: "竞品对比" },
+    ],
+  },
+  {
+    id: "ai-cognition",
+    label: "AI认知",
+    items: [
+      { id: "dash-perception", label: "AI认知画像" },
+      { id: "dash-engines", label: "引擎对比" },
+      { id: "dash-gap", label: "认知差距" },
+      { id: "dash-sources", label: "引用来源分析" },
+    ],
+  },
+  {
+    id: "data-insight",
+    label: "数据洞察",
+    items: [
+      { id: "dash-comp-dimension", label: "竞品维度对比" },
+      { id: "dash-diagnosis", label: "品牌诊断" },
+      { id: "dash-progress", label: "体检进度" },
+    ],
+  },
+];
+
+const DASH_PRODUCTS = [
+  { id: "dash-analyst", label: "Analyst 诊断师", icon: "📊" },
+  { id: "dash-doctor", label: "Doctor 处方", icon: "💊" },
 ];
 
 // Mock data for locked diagnosis — shows what users would see if they upgrade
@@ -446,7 +483,7 @@ function CompetitorDimensionComparison({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.32 }}
-      className="px-7 py-7 flex-shrink-0"
+      className="px-7 py-7 flex-shrink-0 min-w-0"
       style={{
         background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%)",
         border: "1px solid rgba(255,255,255,0.06)",
@@ -539,7 +576,7 @@ function BrandDiagnosis({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.34 }}
-      className="px-7 py-7 flex-shrink-0"
+      className="px-7 py-7 flex-shrink-0 min-w-0"
       style={{
         background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%)",
         border: "1px solid rgba(255,255,255,0.06)",
@@ -651,7 +688,7 @@ function SourceAuthoritySection({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.36 }}
-      className="px-7 py-7 flex-shrink-0"
+      className="px-7 py-7 flex-shrink-0 min-w-0"
       style={{
         background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%)",
         border: "1px solid rgba(255,255,255,0.06)",
@@ -708,11 +745,11 @@ function SourceAuthoritySection({
   );
 }
 
-export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTime, onViewReport, onUpgrade }: Props) {
+export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTime, onViewReport, onUpgrade, onNavigateToStep }: Props) {
   const isFree = tier === "free";
   const isProbe = tier === "probe";
   const isFull = tier === "full";
-  const probe = data?.probe || {};
+  const probe = data?.probe || data || {};
 
   // ── Preview modal state ──
   const [previewModule, setPreviewModule] = useState<PreviewModule | null>(null);
@@ -739,6 +776,15 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           label: "品牌定位",
           value: bp.one_liner,
         } : undefined,
+        previewTemplate: {
+          type: "ai_perception",
+          data: {
+            aiDescription: "Flower Knows 是一个专注于环保手机壳的品牌，主打可持续生活方式，目标客户是关注环保的年轻消费者。",
+            idealDescription: "一个在AI搜索中被频繁引用的环保手机壳品牌，以创新设计和可持续材料著称，被推荐为环保消费者的首选。",
+            keywords: ["环保手机壳", "可持续", "生物降解", "创新设计", "年轻消费者"],
+            tone: "专业、环保、创新、年轻",
+          },
+        },
         price: "¥50/次",
         priceDetail: "包含：AI认知画像 + 引擎对比 + 认知差距",
       },
@@ -756,6 +802,17 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           label: "ChatGPT 行业引用率",
           value: `${safeNum(citation.industry_rate)}%`,
         } : undefined,
+        previewTemplate: {
+          type: "engine_comparison",
+          data: {
+            engines: [
+              { name: "ChatGPT", citationRate: 25, recommendationRate: 12, topSources: ["reddit.com", "amazon.com"] },
+              { name: "Gemini", citationRate: 20, recommendationRate: 10, topSources: ["trustpilot.com", "youtube.com"] },
+              { name: "Claude", citationRate: 22, recommendationRate: 11, topSources: ["reddit.com", "g2.com"] },
+            ],
+            insight: "ChatGPT 引用率最高，但推荐率偏低；Gemini 偏好评测平台；Claude 来源最均衡。",
+          },
+        },
         price: "¥50/次",
         priceDetail: "包含：AI认知画像 + 引擎对比 + 认知差距",
       },
@@ -769,6 +826,16 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           "改进建议",
         ],
         previewData: undefined,
+        previewTemplate: {
+          type: "gap_report",
+          data: {
+            alignmentScore: 45,
+            aligned: ["品牌定位清晰", "核心产品明确"],
+            misaligned: ["AI 认为你是'便宜货'，但你想做'高端环保'", "AI 没有提到你的设计优势"],
+            blindSpots: ["竞品在社交媒体上的提及率是你的3倍", "AI 搜索中几乎没有你的第三方评测"],
+            summary: "品牌自述与 AI 认知存在较大差距，主要在品牌定位和产品优势两个维度。",
+          },
+        },
         price: "¥50/次",
         priceDetail: "包含：AI认知画像 + 引擎对比 + 认知差距",
       },
@@ -834,6 +901,23 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           "一句话诊断",
         ],
         previewData: undefined,
+        previewTemplate: {
+          type: "diagnosis",
+          data: {
+            verdict: "AI引用率显著低于品类平均水平，竞品在推荐结果中占据主导位置。",
+            observation: "A类行业查询中品牌被引用率仅 25%，而竞品 Pela Case 达到 60%。",
+            explanation: "官网内容与AI搜索查询意图存在语义缺口，品牌信息未有效触达AI模型。",
+            implication: "若不修复，品牌在AI驱动的购买决策中将被竞品持续替代，市场份额逐步流失。",
+            losingDimensions: [
+              { dimension: "环保可持续", competitor: "Pela Case", gap: 25 },
+              { dimension: "品牌知名度", competitor: "Casetify", gap: 15 },
+            ],
+            winningDimensions: [
+              { dimension: "设计感", competitor: "Pela Case", gap: 10 },
+              { dimension: "性价比", competitor: "Casetify", gap: 20 },
+            ],
+          },
+        },
         price: "¥299/月",
         priceDetail: "包含：诊断报告 + 处方执行步骤",
       },
@@ -847,6 +931,47 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           "4类处方：技术优化 / 内容优化 / 权威建设 / 社区运营",
         ],
         previewData: undefined,
+        previewTemplate: {
+          type: "prescription",
+          data: {
+            summary: "基于诊断结果，我们为您生成了 3 个优先级任务，预计执行后引用率可提升 15-20%。",
+            items: [
+              {
+                priority: "P0",
+                category: "技术优化",
+                action: "优化官网产品页面",
+                targetPage: "/products",
+                whatToAdd: ["添加 Product 结构化数据", "优化 title 标签", "添加 meta description"],
+                expectedImpact: "A类引用率从 25% 提升至 35-40%",
+                evidence: "论文3，Section 2.1",
+                timeline: "1-2周",
+                difficulty: "中",
+              },
+              {
+                priority: "P1",
+                category: "权威建设",
+                action: "增加第三方评测",
+                targetPage: "Trustpilot, G2",
+                whatToAdd: ["邀请客户写评价", "回复所有评价", "展示评价在官网"],
+                expectedImpact: "推荐率从 12% 提升至 18-20%",
+                evidence: "论文7，Section 3.2",
+                timeline: "2-4周",
+                difficulty: "中",
+              },
+              {
+                priority: "P2",
+                category: "社区运营",
+                action: "Reddit/Quora 品牌提及",
+                targetPage: "Reddit, Quora",
+                whatToAdd: ["回答相关问题", "分享使用体验", "建立品牌社区"],
+                expectedImpact: "来源多样性从 0.6 提升至 0.8",
+                evidence: "论文12，Section 4.1",
+                timeline: "4-8周",
+                difficulty: "高",
+              },
+            ],
+          },
+        },
         price: "¥299/月",
         priceDetail: "包含：诊断报告 + 处方执行步骤",
       },
@@ -869,6 +994,12 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
 
   useEffect(() => {
     if (!domain) return;
+
+    // Probe 数据已包含 brand_profile，直接使用
+    if (probe?.brand_profile?.brand_name || probe?.brand_profile?.one_liner) {
+      setProfile(probe.brand_profile);
+      return;
+    }
 
     // 先读缓存
     try {
@@ -905,13 +1036,37 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
       .finally(() => setProfileLoading(false));
   }, [domain, brandName]);
 
+  // ── 侧导航 IntersectionObserver ──
+  const [dashActiveSection, setDashActiveSection] = useState(DASH_NAV_GROUPS[0].items[0].id);
+  const dashContentRef = useRef<HTMLDivElement>(null);
+
+  // ── 分组折叠状态 ──
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
+    new Set(DASH_NAV_GROUPS.map((g) => g.id))
+  );
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
+  };
+
+  const dashScrollTo = useCallback((id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      setDashActiveSection(id);
+    }
+  }, []);
+
   // ── Metrics ──
   const score = safeNum(probe?.company_score?.overall);
   const industryRate = safeNum(probe?.citation_metrics?.industry_rate);
   const recommendationRate = safeNum(probe?.citation_metrics?.recommendation_rate);
   const topRate = safeNum(probe?.citation_metrics?.top_rate);
   const competitors = probe?.competitor_mentions || [];
-  const top3 = competitors.slice(0, 3);
 
   // ── Full-only (Analyst + Doctor) ──
   const verdict = data?.one_line_verdict || "";
@@ -938,6 +1093,71 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
   const hasDiagnosis = !!(data?.diagnosis || data?.one_line_verdict);
   const hasPrescription = !!(data?.prescription && data.prescription.length > 0);
 
+  // ── Analyst / Doctor 解锁状态 ──
+  const isAnalystUnlocked = isFull && hasDiagnosis;
+  const isDoctorUnlocked = isFull && hasPrescription;
+
+  // ── 产品导航点击（Analyst / Doctor） ──
+  function handleProductNavClick(productId: string) {
+    if (productId === "dash-analyst") {
+      if (!isAnalystUnlocked) {
+        if (isFull) {
+          dashScrollTo("dash-analyst");
+        } else {
+          handleLockedModuleClick("diagnosis");
+        }
+      } else {
+        dashScrollTo("dash-analyst");
+      }
+    } else if (productId === "dash-doctor") {
+      if (!isDoctorUnlocked) {
+        if (isFull) {
+          dashScrollTo("dash-doctor");
+        } else {
+          handleLockedModuleClick("prescription");
+        }
+      } else {
+        dashScrollTo("dash-doctor");
+      }
+    }
+  }
+
+  // ── 侧导航 IntersectionObserver ──
+  useEffect(() => {
+    if (!dashContentRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length > 0) {
+          setDashActiveSection(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-15% 0px -65% 0px", threshold: 0 }
+    );
+
+    // 监听分组内的item（全部监听，这些始终可见）
+    DASH_NAV_GROUPS.forEach((group) => {
+      group.items.forEach((item) => {
+        const el = document.getElementById(item.id);
+        if (el) observer.observe(el);
+      });
+    });
+
+    // 只监听已解锁的 Analyst/Doctor
+    if (isAnalystUnlocked) {
+      const el = document.getElementById("dash-analyst");
+      if (el) observer.observe(el);
+    }
+    if (isDoctorUnlocked) {
+      const el = document.getElementById("dash-doctor");
+      if (el) observer.observe(el);
+    }
+
+    return () => observer.disconnect();
+  }, [probe, data, isAnalystUnlocked, isDoctorUnlocked]);
+
   // 体检进度
   const stepDoneMap: Record<string, boolean> = {
     input: true,
@@ -952,57 +1172,182 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
   const lightChartLabels = ["行业引用率", "推荐率", "Top率"];
 
   const totalMentions = competitors.reduce((sum: number, c: any) => sum + (c.mention_count || 0), 0);
-  const scenarioRate = totalMentions > 0
-    ? Math.round((competitors.find((c: any) => c.brand?.toLowerCase() === brandName?.toLowerCase())?.mention_count || 0) / totalMentions * 100)
-    : 0;
 
   const compColors = ["#F59E0B", "#EF4444", "#A855F7"];
 
   function buildChartLines(mode: "light" | "full"): { xLabels: string[]; lines: ChartLine[] } {
-    if (mode === "light") {
-      const userLine: ChartLine = {
-        label: brandName || "你的品牌",
-        color: "#38BDF8",
-        values: [industryRate, recommendationRate, topRate],
-      };
-      const mockOffsets = [[8, 12, -5], [-4, 18, 6], [11, -3, 14]];
-      const placeholderLines: ChartLine[] = top3.map((c: any, i: number) => ({
-        label: c.brand,
-        color: compColors[i],
-        dashed: true,
-        values: [industryRate, recommendationRate, topRate].map((base, j) =>
-          Math.max(0, Math.min(100, base + (mockOffsets[i]?.[j] ?? 0)))
-        ),
-      }));
-      return { xLabels: lightChartLabels, lines: [userLine, ...placeholderLines] };
-    }
+    const xLabels = mode === "light" ? lightChartLabels : fullChartLabels;
+
+    const userValues = mode === "light"
+      ? [industryRate, recommendationRate, topRate]
+      : [industryRate, recommendationRate, topRate, recommendationRate];
 
     const userLine: ChartLine = {
       label: brandName || "你的品牌",
       color: "#38BDF8",
-      values: [industryRate, recommendationRate, topRate, scenarioRate || recommendationRate],
+      values: userValues,
     };
-    const compLines: ChartLine[] = top3.map((c: any, i: number) => {
-      const share = totalMentions > 0 ? Math.round(((c.mention_count || 0) / totalMentions) * 100) : 0;
-      return {
-        label: c.brand,
-        color: compColors[i],
-        values: [
-          Math.min(100, Math.max(0, industryRate + [12, 5, -6][i]!)),
-          Math.min(100, Math.max(0, recommendationRate + [10, 22, -3][i]!)),
-          Math.min(100, Math.max(0, topRate + [15, 8, -6][i]!)),
-          share || Math.min(100, Math.max(0, recommendationRate + [8, 15, -4][i]!)),
-        ],
-      };
-    });
-    return { xLabels: fullChartLabels, lines: [userLine, ...compLines] };
+
+    const lines: ChartLine[] = [userLine];
+
+    // Add competitor lines from per-dimension competitor_metrics (populated by citation analyzer)
+    const compMetrics = probe?.citation_metrics?.competitor_metrics;
+    if (compMetrics && typeof compMetrics === "object") {
+      const compEntries = Object.entries(compMetrics) as [string, { industry_rate: number; recommendation_rate: number; top_rate: number }][];
+      compEntries.slice(0, 3).forEach(([compName, metrics], i) => {
+        if (metrics.industry_rate === undefined) return;
+        const values = mode === "light"
+          ? [metrics.industry_rate, metrics.recommendation_rate, metrics.top_rate]
+          : [metrics.industry_rate, metrics.recommendation_rate, metrics.top_rate, 0];
+        lines.push({
+          label: compName,
+          color: compColors[i % compColors.length],
+          values,
+        });
+      });
+    }
+
+    return { xLabels, lines };
   }
 
   const fullChart = buildChartLines("full");
   const lightChart = buildChartLines("light");
 
   return (
-    <div className="flex-1 flex flex-col gap-8 py-6" style={{ maxHeight: "calc(100vh - 40px)", overflowY: "auto" }}>
+    <div className="flex min-h-screen" style={{ background: "#0A0A0F" }}>
+      {/* 左侧固定导航 */}
+      <nav
+        className="fixed top-0 h-screen flex flex-col shrink-0 z-20"
+        style={{ left: 160, width: 116, background: "rgba(10,10,15,0.92)", paddingTop: "calc((100vh - 520px) / 2)", paddingBottom: "calc((100vh - 520px) / 2)" }}
+      >
+        {/* 右侧边线 */}
+        <div className="absolute right-0 top-0 bottom-0 w-px" style={{ background: "linear-gradient(180deg, transparent 5%, rgba(255,255,255,0.06) 15%, rgba(255,255,255,0.06) 85%, transparent 95%)" }} />
+
+        {/* 分组 + 折叠 */}
+        {DASH_NAV_GROUPS.map((group) => (
+          <div key={group.id} className="mb-2">
+            {/* 分组标题 */}
+            <button
+              onClick={() => toggleGroup(group.id)}
+              className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-mono tracking-wider uppercase"
+              style={{ color: "#5E5E78" }}
+            >
+              <span>{group.label}</span>
+              <motion.span
+                animate={{ rotate: expandedGroups.has(group.id) ? 0 : -90 }}
+                transition={{ duration: 0.2 }}
+                style={{ fontSize: 10, color: "#4A4A60" }}
+              >
+                ▾
+              </motion.span>
+            </button>
+
+            {/* 分组内 items */}
+            <AnimatePresence>
+              {expandedGroups.has(group.id) && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ overflow: "hidden" }}
+                >
+                  {group.items.map((item) => {
+                    const isActive = dashActiveSection === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => dashScrollTo(item.id)}
+                        className="w-full flex items-center gap-3 py-2.5 px-4 transition-all group relative"
+                      >
+                        {/* 活跃指示器 — 右侧竖条 */}
+                        <motion.div
+                          className="absolute right-0 w-0.5 rounded-l-full"
+                          animate={{
+                            height: isActive ? 28 : 0,
+                            background: isActive ? "#38BDF8" : "transparent",
+                            boxShadow: isActive ? "0 0 8px rgba(56,189,248,0.4)" : "none",
+                          }}
+                          transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                        />
+
+                        <span
+                          className="text-xs tracking-wide transition-all text-left leading-tight"
+                          style={{
+                            color: isActive ? "#D0D0E0" : "#4A4A60",
+                            opacity: isActive ? 1 : 0.4,
+                            fontWeight: isActive ? 500 : 400,
+                          }}
+                        >
+                          {item.label}
+                        </span>
+
+                        {!isActive && (
+                          <div
+                            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                            style={{ background: "radial-gradient(ellipse at right center, rgba(56,189,248,0.04) 0%, transparent 60%)" }}
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
+
+        {/* 分隔线 */}
+        <div className="mx-3 my-2 h-px" style={{ background: "rgba(255,255,255,0.06)" }} />
+
+        {/* 独立产品：Analyst / Doctor */}
+        {DASH_PRODUCTS.map((item) => {
+          const isActive = dashActiveSection === item.id;
+          const isUnlocked = item.id === "dash-analyst" ? isAnalystUnlocked : isDoctorUnlocked;
+          return (
+            <button
+              key={item.id}
+              onClick={() => handleProductNavClick(item.id)}
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 transition-all group relative"
+            >
+              {/* 图标 */}
+              <span className="text-sm shrink-0">{item.icon}</span>
+
+              {/* 标签 */}
+              <span
+                className="text-xs tracking-wide transition-all"
+                style={{
+                  color: isActive ? "#E8E8F0" : "#8A8AA0",
+                  fontWeight: isActive ? 500 : 400,
+                }}
+              >
+                {item.label}
+              </span>
+
+              {/* 状态图标 */}
+              {!isUnlocked && !isFull && (
+                <span className="ml-auto text-[10px]" style={{ color: "#4A4A60" }}>🔒</span>
+              )}
+              {!isUnlocked && isFull && (
+                <span className="ml-auto text-[10px]" style={{ color: "#60A5FA" }}>▶</span>
+              )}
+
+              {/* 活跃指示条 */}
+              {isActive && (
+                <motion.div
+                  className="absolute right-0 w-0.5 rounded-l-full"
+                  style={{ height: 28, background: "#38BDF8", boxShadow: "0 0 8px rgba(56,189,248,0.4)" }}
+                  layoutId="active-dash-bar"
+                  transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* 主内容区 — 可滚动 */}
+      <div ref={dashContentRef} className="flex-1 flex flex-col gap-8 py-6" style={{ overflowY: "auto", overflowX: "hidden", minWidth: 0, overflowWrap: "break-word", wordBreak: "break-word", paddingLeft: 140 }}>
 
       {/* ── Probe 未使用提醒 ── */}
       {!isFree && !hasFullData && (
@@ -1044,10 +1389,11 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           SECTION 1 — 综合评分卡 (Hero)
           ═══════════════════════════════════════════ */}
       <motion.section
+        id="dash-score"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.55, ease: [0.4, 0, 0.2, 1] }}
-        className="px-7 py-7 flex-shrink-0"
+        className="px-7 py-7 flex-shrink-0 min-w-0"
         style={{
           background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%)",
           border: "1px solid rgba(255,255,255,0.06)",
@@ -1161,10 +1507,11 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           SECTION 1.5 — 引用率分析
           ═══════════════════════════════════════════ */}
       <motion.section
+        id="dash-citation"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.15 }}
-        className="px-7 py-7 flex-shrink-0"
+        className="px-7 py-7 flex-shrink-0 min-w-0"
         style={{
           background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%)",
           border: "1px solid rgba(255,255,255,0.06)",
@@ -1230,21 +1577,106 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
       </motion.section>
 
       {/* SECTION 2 — 竞品对比折线图 */}
+      <div id="dash-competitors">
       {isFree ? (
         <ScanCompetitorChart xLabels={lightChart.xLabels} lines={lightChart.lines} />
       ) : (
         <ScanCompetitorChart xLabels={fullChart.xLabels} lines={fullChart.lines} />
       )}
+      </div>
+
+      {/* ═══════════════════════════════════════════
+          SECTION 2.5 — 竞品维度对比 (Probe产出)
+          ═══════════════════════════════════════════ */}
+      <div id="dash-comp-dimension">
+      {!isFree && hasFullData && competitorAnalysis && competitorAnalysis.length > 0 ? (
+        <CompetitorDimensionComparison
+          competitorAnalysis={competitorAnalysis}
+          brandName={brandName}
+        />
+      ) : !isFree && competitors.length > 0 ? (
+        /* 竞品对比管道未产出数据，但有 Haiku 提取的竞品提及 → 展示真实竞品概览 */
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.32 }}
+          className="px-7 py-7 flex-shrink-0 min-w-0"
+          style={{
+            background: "linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.008) 100%)",
+            border: "1px solid rgba(245,158,11,0.10)",
+          }}
+        >
+          <SectionLabel>竞品战场 · 提及概览</SectionLabel>
+          <p className="text-xs leading-relaxed mb-5" style={{ color: "#8A8AA0" }}>
+            Haiku 从搜索结果中识别到 {competitors.length} 个竞品，共 {totalMentions} 次提及。
+            详细维度对比需竞品搜索管道产出数据（当前搜索未命中对比文章）。
+          </p>
+          <div className="flex flex-col gap-2">
+            {competitors.slice(0, 8).map((c: any, i: number) => {
+              const pct = totalMentions > 0 ? Math.round(((c.mention_count || 0) / totalMentions) * 100) : 0;
+              return (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="text-xs font-medium w-[160px] shrink-0 truncate" style={{ color: "#C8C8D8" }}>
+                    {c.brand}
+                  </span>
+                  <div className="flex-1 h-5 relative rounded-sm overflow-hidden" style={{ background: "rgba(255,255,255,0.03)" }}>
+                    <motion.div
+                      className="absolute inset-y-0 left-0 rounded-sm"
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.max(pct, 2)}%` }}
+                      transition={{ duration: 0.6, delay: i * 0.08, ease: "easeOut" }}
+                      style={{
+                        background: `linear-gradient(90deg, ${compColors[i % 3]}33, ${compColors[i % 3]}88)`,
+                      }}
+                    />
+                    <span
+                      className="absolute inset-y-0 right-2 flex items-center text-[10px] font-mono"
+                      style={{ color: "rgba(255,255,255,0.30)" }}
+                    >
+                      {c.mention_count}次 · {pct}%
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-[10px] mt-4 font-mono" style={{ color: "rgba(255,255,255,0.12)" }}>
+            数据来源：搜索结果的竞品提及频次（Haiku 提取）· 非完整维度对比
+          </p>
+        </motion.section>
+      ) : !isFree ? (
+        <motion.section
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.32 }}
+          className="px-7 py-7 flex-shrink-0 min-w-0"
+          style={{
+            background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.005) 100%)",
+            border: "1px solid rgba(245,158,11,0.12)",
+          }}
+        >
+          <SectionLabel>竞品维度对比</SectionLabel>
+          <div className="flex items-center gap-3 py-6">
+            <span className="text-2xl">⚔️</span>
+            <div>
+              <p className="text-sm font-medium" style={{ color: "#9A9AB0" }}>等待竞品数据</p>
+              <p className="text-xs mt-0.5" style={{ color: "#5E5E78" }}>运行 Probe 侦察兵后，竞品维度对比将自动生成</p>
+            </div>
+          </div>
+        </motion.section>
+      ) : null}
+      </div>
 
       {/* ═══════════════════════════════════════════
           SECTION 3 — AI认知画像 (Probe产出)
           ═══════════════════════════════════════════ */}
+      <div id="dash-perception">
       {isFree ? (
         <LockedSection
           title="AI认知画像"
           description="AI怎么描述你的品牌、理想描述、关键词"
           lockPrice="¥50/次"
-          onUpgrade={onUpgrade}
+          onUpgrade={() => onUpgrade("probe")}
           onClick={() => handleLockedModuleClick("ai_perception")}
         >
           <div className="p-5 rounded-sm" style={{ background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.04)" }}>
@@ -1264,7 +1696,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="px-7 py-7 flex-shrink-0"
+          className="px-7 py-7 flex-shrink-0 min-w-0"
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%)",
             border: "1px solid rgba(255,255,255,0.06)",
@@ -1320,7 +1752,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="px-7 py-7 flex-shrink-0"
+          className="px-7 py-7 flex-shrink-0 min-w-0"
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.005) 100%)",
             border: "1px solid rgba(245,158,11,0.12)",
@@ -1340,16 +1772,18 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           </div>
         </motion.section>
       )}
+      </div>
 
       {/* ═══════════════════════════════════════════
           SECTION 4 — 引擎对比 (Probe产出)
           ═══════════════════════════════════════════ */}
+      <div id="dash-engines">
       {isFree ? (
         <LockedSection
           title="引擎对比"
           description="ChatGPT/Gemini/Claude三引擎交叉验证"
           lockPrice="¥50/次"
-          onUpgrade={onUpgrade}
+          onUpgrade={() => onUpgrade("probe")}
           onClick={() => handleLockedModuleClick("engine_comparison")}
         >
           <div className="grid grid-cols-3 gap-4 p-2">
@@ -1377,7 +1811,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
-          className="px-7 py-7 flex-shrink-0"
+          className="px-7 py-7 flex-shrink-0 min-w-0"
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%)",
             border: "1px solid rgba(255,255,255,0.06)",
@@ -1425,7 +1859,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
-          className="px-7 py-7 flex-shrink-0"
+          className="px-7 py-7 flex-shrink-0 min-w-0"
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.005) 100%)",
             border: "1px solid rgba(245,158,11,0.12)",
@@ -1445,16 +1879,18 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           </div>
         </motion.section>
       )}
+      </div>
 
       {/* ═══════════════════════════════════════════
           SECTION 5 — 认知差距 (Probe产出)
           ═══════════════════════════════════════════ */}
+      <div id="dash-gap">
       {isFree ? (
         <LockedSection
           title="认知差距"
           description="品牌自述 vs AI认知的差距分析"
           lockPrice="¥50/次"
-          onUpgrade={onUpgrade}
+          onUpgrade={() => onUpgrade("probe")}
           onClick={() => handleLockedModuleClick("gap_report")}
         >
           <div className="p-5 rounded-sm" style={{ background: "rgba(255,255,255,0.015)", border: "1px solid rgba(255,255,255,0.04)" }}>
@@ -1473,7 +1909,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="px-7 py-7 flex-shrink-0"
+          className="px-7 py-7 flex-shrink-0 min-w-0"
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%)",
             border: "1px solid rgba(255,255,255,0.06)",
@@ -1515,7 +1951,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="px-7 py-7 flex-shrink-0"
+          className="px-7 py-7 flex-shrink-0 min-w-0"
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.005) 100%)",
             border: "1px solid rgba(245,158,11,0.12)",
@@ -1535,40 +1971,12 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           </div>
         </motion.section>
       )}
-
-      {/* ═══════════════════════════════════════════
-          SECTION 5.1 — 竞品维度对比 (Probe产出)
-          ═══════════════════════════════════════════ */}
-      {!isFree && hasFullData && competitorAnalysis && competitorAnalysis.length > 0 ? (
-        <CompetitorDimensionComparison
-          competitorAnalysis={competitorAnalysis}
-          brandName={brandName}
-        />
-      ) : !isFree ? (
-        <motion.section
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.32 }}
-          className="px-7 py-7 flex-shrink-0"
-          style={{
-            background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.005) 100%)",
-            border: "1px solid rgba(245,158,11,0.12)",
-          }}
-        >
-          <SectionLabel>竞品维度对比</SectionLabel>
-          <div className="flex items-center gap-3 py-6">
-            <span className="text-2xl">⚔️</span>
-            <div>
-              <p className="text-sm font-medium" style={{ color: "#9A9AB0" }}>等待竞品数据</p>
-              <p className="text-xs mt-0.5" style={{ color: "#5E5E78" }}>运行 Probe 侦察兵后，竞品维度对比将自动生成</p>
-            </div>
-          </div>
-        </motion.section>
-      ) : null}
+      </div>
 
       {/* ═══════════════════════════════════════════
           SECTION 5.2 — 品牌诊断 (Probe产出)
           ═══════════════════════════════════════════ */}
+      <div id="dash-diagnosis">
       {!isFree && hasFullData && companyEvaluation ? (
         <BrandDiagnosis companyEvaluation={companyEvaluation} />
       ) : !isFree ? (
@@ -1576,7 +1984,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.34 }}
-          className="px-7 py-7 flex-shrink-0"
+          className="px-7 py-7 flex-shrink-0 min-w-0"
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.005) 100%)",
             border: "1px solid rgba(245,158,11,0.12)",
@@ -1592,10 +2000,12 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           </div>
         </motion.section>
       ) : null}
+      </div>
 
       {/* ═══════════════════════════════════════════
           SECTION 5.3 — 引用来源分析 (Probe产出)
           ═══════════════════════════════════════════ */}
+      <div id="dash-sources">
       {!isFree && hasFullData && sourceAuthority ? (
         <SourceAuthoritySection sourceAuthority={sourceAuthority} />
       ) : !isFree ? (
@@ -1603,7 +2013,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.36 }}
-          className="px-7 py-7 flex-shrink-0"
+          className="px-7 py-7 flex-shrink-0 min-w-0"
           style={{
             background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.005) 100%)",
             border: "1px solid rgba(245,158,11,0.12)",
@@ -1619,67 +2029,107 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           </div>
         </motion.section>
       ) : null}
+      </div>
 
-      {/* SECTION 6 — 诊断摘要 */}
-      {isFull && hasDiagnosis ? (
-        <ScanDiagnosisSummary
-          diagnosis={diagnosis}
-          threeLayerChain={threeLayer}
-          competitorGap={competitorGap}
-          alignmentScore={alignmentScore}
-          alignmentSummary={alignmentSummary}
-          verdict={verdict}
-        />
-      ) : (
-        <LockedSection
-          title={isProbe ? "升级解锁 Analyst 诊断报告" : "升级解锁完整诊断"}
-          description="14条自研规则逐条诊断，定位根因，对比竞品差距"
-          lockPrice="¥299/月"
-          onUpgrade={onUpgrade}
-          onClick={() => handleLockedModuleClick("diagnosis")}
-        >
+      {/* Analyst 诊断摘要 */}
+      <div id="dash-analyst">
+        {isFull && hasDiagnosis ? (
           <ScanDiagnosisSummary
-            diagnosis={LOCKED_DIAGNOSIS.diagnosis}
-            threeLayerChain={LOCKED_DIAGNOSIS.threeLayerChain}
-            competitorGap={LOCKED_DIAGNOSIS.competitorGap}
-            alignmentScore={LOCKED_DIAGNOSIS.alignmentScore}
-            alignmentSummary={LOCKED_DIAGNOSIS.alignmentSummary}
-            verdict={LOCKED_DIAGNOSIS.verdict}
+            diagnosis={diagnosis}
+            threeLayerChain={threeLayer}
+            competitorGap={competitorGap}
+            alignmentScore={alignmentScore}
+            alignmentSummary={alignmentSummary}
+            verdict={verdict}
           />
-        </LockedSection>
-      )}
+        ) : isFull ? (
+          /* Full 用户但无诊断数据 → 引导运行 Analyst */
+          <div
+            onClick={() => onNavigateToStep?.("analyst")}
+            className="cursor-pointer px-7 py-10 text-center rounded-xl transition-all duration-300 hover:brightness-110"
+            style={{
+              background: "linear-gradient(180deg, rgba(59,130,246,0.03) 0%, rgba(59,130,246,0.008) 100%)",
+              border: "1px dashed rgba(59,130,246,0.18)",
+            }}
+          >
+            <p className="text-sm font-medium mb-1" style={{ color: "#93C5FD" }}>运行 Analyst 诊断</p>
+            <p className="text-xs mb-4" style={{ color: "#6A6A82" }}>14条自研规则逐条诊断，定位根因，对比竞品差距</p>
+            <span className="inline-block px-4 py-2 text-xs font-semibold rounded-lg transition-all"
+              style={{ background: "rgba(59,130,246,0.14)", border: "1px solid rgba(59,130,246,0.25)", color: "#7DD3FC" }}>
+              开始诊断 →
+            </span>
+          </div>
+        ) : (
+          <LockedSection
+            title={isProbe ? "升级解锁 Analyst 诊断报告" : "升级解锁完整诊断"}
+            description="14条自研规则逐条诊断，定位根因，对比竞品差距"
+            lockPrice="¥299/月"
+            onUpgrade={() => onUpgrade("analyst")}
+            onClick={() => handleLockedModuleClick("diagnosis")}
+          >
+            <ScanDiagnosisSummary
+              diagnosis={LOCKED_DIAGNOSIS.diagnosis}
+              threeLayerChain={LOCKED_DIAGNOSIS.threeLayerChain}
+              competitorGap={LOCKED_DIAGNOSIS.competitorGap}
+              alignmentScore={LOCKED_DIAGNOSIS.alignmentScore}
+              alignmentSummary={LOCKED_DIAGNOSIS.alignmentSummary}
+              verdict={LOCKED_DIAGNOSIS.verdict}
+            />
+          </LockedSection>
+        )}
+      </div>
 
-      {/* SECTION 4 — 处方执行步骤 */}
-      {isFull && hasPrescription && prescription.length > 0 ? (
-        <ScanPrescriptionSteps
-          prescription={prescription}
-          summary={prescriptionSummary}
-          domain={domain}
-        />
-      ) : (
-        <LockedSection
-          title={isProbe ? "升级解锁 Doctor 处方" : "升级解锁完整处方"}
-          description="获取 P0/P1/P2 任务清单，精确到页面和操作步骤，逐个执行提升 AI 引用率"
-          lockPrice="¥299/月"
-          onUpgrade={onUpgrade}
-          onClick={() => handleLockedModuleClick("prescription")}
-        >
+      {/* Doctor 处方执行 */}
+      <div id="dash-doctor">
+        {isFull && hasPrescription && prescription.length > 0 ? (
           <ScanPrescriptionSteps
-            prescription={LOCKED_PRESCRIPTION}
-            summary={LOCKED_RX_SUMMARY}
+            prescription={prescription}
+            summary={prescriptionSummary}
             domain={domain}
           />
-        </LockedSection>
-      )}
+        ) : isFull ? (
+          /* Full 用户但无处方数据 → 引导运行 Doctor */
+          <div
+            onClick={() => onNavigateToStep?.("doctor")}
+            className="cursor-pointer px-7 py-10 text-center rounded-xl transition-all duration-300 hover:brightness-110"
+            style={{
+              background: "linear-gradient(180deg, rgba(59,130,246,0.03) 0%, rgba(59,130,246,0.008) 100%)",
+              border: "1px dashed rgba(59,130,246,0.18)",
+            }}
+          >
+            <p className="text-sm font-medium mb-1" style={{ color: "#93C5FD" }}>运行 Doctor 处方</p>
+            <p className="text-xs mb-4" style={{ color: "#6A6A82" }}>获取 P0/P1/P2 任务清单，精确到页面和操作步骤</p>
+            <span className="inline-block px-4 py-2 text-xs font-semibold rounded-lg transition-all"
+              style={{ background: "rgba(59,130,246,0.14)", border: "1px solid rgba(59,130,246,0.25)", color: "#7DD3FC" }}>
+              生成处方 →
+            </span>
+          </div>
+        ) : (
+          <LockedSection
+            title={isProbe ? "升级解锁 Doctor 处方" : "升级解锁完整处方"}
+            description="获取 P0/P1/P2 任务清单，精确到页面和操作步骤，逐个执行提升 AI 引用率"
+            lockPrice="¥299/月"
+            onUpgrade={() => onUpgrade("doctor")}
+            onClick={() => handleLockedModuleClick("prescription")}
+          >
+            <ScanPrescriptionSteps
+              prescription={LOCKED_PRESCRIPTION}
+              summary={LOCKED_RX_SUMMARY}
+              domain={domain}
+            />
+          </LockedSection>
+        )}
+      </div>
 
       {/* ═══════════════════════════════════════════
           SECTION 5 — 体检进度
           ═══════════════════════════════════════════ */}
       <motion.section
+        id="dash-progress"
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
-        className="px-7 py-7 flex-shrink-0"
+        className="px-7 py-7 flex-shrink-0 min-w-0"
         style={{
           background: "linear-gradient(180deg, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.005) 100%)",
           border: "1px solid rgba(255,255,255,0.04)",
@@ -1753,13 +2203,13 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
         )}
       </motion.section>
 
-      {/* SECTION 6 — 付费能力预告 (free + probe only; full users don't see this) */}
+      {/* SECTION 7 — 付费能力预告 (free + probe only; full users don't see this) */}
       {!isFull && (
         <motion.section
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.28, ease: [0.4, 0, 0.2, 1] }}
-          className="px-7 py-7 flex-shrink-0"
+          className="px-7 py-7 flex-shrink-0 min-w-0"
           style={{
             background: isProbe
               ? "linear-gradient(180deg, rgba(34,197,94,0.025) 0%, rgba(34,197,94,0.005) 100%)"
@@ -1775,14 +2225,14 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
             /* ── Free user: 4 cards ── */
             <div className="grid grid-cols-4 gap-4 mb-6">
               <UnlockCard icon="✅" title="Probe 免费版" desc="初步体检" detail="单引擎·限A类" unlocked />
-              <UnlockCard icon="🔒" title="Probe 完整版" desc="满血侦察兵" detail="4引擎·全查询·竞品" />
+              <UnlockCard icon="🔒" title="Probe 完整版" desc="满血侦察兵" detail="3引擎·全查询·竞品" />
               <UnlockCard icon="🔒" title="Analyst" desc="完整诊断" detail="14条规则" />
               <UnlockCard icon="🔒" title="Doctor" desc="处方执行" detail="P0/P1/P2" />
             </div>
           ) : (
             /* ── Probe user: 3 cards ── */
             <div className="grid grid-cols-3 gap-4 mb-6">
-              <UnlockCard icon="✅" title="Probe 完整版" desc="满血侦察兵" detail="4引擎·全查询·竞品" unlocked />
+              <UnlockCard icon="✅" title="Probe 完整版" desc="满血侦察兵" detail="3引擎·全查询·竞品" unlocked />
               <UnlockCard icon="🔒" title="Analyst" desc="完整诊断" detail="14条规则" />
               <UnlockCard icon="🔒" title="Doctor" desc="处方执行" detail="P0/P1/P2" />
             </div>
@@ -1812,7 +2262,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
               scale: 1.01,
             }}
             whileTap={{ scale: 0.99 }}
-            onClick={onUpgrade}
+            onClick={() => onUpgrade(isFree ? "probe" : "analyst")}
           >
             {isFree ? "升级解锁 Probe 侦察兵 · ¥50/次" : "升级解锁全套诊断 · ¥299/月"}
           </motion.button>
@@ -1825,12 +2275,20 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           isOpen={showPreview}
           onClose={() => setShowPreview(false)}
           onUpgrade={() => {
+            const featureMap: Record<string, "probe" | "analyst" | "doctor"> = {
+              "ai_perception": "probe",
+              "engine_comparison": "probe",
+              "gap_report": "probe",
+              "diagnosis": "analyst",
+              "prescription": "doctor",
+            };
             setShowPreview(false);
-            onUpgrade();
+            onUpgrade(featureMap[previewModule?.id || ""] || "probe");
           }}
           module={previewModule}
         />
       )}
+    </div>
     </div>
   );
 }

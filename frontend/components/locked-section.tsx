@@ -17,31 +17,34 @@ export function LockedSection({ title, description, children, lockPrice, onUpgra
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      className="px-7 py-7 flex-shrink-0 min-w-0"
       style={{
         position: "relative",
-        marginBottom: 32,
         overflow: "hidden",
-        flexShrink: 0,
         cursor: onClick ? "pointer" : "default",
+        width: "100%",
+        background: "linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%)",
+        border: "1px solid rgba(255,255,255,0.05)",
       }}
       onClick={onClick}
-      whileHover={onClick ? { borderColor: "rgba(245,158,11,0.25)" } : undefined}
     >
-      {/* Blurred content area */}
+      {/* Blurred content area — fills the box, content centered */}
       <div
         style={{
           filter: "blur(8px)",
           opacity: 0.22,
           pointerEvents: "none",
           userSelect: "none",
+          wordBreak: "break-word",
+          overflowWrap: "break-word",
         }}
       >
         {children || (
-          <div style={{ height: 128, background: "rgba(255,255,255,0.02)" }} />
+          <div style={{ height: 128 }} />
         )}
       </div>
 
-      {/* Lock overlay */}
+      {/* Lock overlay — centered on the box */}
       <div
         style={{
           position: "absolute",

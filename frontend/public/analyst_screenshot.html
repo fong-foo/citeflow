@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:480px;height:320px;font-family:'Inter',-apple-system,sans-serif;background:#0A0A0F;color:#EDEDF5;overflow:hidden}
+.head{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
+.head-dot{width:8px;height:8px;border-radius:50%}
+.head-title{font-size:12px;color:#5E5E78;font-family:'JetBrains Mono',monospace;letter-spacing:0.5px}
+.body{padding:16px 18px}
+.verdict{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:11px;color:#f59e0b;line-height:1.5}
+.issue{margin-bottom:10px;display:flex;gap:10px;align-items:flex-start}
+.issue-badge{min-width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.issue-badge.p0{background:rgba(239,68,68,0.15);color:#ef4444}.issue-badge.p1{background:rgba(245,158,11,0.15);color:#f59e0b}
+.issue-text{font-size:11px;color:#9A9AB0;line-height:1.5}
+.gap-bar{display:flex;align-items:center;gap:8px;margin-top:12px}
+.gap-label{font-size:9px;color:#5E5E78;font-family:'JetBrains Mono',monospace;min-width:50px}
+.gap-track{flex:1;height:4px;background:#131318;border-radius:2px;overflow:hidden}
+.gap-fill{height:100%;border-radius:2px}
+.gap-pct{font-size:9px;font-family:'JetBrains Mono',monospace;min-width:36px;text-align:right}
+</style></head><body>
+<div class="head">
+  <div class="head-dot" style="background:#FF5F56"></div><div class="head-dot" style="background:#FFBD2E"></div><div class="head-dot" style="background:#27C93F"></div>
+  <div class="head-title">ANALYST REPORT · UGREEN.COM</div>
+</div>
+<div class="body">
+  <div class="verdict">⚠ 根因诊断：品牌缺乏权威第三方内容背书 + 结构化数据缺失，导致 AI 引用率远低于竞品</div>
+  <div class="issue"><div class="issue-badge p0">P0</div><div class="issue-text"><b style="color:#EDEDF5">结构化数据缺失</b><br>网站无 FAQPage、Product、Organization Schema，AI 无法结构化理解内容</div></div>
+  <div class="issue"><div class="issue-badge p0">P0</div><div class="issue-text"><b style="color:#EDEDF5">竞品差距显著</b><br>Anker 在 5 个维度全面领先，尤其在 Trust（信任力）差距最大</div></div>
+  <div class="issue"><div class="issue-badge p1">P1</div><div class="issue-text"><b style="color:#EDEDF5">品牌定位模糊</b><br>AI 描述缺乏差异化关键词，与竞品 Anker 混淆度高</div></div>
+  <div class="gap-bar"><span class="gap-label">UGREEN</span><div class="gap-track"><div class="gap-fill" style="width:20%;background:#ef4444"></div></div><span class="gap-pct" style="color:#ef4444">20%</span></div>
+  <div class="gap-bar"><span class="gap-label">Anker</span><div class="gap-track"><div class="gap-fill" style="width:73%;background:#22c55e"></div></div><span class="gap-pct" style="color:#22c55e">73%</span></div>
+</div>
+</body></html>

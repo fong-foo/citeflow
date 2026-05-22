@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CiteFlow — Flower Knows AI 引用体检报告</title>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root {
+  --bg-root: #0A0A0F;
+  --bg-card: #131318;
+  --border: #222228;
+  --text-primary: #EDEDEF;
+  --text-secondary: #8B8B90;
+  --text-muted: #5B5B60;
+  --accent: #3B82F6;
+  --accent-glow: #60A5FA;
+  --accent-dim: #1E3A5F;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --radius-card: 12px;
+  --radius-btn: 8px;
+  --radius-full: 9999px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg-root);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.page {
+  display: flex;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 40px 40px 80px;
+  gap: 40px;
+}
+.main { flex: 1; min-width: 0; }
+
+/* ── Header ──────────────────────────────── */
+.header {
+  text-align: center;
+  padding: 48px 0 36px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.header h1 {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.5px; color: #fff;
+}
+.header h1 span { color: var(--accent); }
+.header .sub {
+  margin-top: 8px; color: var(--text-secondary); font-size: 14px;
+}
+.header-metrics {
+  display: flex; justify-content: center; gap: 48px; margin-top: 24px;
+}
+.header-metric { text-align: center; }
+.header-metric-value {
+  font-size: 48px; font-weight: 700;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace; line-height: 1;
+}
+.header-metric-value.danger { color: var(--danger); }
+.header-metric-value.warning { color: var(--warning); }
+.header-metric-value.success { color: var(--success); }
+.header-metric-label {
+  font-size: 13px; color: var(--text-secondary); margin-top: 6px;
+}
+.header-verdict {
+  margin-top: 20px; padding: 12px 20px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent); border-radius: 8px;
+  color: var(--text-secondary); font-size: 14px; text-align: left;
+  max-width: 720px; margin-left: auto; margin-right: auto;
+}
+
+/* ── Cards ────────────────────────────────── */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-card); padding: 28px; margin-bottom: 20px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+  border-color: rgba(59,130,246,0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(59,130,246,0.06);
+}
+.card-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+.card-header h2 { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+.card-header .icon { color: var(--accent); width: 20px; height: 20px; }
+
+.section-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 6px;
+  background: var(--accent-dim); color: var(--accent-glow);
+  font-size: 12px; font-weight: 700;
+}
+
+/* ── Skeleton ─────────────────────────────── */
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+.skeleton {
+  background: rgba(255,255,255,0.04); border-radius: 6px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+.skeleton-line { height: 14px; margin-bottom: 10px; width: 100%; }
+.skeleton-line.short { width: 60%; }
+.skeleton-line.medium { width: 80%; }
+.skeleton-num { height: 56px; width: 100px; margin-bottom: 8px; border-radius: 8px; }
+.skeleton-block { height: 80px; margin-bottom: 12px; }
+
+.card-content.loading .real-data { display: none; }
+.card-content.loading .skeleton-group { display: block; }
+.card-content.loaded .real-data { display: block; }
+.card-content.loaded .skeleton-group { display: none; }
+.skeleton-group { display: none; }
+.real-data { opacity: 0; transform: translateY(4px); transition: opacity 0.4s ease-out, transform 0.4s ease-out; }
+.card-content.loaded .real-data { opacity: 1; transform: translateY(0); }
+
+/* ── Dashboard ────────────────────────────── */
+.dashboard-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.dashboard-card {
+  background: var(--bg-root); border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px; text-align: center;
+}
+.dashboard-card .metric-value {
+  font-size: 48px; font-weight: 700;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace; line-height: 1; letter-spacing: -1px;
+}
+.dashboard-card .metric-value.glow {
+  color: var(--accent); text-shadow: 0 0 30px rgba(59,130,246,0.3);
+}
+.dashboard-card .metric-label { font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
+.dashboard-card .metric-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.dashboard-row { display: flex; gap: 20px; margin-top: 16px; flex-wrap: wrap; }
+.dashboard-stat {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text-secondary);
+}
+.dashboard-stat strong { color: var(--text-primary); }
+
+/* ── Score Bar ────────────────────────────── */
+.score-row {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+}
+.score-label {
+  width: 72px; font-size: 13px; font-weight: 600; color: var(--text-secondary); text-align: right;
+}
+.score-bar-wrap {
+  flex: 1; height: 22px; background: var(--bg-root); border-radius: 6px;
+  overflow: hidden; border: 1px solid var(--border);
+}
+.score-bar-fill { height: 100%; border-radius: 5px; transition: width 0.8s ease-out; }
+.score-value {
+  width: 48px; font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+}
+.score-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 2px; margin-left: 84px;
+}
+
+/* ── Competitor ───────────────────────────── */
+.comp-summary {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px;
+}
+.comp-stat {
+  text-align: center; padding: 16px; background: var(--bg-root);
+  border-radius: 10px; border: 1px solid var(--border);
+}
+.comp-stat .num { font-size: 32px; font-weight: 700; }
+.comp-stat .num.win { color: var(--success); }
+.comp-stat .num.lose { color: var(--danger); }
+.comp-stat .num.tie { color: var(--warning); }
+.comp-stat .lbl { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+.comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.comp-table th { text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border); color: var(--text-secondary); font-weight: 600; }
+.comp-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+.comp-table td.query { color: var(--text-primary); max-width: 280px; }
+.comp-table .winner-tag {
+  display: inline-block; padding: 2px 10px; border-radius: var(--radius-full);
+  font-size: 12px; font-weight: 600;
+}
+
+/* ── Tags ─────────────────────────────────── */
+.tag-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag {
+  display: inline-block; padding: 4px 12px; border-radius: var(--radius-full);
+  font-size: 12px; background: var(--bg-root); color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.tag.blue { background: var(--accent-dim); color: var(--accent-glow); border-color: transparent; }
+.tag.green { background: rgba(34,197,94,0.12); color: var(--success); border-color: transparent; }
+.tag.yellow { background: rgba(245,158,11,0.12); color: var(--warning); border-color: transparent; }
+.tag.red { background: rgba(239,68,68,0.12); color: var(--danger); border-color: transparent; }
+
+/* ── Grids ─────────────────────────────────── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+ul { list-style: none; padding: 0; }
+li { padding: 3px 0; color: var(--text-secondary); font-size: 14px; }
+li::before { content: "·"; color: var(--accent); margin-right: 8px; font-weight: 700; }
+
+/* ── Right Nav ────────────────────────────── */
+.nav {
+  position: sticky; top: 40px; width: 48px; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  padding-top: 60px;
+}
+.nav-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--border); cursor: pointer; transition: all 0.3s; position: relative;
+}
+.nav-dot:hover, .nav-dot.active {
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(59,130,246,0.5); transform: scale(1.3);
+}
+.nav-dot::after {
+  content: attr(data-label);
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  font-size: 11px; color: var(--text-secondary); white-space: nowrap;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none;
+}
+.nav-dot:hover::after, .nav-dot.active::after { opacity: 1; }
+
+/* ── Footer ────────────────────────────────── */
+.footer {
+  text-align: center; padding: 40px 0 20px; color: var(--text-muted); font-size: 13px;
+  border-top: 1px solid var(--border); margin-top: 20px;
+}
+.footer-row { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; }
+.footer-row span { color: var(--text-secondary); }
+.footer-row strong { color: var(--text-primary); }
+
+/* ── Replay Button ─────────────────────────── */
+.replay-wrap {
+  position: fixed; top: 20px; right: 20px; z-index: 100;
+}
+.btn-replay {
+  padding: 8px 18px; border-radius: var(--radius-btn); border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--text-secondary); cursor: pointer;
+  font-size: 13px; transition: all 0.2s;
+}
+.btn-replay:hover { border-color: var(--accent); color: var(--accent-glow); }
+
+/* ── Oneliner ──────────────────────────────── */
+.oneliner {
+  font-size: 16px; color: #fff; padding: 12px 0 12px 16px;
+  border-left: 3px solid var(--accent); margin-bottom: 16px;
+}
+
+/* ── Narrative ─────────────────────────────── */
+.narrative-box {
+  background: var(--bg-root); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px; font-size: 14px; line-height: 1.7;
+  color: var(--text-secondary); margin-bottom: 16px;
+}
+
+/* ── Source table ──────────────────────────── */
+.src-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.src-table th { text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--border); color: var(--text-secondary); font-weight: 600; }
+.src-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text-secondary); }
+
+/* ── Engine bars ───────────────────────────── */
+.engine-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.engine-label { width: 64px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.engine-bar-wrap { flex: 1; height: 20px; background: var(--bg-root); border-radius: 4px; overflow: hidden; }
+.engine-bar-fill { height: 100%; border-radius: 3px; }
+.engine-val { width: 56px; font-size: 13px; text-align: right; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+/* ── Sub-section divider ───────────────────── */
+.sub-section {
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+
+/* ── Responsive ────────────────────────────── */
+@media (max-width: 1024px) {
+  .nav { display: none; }
+  .page { padding: 20px; }
+  .dashboard-grid, .grid-3 { grid-template-columns: 1fr 1fr; }
+  .comp-summary { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="replay-wrap">
+  <button class="btn-replay" onclick="replayLoading()">重播加载</button>
+</div>
+
+<div class="page">
+  <nav class="nav" id="nav"></nav>
+
+  <main class="main">
+
+    <!-- ═══ Header ═══ -->
+    <div class="header">
+      <h1><span>Flower Knows</span> — AI 引用体检报告</h1>
+      <div class="sub">CiteFlow Probe · 2026-05-10 · 30个查询词 · 耗时 333s · Token 23,896</div>
+
+      <div class="header-metrics">
+        <div class="header-metric">
+          <div class="header-metric-value danger">0%</div>
+          <div class="header-metric-label">A类引用率</div>
+        </div>
+        <div class="header-metric">
+          <div class="header-metric-value warning">62</div>
+          <div class="header-metric-label">综合评分</div>
+        </div>
+        <div class="header-metric">
+          <div class="header-metric-value warning">警告</div>
+          <div class="header-metric-label">健康状态</div>
+        </div>
+      </div>
+
+      <div class="header-verdict">
+        包装美但产品力不被AI认可——先去零售平台积累评价，再靠行业报告让AI主动推荐你
+      </div>
+    </div>
+
+    <!-- ═══ 1. 品牌画像 ═══ -->
+    <section id="brand_profile" class="card">
+      <div class="card-header">
+        <span class="section-num">1</span>
+        <i data-lucide="building-2" class="icon"></i>
+        <h2>品牌画像</h2>
+        <span style="font-size:12px;color:var(--text-muted);margin-left:auto">从官网爬取 + AI 提炼</span>
+      </div>
+      <div class="card-content loaded">
+        <div class="skeleton-group">
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line medium"></div>
+          <div class="skeleton skeleton-block"></div>
+        </div>
+        <div class="real-data">
+          <div class="oneliner">花知晓：为 Gen-Z 女性打造的平价奢华童话彩妆，以动漫/可爱美学唤醒少女梦。</div>
+          <div class="grid-2">
+            <div>
+              <h4 style="color:var(--accent-glow);font-size:13px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">价值主张</h4>
+              <ul>
+                <li>以童话和动漫为灵感的梦幻包装，让化妆成为艺术享受</li>
+                <li>高品质彩妆产品，价格亲民，实现平价奢华体验</li>
+                <li>丰富的产品线覆盖眼影、唇妆、底妆等</li>
+                <li>定期推出限定系列和优惠活动，提升购物乐趣</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="color:var(--accent-glow);font-size:13px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">差异化</h4>
+              <ul>
+                <li>独特的童话与动漫美学设计，包装如艺术品</li>
+                <li>专注 Gen-Z 女性市场，通过梦幻主题和社交媒体互动建立情感连接</li>
+              </ul>
+              <h4 style="color:var(--accent-glow);font-size:13px;text-transform:uppercase;letter-spacing:0.5px;margin:16px 0 8px">目标客户</h4>
+              <ul>
+                <li>18-30岁 Gen-Z 女性，热爱二次元、动漫和可爱文化</li>
+                <li>注重产品颜值和仪式感的年轻消费者</li>
+              </ul>
+            </div>
+          </div>
+          <div style="margin-top:12px">
+            <span class="tag blue">彩妆</span>
+            <span class="tag blue">全球（美国、欧盟、日本、东南亚）</span>
+            <span class="tag blue">眼影盘、唇膏、腮红、高光</span>
+          </div>
+          <div class="tag-group" style="margin-top:12px">
+            <span class="tag">梦幻</span><span class="tag">可爱</span><span class="tag">浪漫</span><span class="tag">艺术</span><span class="tag">亲民</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 2. 引用率仪表盘 ═══ -->
+    <section id="citation_dashboard" class="card">
+      <div class="card-header">
+        <span class="section-num">2</span>
+        <i data-lucide="activity" class="icon"></i>
+        <h2>引用率仪表盘</h2>
+      </div>
+      <div class="card-content loaded">
+        <div class="skeleton-group">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+            <div class="skeleton skeleton-num"></div>
+            <div class="skeleton skeleton-num"></div>
+            <div class="skeleton skeleton-num"></div>
+          </div>
+        </div>
+        <div class="real-data">
+          <div class="dashboard-grid">
+            <div class="dashboard-card">
+              <div class="metric-value" style="color:var(--danger)">0.0%</div>
+              <div class="metric-label">A类 · 行业引用率</div>
+              <div class="metric-sub">0/14条行业查询被提及</div>
+            </div>
+            <div class="dashboard-card">
+              <div class="metric-value" style="color:var(--warning)">0.0%</div>
+              <div class="metric-label">推荐率</div>
+              <div class="metric-sub">AI 主动推荐的比例</div>
+            </div>
+            <div class="dashboard-card">
+              <div class="metric-value" style="color:var(--warning)">0.0%</div>
+              <div class="metric-label">Top1率</div>
+              <div class="metric-sub">被排在第一位的比例</div>
+            </div>
+          </div>
+          <div class="dashboard-row">
+            <div class="dashboard-stat">总查询 <strong>30</strong></div>
+            <div class="dashboard-stat">被提及 <strong>15</strong></div>
+            <div class="dashboard-stat">综合引用率 <strong>50.0%</strong></div>
+            <div class="dashboard-stat">官网引用占比 <strong>40%</strong></div>
+            <div class="dashboard-stat">第三方引用占比 <strong>60%</strong></div>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:12px">A类（行业通用查询）是评估 AI 引用率的唯一可靠指标。B 类、C 类数据见下方对应模块。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 3. 市场镜像 ═══ -->
+    <section id="market_perception" class="card">
+      <div class="card-header">
+        <span class="section-num">3</span>
+        <i data-lucide="eye" class="icon"></i>
+        <h2>市场镜像</h2>
+      </div>
+      <div class="card-content loaded">
+        <div class="skeleton-group">
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line medium"></div>
+          <div class="skeleton skeleton-block"></div>
+        </div>
+        <div class="real-data">
+          <p style="margin-bottom:16px;color:var(--text-secondary);font-size:14px"><strong style="color:#fff">AI 认为你是谁：</strong>一个以梦幻、精致包装和高品质化妆品著称的品牌，适合追求美学与功能平衡的消费者。</p>
+          <div class="grid-2">
+            <div>
+              <h4 style="color:var(--success);font-size:13px;margin-bottom:8px">AI 感知优势</h4>
+              <ul>
+                <li>包装精美、有艺术感</li>
+                <li>眼影质地丝滑、显色度好</li>
+                <li>性价比高，兼具奢华感和实惠价格</li>
+                <li>适合日常使用</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="color:var(--danger);font-size:13px;margin-bottom:8px">AI 感知劣势</h4>
+              <ul>
+                <li>眼影质地被评价为'平均'</li>
+                <li>未提及持久度或创新性</li>
+              </ul>
+              <h4 style="color:var(--accent-glow);font-size:13px;margin:12px 0 8px">AI 定位感知</h4>
+              <p style="font-size:13px;color:var(--text-secondary)">中高端平价品牌，挑战者/细分领域专家，非市场领导者</p>
+            </div>
+          </div>
+
+          <!-- B类数据 -->
+          <div class="sub-section">
+            <h4 style="color:var(--accent);font-size:13px;margin-bottom:8px">B类 · 品牌直接查询</h4>
+            <div class="dashboard-row">
+              <div class="dashboard-stat">B类查询数 <strong>9</strong></div>
+              <div class="dashboard-stat">被提及 <strong>8</strong></div>
+              <div class="dashboard-stat">B类引用率 <strong style="color:var(--success)">88.9%</strong></div>
+            </div>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:8px">B类引用率高是正常的（用户搜"Flower Knows review"当然会提到）。由 B 类查询生成的 AI 回答构成以上「AI 感知」的原始素材。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 4. 差距分析 ═══ -->
+    <section id="gap_analysis" class="card">
+      <div class="card-header">
+        <span class="section-num">4</span>
+        <i data-lucide="git-compare" class="icon"></i>
+        <h2>差距分析</h2>
+      </div>
+      <div class="card-content loaded">
+        <div class="skeleton-group">
+          <div class="skeleton skeleton-num"></div>
+          <div class="skeleton skeleton-line"></div>
+        </div>
+        <div class="real-data">
+          <div style="text-align:center;margin-bottom:16px">
+            <div style="font-size:56px;font-weight:700;color:var(--warning);font-family:'JetBrains Mono',monospace">70<span style="font-size:24px;color:var(--text-muted)">/100</span></div>
+            <div style="font-size:13px;color:var(--text-secondary)">品牌自述 vs AI 认知对齐分</div>
+          </div>
+          <p class="oneliner">AI 视你为梦幻精致、性价比高的彩妆品牌，但你想被看作专为 Gen-Z 女性打造的平价奢华童话彩妆。差距在于 AI 未充分捕捉你的 Gen-Z 目标群体和全球市场野心。</p>
+          <div class="grid-3">
+            <div><h4 style="color:var(--success);font-size:13px;margin-bottom:6px">已对齐</h4><ul><li>童话动漫美学为核心</li><li>产品线丰富</li><li>平价奢华定位</li><li>年轻女性消费者</li></ul></div>
+            <div><h4 style="color:var(--warning);font-size:13px;margin-bottom:6px">偏差</h4><ul><li>未提 Gen-Z 专属定位</li><li>AI 错误限定肤色</li><li>眼影质地评价分歧</li></ul></div>
+            <div><h4 style="color:var(--danger);font-size:13px;margin-bottom:6px">AI 盲区</h4><ul><li>限时促销和买赠活动</li><li>全球市场布局</li><li>化妆作为浪漫自我表达</li></ul></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 5. 量化评分 ═══ -->
+    <section id="company_score" class="card">
+      <div class="card-header">
+        <span class="section-num">5</span>
+        <i data-lucide="bar-chart-3" class="icon"></i>
+        <h2>量化评分</h2>
+      </div>
+      <div class="card-content loaded">
+        <div class="skeleton-group">
+          <div class="skeleton skeleton-num"></div>
+          <div class="skeleton skeleton-line"></div>
+        </div>
+        <div class="real-data">
+          <div style="display:flex;align-items:center;gap:24px;margin-bottom:20px">
+            <div style="font-size:56px;font-weight:700;color:var(--warning);font-family:'JetBrains Mono',monospace">62</div>
+            <div><div style="font-size:14px;color:var(--text-secondary)">综合评分</div><div style="font-size:12px;color:var(--text-muted)">行业：彩妆</div></div>
+          </div>
+          <div class="score-row">
+            <span class="score-label">品牌力</span>
+            <div class="score-bar-wrap"><div class="score-bar-fill" style="width:75%;background:var(--success)"></div></div>
+            <span class="score-value" style="color:var(--success)">75</span>
+          </div>
+          <span class="score-evidence">AI 认可梦幻包装和美学价值，但未明确 Gen-Z 专属定位</span>
+          <div class="score-row">
+            <span class="score-label">产品力</span>
+            <div class="score-bar-wrap"><div class="score-bar-fill" style="width:68%;background:var(--warning)"></div></div>
+            <span class="score-value" style="color:var(--warning)">68</span>
+          </div>
+          <span class="score-evidence">AI 称赞眼影质地丝滑显色，但指出质地可能不如竞品</span>
+          <div class="score-row">
+            <span class="score-label">内容力</span>
+            <div class="score-bar-wrap"><div class="score-bar-fill" style="width:55%;background:var(--warning)"></div></div>
+            <span class="score-value" style="color:var(--warning)">55</span>
+          </div>
+          <span class="score-evidence">引用率高但推荐率 0%，负面刷屏现象</span>
+          <div class="score-row">
+            <span class="score-label">技术力</span>
+            <div class="score-bar-wrap"><div class="score-bar-fill" style="width:60%;background:var(--warning)"></div></div>
+            <span class="score-value" style="color:var(--warning)">60</span>
+          </div>
+          <span class="score-evidence">AI 未提及技术壁垒或创新成分</span>
+          <div class="score-row">
+            <span class="score-label">市场力</span>
+            <div class="score-bar-wrap"><div class="score-bar-fill" style="width:50%;background:var(--danger)"></div></div>
+            <span class="score-value" style="color:var(--danger)">50</span>
+          </div>
+          <span class="score-evidence">未提及全球市场布局，未明确客户群体年龄和地区</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 6. 竞品矩阵 ═══ -->
+    <section id="competitor_matrix" class="card">
+      <div class="card-header">
+        <span class="section-num">6</span>
+        <i data-lucide="swords" class="icon"></i>
+        <h2>竞品矩阵</h2>
+      </div>
+      <div class="card-content loaded">
+        <div class="skeleton-group">
+          <div class="skeleton skeleton-block"></div>
+          <div class="skeleton skeleton-block"></div>
+        </div>
+        <div class="real-data">
+          <!-- C类数据 -->
+          <h4 style="color:var(--accent);font-size:13px;margin-bottom:8px">C类 · 竞品对比查询</h4>
+          <div class="dashboard-row" style="margin-bottom:16px">
+            <div class="dashboard-stat">C类查询数 <strong>7</strong></div>
+            <div class="dashboard-stat">被提及 <strong>7</strong></div>
+            <div class="dashboard-stat">C类引用率 <strong style="color:var(--success)">100%</strong></div>
+          </div>
+
+          <div class="comp-summary">
+            <div class="comp-stat"><div class="num win">2</div><div class="lbl">Flower Knows 胜出</div></div>
+            <div class="comp-stat"><div class="num lose">10</div><div class="lbl">竞品胜出</div></div>
+            <div class="comp-stat"><div class="num tie">0</div><div class="lbl">平局</div></div>
+          </div>
+          <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">共 12 场 AI 对比查询 · 维度总胜出：ColourPop 3次、Flower Knows 1次、Rom&nd 1次、Etude House 1次、Peripera 1次</p>
+          <table class="comp-table">
+            <thead><tr><th>查询场景</th><th>胜者</th><th>理由</th></tr></thead>
+            <tbody>
+              <tr><td class="query">Which has better color payoff for the price, ColourPop or Flower Knows?</td><td><span class="winner-tag" style="color:var(--danger);background:rgba(239,68,68,0.12)">ColourPop</span></td><td>ColourPop 性价比更高，显色度更优</td></tr>
+              <tr><td class="query">Between Rom&nd and Flower Knows, which brand has better eyeshadow for sensitive eyes?</td><td><span class="winner-tag" style="color:var(--danger);background:rgba(239,68,68,0.12)">Rom&nd</span></td><td>Rom&nd 在敏感肌友好度上信息更透明</td></tr>
+              <tr><td class="query">For a startup trying to launch a trendy makeup line, which brand positioning is better?</td><td><span class="winner-tag" style="color:var(--warning);background:rgba(245,158,11,0.12)">平局</span></td><td>双方均有优势维度，无明确胜者</td></tr>
+              <tr><td class="query">If you had to choose between Canmake and Rom&nd for a natural everyday look?</td><td><span class="winner-tag" style="color:var(--warning);background:rgba(245,158,11,0.12)">平局</span></td><td>各有适用场景，Canmake 适合办公室，Rom&nd 显色更强</td></tr>
+              <tr><td class="query">Which lip tint lasts longer, Peripera Ink Velvet or Etude House Fixing Tint?</td><td><span class="winner-tag" style="color:var(--danger);background:rgba(239,68,68,0.12)">Etude House</span></td><td>Etude House 持久度口碑更强</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 7. AI 推荐话术 ═══ -->
+    <section id="ai_narrative" class="card">
+      <div class="card-header">
+        <span class="section-num">7</span>
+        <i data-lucide="sparkles" class="icon"></i>
+        <h2>AI 推荐话术</h2>
+      </div>
+      <div class="card-content loaded">
+        <div class="skeleton-group">
+          <div class="skeleton skeleton-block"></div>
+        </div>
+        <div class="real-data">
+          <div class="narrative-box">花知晓（Flower Knows）是一个专为 Gen-Z 女性设计的平价奢华彩妆品牌，以童话和动漫美学为核心，将化妆转化为浪漫的自我表达。其产品线包括眼影盘、唇膏、腮红等，包装如艺术品，融合梦幻主题如兔子花园系列。品牌强调高品质与亲民价格，定期推出限时促销、买赠活动和神秘福袋，提升购物体验。花知晓面向全球市场（美国、欧盟、日本、东南亚），在 Ulta Beauty 和 Urban Outfitters 等主流零售商有售。</div>
+          <div class="grid-2">
+            <div>
+              <h4 style="color:var(--success);font-size:13px;margin-bottom:8px">必须包含的关键词</h4>
+              <div class="tag-group">
+                <span class="tag blue">花知晓</span><span class="tag blue">平价奢华</span><span class="tag blue">童话彩妆</span>
+                <span class="tag blue">Gen-Z 女性</span><span class="tag blue">眼影盘</span><span class="tag blue">动漫美学</span>
+                <span class="tag blue">限时促销</span><span class="tag blue">全球市场</span>
+              </div>
+            </div>
+            <div>
+              <h4 style="color:var(--danger);font-size:13px;margin-bottom:8px">禁忌话术（避免）</h4>
+              <ul>
+                <li>泛化目标人群为"追求美学与功能平衡的消费者"</li>
+                <li>错误限定肤色为"偏白和冷色调"</li>
+                <li>忽视全球市场布局</li>
+                <li>忽视限时促销和买赠活动</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 8. 引用源权威性 ═══ -->
+    <section id="source_authority" class="card">
+      <div class="card-header">
+        <span class="section-num">8</span>
+        <i data-lucide="link-2" class="icon"></i>
+        <h2>引用源权威性</h2>
+      </div>
+      <div class="card-content loaded">
+        <div class="skeleton-group">
+          <div class="skeleton skeleton-block"></div>
+        </div>
+        <div class="real-data">
+          <div class="dashboard-row" style="margin-bottom:16px">
+            <div class="dashboard-stat">总来源数 <strong>5</strong></div>
+            <div class="dashboard-stat">多样性指数 <strong>0.87</strong></div>
+          </div>
+          <table class="src-table">
+            <thead><tr><th>#</th><th>域名</th><th>类型</th><th>提及次数</th><th>权威分</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td><strong>flowerknows.co</strong></td><td><span class="tag blue">官网</span></td><td>6</td><td><span style="color:var(--warning);font-weight:600">55</span></td></tr>
+              <tr><td>2</td><td><strong>trustpilot.com</strong></td><td><span class="tag">评测平台</span></td><td>3</td><td><span style="color:var(--warning);font-weight:600">47</span></td></tr>
+              <tr><td>3</td><td><strong>reddit.com</strong></td><td><span class="tag">社区</span></td><td>4</td><td><span style="color:var(--warning);font-weight:600">45</span></td></tr>
+              <tr><td>4</td><td><strong>floatingindreams.com</strong></td><td><span class="tag">博客</span></td><td>1</td><td>31</td></tr>
+              <tr><td>5</td><td><strong>tiktok.com</strong></td><td><span class="tag">社交媒体</span></td><td>1</td><td>22</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 9. 三引擎对比 ═══ -->
+    <section id="engine_comparison" class="card">
+      <div class="card-header">
+        <span class="section-num">9</span>
+        <i data-lucide="cpu" class="icon"></i>
+        <h2>三引擎对比</h2>
+      </div>
+      <div class="card-content loaded">
+        <div class="skeleton-group">
+          <div class="skeleton skeleton-block"></div>
+        </div>
+        <div class="real-data">
+          <div style="margin-bottom:20px">
+            <div class="engine-row">
+              <span class="engine-label">GPT</span>
+              <div class="engine-bar-wrap"><div class="engine-bar-fill" style="width:0%;background:var(--accent)"></div></div>
+              <span class="engine-val" style="color:var(--text-muted)">0.0%</span>
+            </div>
+            <div class="engine-row">
+              <span class="engine-label">Gemini</span>
+              <div class="engine-bar-wrap"><div class="engine-bar-fill" style="width:0%;background:var(--accent)"></div></div>
+              <span class="engine-val" style="color:var(--text-muted)">0.0%</span>
+            </div>
+            <div class="engine-row">
+              <span class="engine-label">Haiku</span>
+              <div class="engine-bar-wrap"><div class="engine-bar-fill" style="width:0%;background:var(--accent)"></div></div>
+              <span class="engine-val" style="color:var(--text-muted)">0.0%</span>
+            </div>
+          </div>
+          <p style="font-size:13px;color:var(--text-muted)">三引擎 A 类引用率均为 0% — 行业查询中品牌完全不可见，跨引擎高度一致。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 10. 公司评估 ═══ -->
+    <section id="company_evaluation" class="card">
+      <div class="card-header">
+        <span class="section-num">10</span>
+        <i data-lucide="file-text" class="icon"></i>
+        <h2>公司评估</h2>
+      </div>
+      <div class="card-content loaded">
+        <div class="skeleton-group">
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line medium"></div>
+        </div>
+        <div class="real-data">
+          <p class="oneliner">花知晓在包装设计和产品品质上获得了 AI 的积极认可，但品牌自我定位中的 Gen-Z 专属、全球市场和童话故事核心差异化未被 AI 充分捕捉。品牌应加强在 AI 信息源中的目标群体和全球市场宣传。</p>
+          <div class="grid-2">
+            <div>
+              <h4 style="color:var(--success);font-size:13px;margin-bottom:8px">优势</h4>
+              <ul>
+                <li>包装精美、有艺术感，唤醒少女心</li>
+                <li>产品性价比高，兼具奢华感和实惠价格</li>
+                <li>眼影质地丝滑、显色度好，易于晕染</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="color:var(--danger);font-size:13px;margin-bottom:8px">劣势</h4>
+              <ul>
+                <li>眼影质地被 AI 评价为'平均'，可能不如某些竞品突出</li>
+                <li>品牌在 AI 信息源中未明确提及持久度或创新性</li>
+              </ul>
+            </div>
+          </div>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <p style="font-size:13px;color:var(--text-secondary)">
+              <strong style="color:var(--text-primary)">市场定位：</strong>
+              中高端平价彩妆品牌，以梦幻童话包装和高质量产品在细分市场具有竞争力，但尚未成为市场领导者。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-row">
+        <span>状态: <strong style="color:var(--success)">success</strong></span>
+        <span>耗时: <strong>333.0s</strong></span>
+        <span>Token: <strong>23,896</strong></span>
+        <span>查询词: <strong>30</strong></span>
+        <span>引擎: <strong>GPT + Gemini + Haiku</strong></span>
+      </div>
+      <div style="margin-top:12px">Generated by CiteFlow Probe</div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+lucide.createIcons();
+
+const sections = [
+  { id: 'brand_profile', label: '品牌画像' },
+  { id: 'citation_dashboard', label: '引用率' },
+  { id: 'market_perception', label: '市场镜像' },
+  { id: 'gap_analysis', label: '差距分析' },
+  { id: 'company_score', label: '量化评分' },
+  { id: 'competitor_matrix', label: '竞品矩阵' },
+  { id: 'ai_narrative', label: 'AI话术' },
+  { id: 'source_authority', label: '引用源' },
+  { id: 'engine_comparison', label: '三引擎' },
+  { id: 'company_evaluation', label: '公司评估' },
+];
+
+const nav = document.getElementById('nav');
+sections.forEach(s => {
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot';
+  dot.setAttribute('data-label', s.label);
+  dot.onclick = () => document.getElementById(s.id).scrollIntoView({ behavior: 'smooth' });
+  nav.appendChild(dot);
+});
+
+const dots = document.querySelectorAll('.nav-dot');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      dots.forEach((d, i) => d.classList.toggle('active', sections[i].id === entry.target.id));
+    }
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+
+document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+function replayLoading() {
+  const cards = document.querySelectorAll('.card-content');
+  cards.forEach(c => { c.classList.remove('loaded'); c.classList.add('loading'); });
+  cards.forEach((card, i) => {
+    setTimeout(() => { card.classList.remove('loading'); card.classList.add('loaded'); }, 400 + i * 220);
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const cards = document.querySelectorAll('.card-content');
+  cards.forEach((card, i) => {
+    if (!card.classList.contains('loaded')) {
+      card.classList.add('loading');
+      setTimeout(() => { card.classList.remove('loading'); card.classList.add('loaded'); }, 200 + i * 160);
+    }
+  });
+});
+</script>
+</body>
+</html>

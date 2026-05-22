@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:480px;height:320px;font-family:'Inter',-apple-system,sans-serif;background:#0A0A0F;color:#EDEDF5;overflow:hidden}
+.head{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:10px}
+.head-dot{width:8px;height:8px;border-radius:50%}
+.head-title{font-size:12px;color:#5E5E78;font-family:'JetBrains Mono',monospace;letter-spacing:0.5px}
+.body{padding:16px 18px}
+.stat-row{display:flex;gap:16px;margin-bottom:14px}
+.stat-box{flex:1;background:#131318;border:1px solid rgba(255,255,255,0.04);border-radius:6px;padding:12px 14px;text-align:center}
+.stat-label{font-size:9px;color:#5E5E78;text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+.stat-val{font-size:26px;font-weight:600;font-family:'JetBrains Mono',monospace;line-height:1}
+.stat-val.good{color:#22c55e}.stat-val.warn{color:#f59e0b}.stat-val.accent{color:#38BDF8}
+.stat-sub{font-size:10px;color:#9A9AB0;margin-top:3px}
+.engine-row{display:flex;gap:8px}
+.engine-chip{flex:1;background:#131318;border:1px solid rgba(255,255,255,0.04);border-radius:4px;padding:8px 10px;text-align:center}
+.engine-name{font-size:9px;color:#5E5E78;text-transform:uppercase;letter-spacing:0.5px;font-family:'JetBrains Mono',monospace;margin-bottom:4px}
+.engine-pct{font-size:15px;font-weight:600;font-family:'JetBrains Mono',monospace}
+</style></head><body>
+<div class="head">
+  <div class="head-dot" style="background:#FF5F56"></div>
+  <div class="head-dot" style="background:#FFBD2E"></div>
+  <div class="head-dot" style="background:#27C93F"></div>
+  <div class="head-title">PROBE REPORT · UGREEN.COM</div>
+</div>
+<div class="body">
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-label">AI 引用率</div>
+      <div class="stat-val warn">20.0%</div>
+      <div class="stat-sub">30次查询中6次被引用</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">A类推荐率</div>
+      <div class="stat-val accent">16.7%</div>
+      <div class="stat-sub">行业通用查询</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">竞品均值</div>
+      <div class="stat-val good">73.0%</div>
+      <div class="stat-sub">Anker 对比基准</div>
+    </div>
+  </div>
+  <div class="engine-row">
+    <div class="engine-chip"><div class="engine-name">ChatGPT</div><div class="engine-pct" style="color:#38BDF8">26.7%</div></div>
+    <div class="engine-chip"><div class="engine-name">Claude</div><div class="engine-pct" style="color:#a855f7">23.3%</div></div>
+    <div class="engine-chip"><div class="engine-name">Gemini</div><div class="engine-pct" style="color:#38BDF8">20.0%</div></div>
+    <div class="engine-chip"><div class="engine-name">Perplexity</div><div class="engine-pct" style="color:#f59e0b">10.0%</div></div>
+  </div>
+</div>
+</body></html>

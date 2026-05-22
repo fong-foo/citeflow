@@ -1,0 +1,232 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-dm-sans);
+  --font-mono: var(--font-jetbrains-mono);
+  --color-cf-bg: #08080D;
+  --color-cf-surface: #0D0D15;
+  --color-cf-surface-raised: #12121C;
+  --color-cf-surface-elevated: #181825;
+  --color-cf-border: #1C1C2A;
+  --color-cf-border-light: #252538;
+  --color-cf-border-accent: rgba(56, 189, 248, 0.12);
+  --color-cf-primary: #EDEDF5;
+  --color-cf-secondary: #9A9AB0;
+  --color-cf-muted: #5E5E78;
+  --color-cf-accent: #38BDF8;
+  --color-cf-accent-glow: #7DD3FC;
+  --color-cf-accent-dim: #0C4A6E;
+  --color-cf-success: #22C55E;
+  --color-cf-warning: #F59E0B;
+  --color-cf-danger: #EF4444;
+}
+
+body {
+  background: #08080D;
+  color: var(--color-cf-primary);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.18);
+  color: #EDEDF5;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1C1C2A; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #252538; }
+
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.10; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes starBreath {
+  0%, 100% { opacity: 0.2; filter: drop-shadow(0 0 1px rgba(56,189,248,0.1)); transform: scale(0.85); }
+  50% { opacity: 1; filter: drop-shadow(0 0 12px rgba(56,189,248,0.7)); transform: scale(1.25); }
+}
+
+@keyframes luminousBreath {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.75; }
+}
+
+@keyframes edgeGlow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.06), 0 0 30px rgba(56, 189, 248, 0.04); }
+  50% { box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.12), 0 0 50px rgba(56, 189, 248, 0.08); }
+}
+
+@keyframes revealMask {
+  from { clip-path: inset(0 0 100% 0); }
+  to   { clip-path: inset(0 0 0% 0); }
+}
+
+@keyframes logoBarPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes keywordGlow {
+  0%, 100% { text-shadow: 0 0 2px rgba(56,189,248,0.25); opacity: 0.8; }
+  50% { text-shadow: 0 0 10px rgba(56,189,248,0.6), 0 0 22px rgba(56,189,248,0.2); opacity: 1; }
+}
+
+@keyframes sensorPulse {
+  0%, 100% { opacity: 0.5; box-shadow: 0 0 2px rgba(56,189,248,0.3); }
+  50% { opacity: 1; box-shadow: 0 0 6px rgba(56,189,248,0.7); }
+}
+
+@keyframes scanSweep {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes scanRingCW {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes scanRingCCW {
+  from { transform: rotate(360deg); }
+  to   { transform: rotate(0deg); }
+}
+
+@keyframes scanRingBreath {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes phaseDotActive {
+  0%, 100% { opacity: 0.6; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes scanFlash {
+  0% { opacity: 1; }
+  25% { opacity: 0.12; }
+  50% { opacity: 0.12; }
+  75% { opacity: 0.55; }
+  100% { opacity: 1; }
+}
+
+@keyframes spectralPulse {
+  0%, 100% { opacity: 0.15; transform: scale(0.7); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes dotsPulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 1; }
+}
+
+@keyframes scanSweepVertical {
+  0%, 100% { top: 0%; }
+  50% { top: 100%; }
+}
+
+@keyframes brandScanSweep {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes brandShine {
+  0% { background-position: -100% center; }
+  100% { background-position: 200% center; }
+}
+
+.brand-shine {
+  background: linear-gradient(
+    90deg,
+    #7DD3FC 0%,
+    #7DD3FC 20%,
+    #fff 35%,
+    #7DD3FC 50%,
+    #7DD3FC 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: brandShine 4s ease-in-out infinite;
+}
+
+.brand-scan-shimmer {
+  background: linear-gradient(
+    105deg,
+    #7DD3FC 0%,
+    #7DD3FC 38%,
+    #fff 48%,
+    #7DD3FC 58%,
+    #7DD3FC 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: brandScanSweep 2.8s ease-in-out infinite;
+}
+
+.logo-bar-top { animation: logoBarPulse 3s ease-in-out infinite; }
+.logo-bar-bottom { animation: logoBarPulse 3s ease-in-out 0.5s infinite; }
+
+@keyframes sloganBreath {
+  0%, 100% { text-shadow: 0 0 48px rgba(56,189,248,0.25), 0 0 96px rgba(56,189,248,0.10); }
+  50% { text-shadow: 0 0 72px rgba(56,189,248,0.40), 0 0 144px rgba(56,189,248,0.18); }
+}
+
+@keyframes pulseRing {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(56,189,248,0.2), inset 0 0 0 0 rgba(56,189,248,0); }
+  50% { box-shadow: 0 0 0 4px rgba(56,189,248,0), inset 0 0 0 1px rgba(56,189,248,0.08); }
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Hairline divider — bright but transparent, expensive edges */
+.hairline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+}
+
+.hairline-accent {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.15), transparent);
+}
+
+/* Surface depth stepping */
+.surface-deep { background: #08080D; }
+.surface-base { background: #0D0D15; }
+.surface-raised { background: #12121C; }
+.surface-elevated { background: #181825; }
+
+/* Luminous edge — bright transparent hairline */
+.luminous-edge {
+  position: relative;
+}
+.luminous-edge::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.25), transparent);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.luminous-edge:hover::before {
+  opacity: 1;
+}

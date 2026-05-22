@@ -1,0 +1,68 @@
+{
+  "paper_id": "004",
+  "arxiv": "2601.00869",
+  "title": "Cultural Encoding in Large Language Models: The Existence Gap in AI-Mediated Brand Discovery",
+  "date_read": "2026-05-10",
+  "last_reviewed": "2026-05-20",
+  "confidence": "high",
+  "extracted_strategies": [
+    {
+      "id": "004-01",
+      "name": "弥合'存在鸿沟'——进入国际LLM训练数据",
+      "category": "品牌战略",
+      "confidence": "high",
+      "source_section": "Section 3.2",
+      "what": "中国品牌在国际LLM中提及率低30.6%（88.9% vs 58.3%）。品牌不在训练数据中 = 在AI回答中不存在",
+      "why": "训练数据地理（不是语言）驱动可见性差距",
+      "how": "1)在国际网站（Wikipedia、Reddit、Medium、YouTube）创建品牌内容 2)被英文科技/行业媒体报道 3)在Product Hunt、G2等国际平台有存在",
+      "template": "templates/existence-gap-bridge.md",
+      "applicable_to": ["中国跨境品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["china_to_us", "china_to_europe"],
+      "expected_impact": "弥合30%可见性差距的基础性工作",
+      "how_to_verify": "在ChatGPT/Gemini中搜索你的品类词，看品牌是否出现"
+    },
+    {
+      "id": "004-02",
+      "name": "构建'数据护城河'",
+      "category": "品牌战略",
+      "confidence": "high",
+      "source_section": "Section 5",
+      "what": "通过持续在国际数据源中积累品牌提及，建立竞争壁垒",
+      "why": ""Data Moat"框架——品牌在国际训练数据中的累积存在是长期护城河",
+      "how": "订阅制内容发布：每月至少1篇Medium深度文章、1个YouTube视频、主动联系1家行业媒体评测",
+      "template": "templates/data-moat-calendar.md",
+      "applicable_to": ["中国跨境品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["china_to_us"],
+      "expected_impact": "6-12个月建立可持续的国际AI可见性",
+      "how_to_verify": "追踪Probe数据中brand_mention_count的月度增长"
+    },
+    {
+      "id": "004-03",
+      "name": "追求'算法全在'",
+      "category": "品牌战略",
+      "confidence": "medium",
+      "source_section": "Section 5",
+      "what": "品牌在所有AI引擎、所有查询场景中都存在。不仅是被找到，而是不缺席",
+      "why": ""Algorithmic Omnipresence"——当用户在任何AI中搜索品类，你的品牌都在回答中",
+      "how": "三层覆盖：技术文档（被DeepSeek抓取）+ 社交媒体（被Perplexity抓取）+ 视频（被Gemini抓取）",
+      "template": null,
+      "applicable_to": ["中国跨境品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "战略目标，非单一战术",
+      "how_to_verify": "跨引擎Probe，检查各引擎品牌覆盖率"
+    }
+  ],
+  "key_data": {
+    "brand_mention_gap": "中文LLM 88.9% vs 国际LLM 58.3%，差距30.6%",
+    "extreme_case": "Zhizibianjie：中文LLM 65.6%，国际LLM 0%",
+    "root_cause": "训练数据地理分布，非语言能力问题"
+  },
+  "chinese_brand_specific": true,
+  "priority_for_citeflow": "最高——这是CiteFlow的核心差异化和价值主张"
+}

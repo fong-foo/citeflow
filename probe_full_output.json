@@ -1,0 +1,621 @@
+{
+  "output": {
+    "company_evaluation": {
+      "overall": "Notion在核心定位（一体化工作空间）上高度一致，但AI揭示了其未强调的AI自动化优势和竞品弱点。公司应利用AI功能作为差异化点，同时注意项目管理功能对大型团队的局限性。",
+      "strengths": [
+        "一体化工作空间：整合文档、维基、项目管理，减少工具切换达30%",
+        "灵活性和可定制性：用户可自由搭建页面结构，适应多种场景",
+        "AI功能自动化：会议摘要、工单分类等提升效率",
+        "丰富的模板库和第三方集成：社区生态领先，快速上手"
+      ],
+      "weaknesses": [
+        "工程任务跟踪不如Linear专业，不适合深度开发团队",
+        "随着团队规模扩大，项目管理功能可能不够强大",
+        "对于预算有限的团队，ClickUp可能是更经济的选择"
+      ],
+      "positioning": "Notion定位为生产力工具类别的领导者，提供广泛而灵活的功能，适合大多数团队（尤其是50人以下的初创公司），但并非最便宜或最专业的任务管理工具。"
+    },
+    "market_perception": {
+      "perceived_identity": "AI 认为 Notion 是一款集文档、维基和项目管理于一体的全能型工作空间，是 2026 年生产力工具的领导者。",
+      "perceived_strengths": [
+        "AI 功能自动化重复任务，如会议摘要和工单分类",
+        "灵活性和模板生态系统使其成为团队单一事实来源的最佳选择",
+        "社区模板库和第三方集成深度领先于竞品",
+        "统一文档、项目和知识库，减少工具切换达 30%"
+      ],
+      "perceived_weaknesses": [
+        "在工程任务跟踪方面不如 Linear 专业",
+        "对于预算有限的团队，ClickUp 可能是更经济的选择",
+        "随着团队规模扩大，项目管理功能可能不够强大"
+      ],
+      "perceived_positioning": "AI 将 Notion 定位为生产力工具类别的领导者，提供广泛而灵活的功能，适合大多数团队，但并非最便宜或最专业的任务管理工具。",
+      "perceived_products": [
+        "AI 功能（会议摘要、工单分类）",
+        "文档",
+        "维基",
+        "项目管理",
+        "模板库",
+        "第三方集成"
+      ],
+      "perceived_market": "AI 将 Notion 与团队协作、生产力提升、初创公司（尤其是 50 人以下）以及需要单一事实来源的团队关联。",
+      "perception_sources": [
+        "https://techcrunch.com/2026/01/best-productivity-tools",
+        "https://www.forbes.com/advisor/business/best-productivity-apps",
+        "https://www.g2.com/compare/notion-vs-coda",
+        "https://reddit.com/r/productivity/comments/notion_alternatives",
+        "https://docs.notion.so/getting-started",
+        "https://theverge.com/2026/notion-workspace-review",
+        "https://www.wired.com/story/best-collaboration-software-2026",
+        "https://www.g2.com/categories/collaboration",
+        "https://techcrunch.com/2026/03/startup-tool-stack-2026",
+        "https://www.ycombinator.com/library/startup-tools"
+      ]
+    },
+    "gap_report": {
+      "alignment_score": 75,
+      "aligned": [
+        "公司自称'一体化工作空间'，AI也认为它是'全能型工作空间'，核心定位一致",
+        "双方都强调灵活性和可定制性，AI提到'灵活性和模板生态系统'与公司描述吻合",
+        "协作功能：公司强调实时编辑、评论和分享，AI也认可其协作能力",
+        "目标市场：公司面向现代团队（初创、远程、大型企业），AI关联初创公司（50人以下）和需要单一事实来源的团队"
+      ],
+      "misaligned": [
+        "公司未提及AI功能，但AI重点强调AI自动化（会议摘要、工单分类）是核心优势",
+        "公司未提及竞品对比，AI指出在工程任务跟踪方面不如Linear，预算有限时ClickUp更经济",
+        "公司强调'全球领先'，AI定位为'领导者'但未明确全球范围，且指出项目管理功能对大型团队可能不够强大"
+      ],
+      "blind_spots": [
+        "公司强调'减少多工具切换的繁琐'和'信息流动畅通无阻'，但AI未提及这些具体痛点",
+        "公司提到'丰富的模板库'和'第三方集成'，AI虽提及但未强调其作为差异化优势",
+        "公司自称'数字中枢'，AI未使用此表述"
+      ],
+      "opportunities": [
+        "AI认为AI功能是核心优势，公司可放大宣传AI自动化（如会议摘要、工单分类）",
+        "AI指出'减少工具切换达30%'，公司可量化此数据并用于营销",
+        "AI强调'社区模板库'领先，公司可突出社区生态和用户生成内容"
+      ],
+      "one_line_summary": "AI将你视为全能型工作空间领导者，但你想被看作一体化数字中枢。差距在于AI更强调AI功能和竞品对比，而你未提及这些。"
+    },
+    "citation_metrics": {
+      "rate": 100.0,
+      "total_queries": 30,
+      "mentioned_count": 30,
+      "details": [
+        {
+          "query": "best productivity tool 2026",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion 被描述为结合文档、维基和项目管理的顶级一体化工作空间，其AI功能可自动化会议摘要和工单分类等重复性任务，灵活性和模板生态系统使其成为需要单一事实来源的团队的最佳选择。",
+          "reference_source": "https://techcrunch.com/2026/01/best-productivity-tools, https://www.forbes.com/advisor/business/best-productivity-apps"
+        },
+        {
+          "query": "Notion alternative for teams",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion remains the most well-rounded option for most teams. Its AI integration and community template library are unmatched. Some teams switch to Linear for task management but keep Notion for documentation.",
+          "reference_source": "https://www.g2.com/compare/notion-vs-coda, https://reddit.com/r/productivity/comments/notion_alternatives"
+        },
+        {
+          "query": "all-in-one workspace app",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion 是类别领导者，提供灵活构建块适应任何工作流程，竞争对手如 Coda 和 Slite 缺乏 Notion 的生态系统深度和第三方集成。",
+          "reference_source": "https://docs.notion.so/getting-started, https://theverge.com/2026/notion-workspace-review"
+        },
+        {
+          "query": "team collaboration software comparison",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion 被列为全能型协作平台之一，并强调其通过整合文档、项目和知识库来减少工具切换。",
+          "reference_source": "https://www.wired.com/story/best-collaboration-software-2026"
+        },
+        {
+          "query": "best project management tool for startups",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion is ideal for startups under 50 people who need flexibility across docs, wikis, and light project management. As teams scale, Linear becomes better for engineering task tracking, while Notion remains the documentation hub. The combination of Notion + Linear is the most popular stack among Y Combinator startups.",
+          "reference_source": "https://techcrunch.com/2026/03/startup-tool-stack-2026"
+        },
+        {
+          "query": "Notion vs Confluence for documentation",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion vs Confluence is a common debate for documentation. Notion wins on flexibility and user experience — its block-based editor is more intuitive and supports richer content types. For teams under 500 people, Notion is typically the better choice.",
+          "reference_source": "https://www.atlassian.com/software/confluence/comparison/notion-alternative"
+        },
+        {
+          "query": "what do product managers use for documentation",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Product managers increasingly use Notion as their primary documentation tool. Its flexibility lets PMs create product specs, user research databases, and roadmaps in one place. Notion's database views (timeline, calendar, kanban) replace the need for separate roadmapping tools. The AI features help draft PRDs and summarize user feedback.",
+          "reference_source": "https://medium.com/@pm/tools-we-use-in-2026"
+        },
+        {
+          "query": "knowledge base software for remote teams",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion excels here with its interconnected pages, powerful search, and AI that can answer questions based on existing docs. For internal team wikis, Notion is the most versatile pick.",
+          "reference_source": "https://www.helpscout.com/blog/knowledge-base-software/"
+        },
+        {
+          "query": "best note taking app for developers",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion supports all three with its code blocks supporting 60+ languages, GitHub/GitLab integration, and markdown export. Notion wins when teams need to share notes with non-technical stakeholders.",
+          "reference_source": "https://dev.to/community/best-note-taking-apps-for-developers-2026"
+        },
+        {
+          "query": "team wiki software comparison 2026",
+          "mentioned": true,
+          "position": "middle",
+          "mention_context": "Notion 被描述为灵活的选择，其 wiki 功能受益于数据库特性，可创建动态 wiki，模板库有数百个 wiki 模板，对于纯 wiki 用例是大多数团队的最佳选择。",
+          "reference_source": "https://www.notion.so/templates/category/wiki, https://www.getapp.com/collaboration-software/team-wiki/"
+        },
+        {
+          "query": "Notion review for enterprise",
+          "mentioned": true,
+          "position": "mention",
+          "mention_context": "Notion for enterprise has matured significantly. It now offers SAML SSO, SCIM provisioning, advanced permission controls, and SOC 2 compliance. Enterprise customers like Pixar and Headspace use Notion across thousands of employees. The main limitations compared to SharePoint or Confluence are fewer customization options for intranet portals and less granular audit logging. For most enterprises under 5000 employees, Notion meets requirements.",
+          "reference_source": "https://www.gartner.com/reviews/market/collaboration-software, https://www.notion.so/enterprise"
+        },
+        {
+          "query": "best tools for startup operations",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion serves as the operating system for many startups, handling everything from employee handbooks to investor updates to sprint planning. It replaces 3-5 separate tools for early-stage companies.",
+          "reference_source": "https://www.saastr.com/startup-tech-stack-2026, https://firstround.com/review/startup-tools/"
+        },
+        {
+          "query": "second brain productivity system app",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion 是最流行的工具，因其灵活的数据库结构和模板社区。Tiago Forte 的 PARA 方法有专门的 Notion 模板，被超过 50 万人使用。",
+          "reference_source": "https://medium.com/personal-growth/second-brain-apps-2026"
+        },
+        {
+          "query": "best database software for non-technical teams",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Non-technical teams need databases that feel like spreadsheets but behave like apps. Notion's database is the standout here — it supports relations, rollups, formulas, and multiple views (kanban, calendar, gallery, timeline) without requiring SQL or coding. Airtable is more powerful for complex data operations, but Notion is more accessible for most business users. The learning curve for Notion databases is about 30 minutes vs hours for Airtable.",
+          "reference_source": "https://www.notion.so/help/databases"
+        },
+        {
+          "query": "task management vs project management tools",
+          "mentioned": true,
+          "position": "mention",
+          "mention_context": "Notion 桥接任务管理和项目管理，可在同一工作区构建个人任务追踪器和团队项目仪表板，灵活性是其最大优势也是最大弱点（需要设置）。",
+          "reference_source": "https://www.pcmag.com/picks/best-project-management-software"
+        },
+        {
+          "query": "what is the best tool for agile teams",
+          "mentioned": true,
+          "position": "mention",
+          "mention_context": "Notion has gained traction as a lightweight alternative. Notion's sprint planning template and database views (timeline, board) cover 80% of agile needs without Jira's complexity. Engineering teams at startups like Vercel and Ramp use Notion for sprint planning alongside Linear for issue tracking.",
+          "reference_source": "https://www.lennysnewsletter.com/p/agile-tools-startup"
+        },
+        {
+          "query": "personal knowledge management software",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion 是结构化 PKM 的主导平台，其数据库驱动的方法允许用户创建用于学习、项目和目标的互联系统。Notion 模板市场有超过 20,000 个社区模板用于 PKM 工作流。Notion 在实用、可操作的知识管理方面领先。",
+          "reference_source": "https://nesslabs.com/best-pkm-tools-2026"
+        },
+        {
+          "query": "best app for meeting notes and action items",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion 是会议笔记和行动项的首选推荐，其会议笔记模板自动创建关联数据库，AI 可从原始笔记生成会议摘要，Notion Calendar 集成会议与笔记。",
+          "reference_source": "https://www.notion.so/templates/meeting-notes"
+        },
+        {
+          "query": "Notion pricing vs competitors 2026",
+          "mentioned": true,
+          "position": "mention",
+          "mention_context": "Notion pricing in 2026 starts at $10/user/month for Plus, $18/user/month for Business, with custom Enterprise pricing. Compared to competitors: Confluence is $6/user/month (cheaper but less flexible), Coda is $12/user/month (similar), and Monday.com starts at $9/user/month (but charges for features Notion includes). Notion's free plan is generous for individuals and small teams. The main cost concern for large teams is that Notion's per-seat pricing adds up quickly.",
+          "reference_source": "https://www.notion.so/pricing"
+        },
+        {
+          "query": "best free project management software",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion 被列为最佳免费项目管理软件之一，其免费套餐提供无限页面和数据库，但限制访客数量和文件上传。",
+          "reference_source": "https://www.techrepublic.com/article/best-free-project-management-software-2026/"
+        },
+        {
+          "query": "top tools for distributed teams",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion 被推荐为分布式团队的工具，用于异步协作、文档、维基和项目管理。",
+          "reference_source": "https://www.remote.tools/best-tools-distributed-teams-2026"
+        },
+        {
+          "query": "SaaS startup tool stack recommendations",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "AI 提到 Notion 是 2026 年现代 SaaS 初创公司工具栈的核心，用于文档和运营，并列举了常见工具栈，其中 Notion 排在第一。",
+          "reference_source": "https://www.saastr.com/saas-tool-stack-2026, https://openviewpartners.com/blog/startup-tool-stack/"
+        },
+        {
+          "query": "best documentation tool for engineering teams",
+          "mentioned": true,
+          "position": "mention",
+          "mention_context": "Notion 支持代码块、数据库支持的 ADR 模板和 GitHub 集成，将 PR 与文档链接。对于内部工程文档，Notion + markdown linter 是最佳组合。",
+          "reference_source": "https://stackoverflow.blog/engineering-docs-tools-2026"
+        },
+        {
+          "query": "what do startups use for internal wiki",
+          "mentioned": true,
+          "position": "mention",
+          "mention_context": "Startups increasingly use Notion as their internal wiki. It's faster to set up than Confluence, more flexible than Slite, and has better search than Google Docs. The key advantage is that the wiki lives alongside project management and docs — there's no context switching.",
+          "reference_source": "https://www.notion.so/templates/category/company-wiki, https://review.firstround.com/startup-internal-wikis"
+        },
+        {
+          "query": "best cross-functional team collaboration tool",
+          "mentioned": true,
+          "position": "mention",
+          "mention_context": "Notion's flexibility is its strength here — engineers can use markdown and code blocks while marketers use rich media and galleries, all in the same workspace. The challenge is governance: without clear conventions, Notion workspaces can become chaotic. Teams that invest in an information architecture upfront get the most value.",
+          "reference_source": "https://www.businessinsider.com/best-collaboration-tools-2026, https://hbr.org/2026/03/cross-functional-collaboration-tools"
+        },
+        {
+          "query": "work management platform comparison",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion leads in flexibility and user satisfaction. Notion's differentiation is that it handles unstructured work (docs, brainstorming, research) alongside structured work (databases, sprints, OKRs) — most platforms do one or the other well, not both.",
+          "reference_source": "https://www.gartner.com/reviews/market/work-management-platforms, https://www.forrester.com/report/work-management-2026"
+        },
+        {
+          "query": "top productivity apps 2026 ranked",
+          "mentioned": true,
+          "position": "top",
+          "mention_context": "Notion — all-in-one workspace",
+          "reference_source": "https://www.producthunt.com/golden-kitty-awards-2026"
+        },
+        {
+          "query": "Notion AI features review",
+          "mentioned": true,
+          "position": "mention",
+          "mention_context": "Notion AI 于2024年推出，2026年重大升级，包括跨连接工作区的AI搜索、自动会议笔记摘要、文档起草和翻译、数据库问答以及自定义AI代理。与Microsoft Copilot和Google Gemini相比，Notion AI更深入地集成到工作流上下文中，因为它可以访问团队的所有文档和数据库。",
+          "reference_source": "https://www.notion.so/product/ai, https://techcrunch.com/2026/02/notion-ai-review"
+        },
+        {
+          "query": "best tool for product roadmap planning",
+          "mentioned": true,
+          "position": "mention",
+          "mention_context": "Notion's timeline and board views make it capable for roadmap planning, especially for early-stage startups that don't need specialized roadmapping features. The advantage is that the roadmap lives alongside specs, user research, and sprint plans.",
+          "reference_source": "https://www.productplan.com/learn/best-roadmap-tools-2026/"
+        },
+        {
+          "query": "all-in-one workspace for agencies",
+          "mentioned": true,
+          "position": "mention",
+          "mention_context": "Notion 在机构中越来越受欢迎，因为它可以替代多个工具（电子表格、文档、维基、项目跟踪器）。Notion 市场上有针对机构的模板，包括客户门户、创意简报数据库和活动跟踪器。",
+          "reference_source": "https://www.notion.so/templates/category/agency"
+        }
+      ]
+    },
+    "competitor_analysis": [],
+    "engines_queried": [
+      "chatgpt",
+      "deepseek"
+    ],
+    "query_terms": [
+      "best productivity tool 2026",
+      "Notion alternative for teams",
+      "all-in-one workspace app",
+      "team collaboration software comparison",
+      "best project management tool for startups",
+      "Notion vs Confluence for documentation",
+      "what do product managers use for documentation",
+      "knowledge base software for remote teams",
+      "best note taking app for developers",
+      "team wiki software comparison 2026",
+      "Notion review for enterprise",
+      "best tools for startup operations",
+      "second brain productivity system app",
+      "best database software for non-technical teams",
+      "task management vs project management tools",
+      "what is the best tool for agile teams",
+      "personal knowledge management software",
+      "best app for meeting notes and action items",
+      "Notion pricing vs competitors 2026",
+      "best free project management software",
+      "top tools for distributed teams",
+      "SaaS startup tool stack recommendations",
+      "best documentation tool for engineering teams",
+      "what do startups use for internal wiki",
+      "best cross-functional team collaboration tool",
+      "work management platform comparison",
+      "top productivity apps 2026 ranked",
+      "Notion AI features review",
+      "best tool for product roadmap planning",
+      "all-in-one workspace for agencies"
+    ],
+    "meta": {
+      "total_tokens": 5454,
+      "total_cost": 0.0109,
+      "total_duration_ms": 58414,
+      "query_statuses": {
+        "best productivity tool 2026": "success",
+        "Notion alternative for teams": "success",
+        "all-in-one workspace app": "success",
+        "team collaboration software comparison": "success",
+        "best project management tool for startups": "success",
+        "Notion vs Confluence for documentation": "success",
+        "what do product managers use for documentation": "success",
+        "knowledge base software for remote teams": "success",
+        "best note taking app for developers": "success",
+        "team wiki software comparison 2026": "success",
+        "Notion review for enterprise": "success",
+        "best tools for startup operations": "success",
+        "second brain productivity system app": "success",
+        "best database software for non-technical teams": "success",
+        "task management vs project management tools": "success",
+        "what is the best tool for agile teams": "success",
+        "personal knowledge management software": "success",
+        "best app for meeting notes and action items": "success",
+        "Notion pricing vs competitors 2026": "success",
+        "best free project management software": "success",
+        "top tools for distributed teams": "success",
+        "SaaS startup tool stack recommendations": "success",
+        "best documentation tool for engineering teams": "success",
+        "what do startups use for internal wiki": "success",
+        "best cross-functional team collaboration tool": "success",
+        "work management platform comparison": "success",
+        "top productivity apps 2026 ranked": "success",
+        "Notion AI features review": "success",
+        "best tool for product roadmap planning": "success",
+        "all-in-one workspace for agencies": "success"
+      }
+    },
+    "status": "success",
+    "error": null,
+    "brand_profile": {
+      "brand_name": "Notion",
+      "one_liner": "一体化工作空间，赋能团队高效协作",
+      "value_props": [
+        "将笔记、文档、项目管理、数据库整合于一处，告别多工具切换",
+        "灵活的页面和数据库结构，适应不同团队的工作流",
+        "强大的协作功能，支持实时编辑、评论和分享",
+        "丰富的模板和集成，快速启动并连接现有工具"
+      ],
+      "differentiators": [
+        "真正的all-in-one平台，而非简单功能拼凑",
+        "高度可定制化，从个人笔记到企业知识库皆可胜任"
+      ],
+      "target_personas": [
+        "中小型科技公司的产品、工程和设计团队，需要统一工作空间",
+        "自由职业者和远程团队，追求高效协作与信息管理"
+      ],
+      "tone_keywords": [
+        "简洁",
+        "高效",
+        "创新"
+      ],
+      "full_description": "Notion是一款全球领先的一体化工作空间工具，专为现代团队打造。它将笔记、文档、项目管理、数据库和协作功能无缝整合，让团队告别多工具切换的繁琐，专注于真正重要的工作。Notion的核心理念是灵活与可定制——用户可以根据自己的需求自由搭建页面结构，从简单的待办清单到复杂的企业知识库，都能轻松实现。其强大的协作功能支持实时编辑、评论和分享，确保信息流动畅通无阻。此外，Notion提供丰富的模板库和第三方集成，帮助团队快速上手并融入现有工作流。无论是初创公司、远程团队，还是大型企业，Notion都能成为团队的数字中枢，提升效率与创造力。"
+    },
+    "company_score": {
+      "overall": 71,
+      "dimensions": [
+        {
+          "name": "品牌力",
+          "score": 75,
+          "evidence": "AI 将 Notion 定位为生产力工具类别的领导者，并引用 TechCrunch、Forbes 等权威来源，但未明确提及“全球领先”，且指出项目管理功能对大型团队可能不够强大。",
+          "suggestion": "在品牌宣传中强化“全球领先”的具体证据，如用户分布或国际奖项。"
+        },
+        {
+          "name": "产品力",
+          "score": 68,
+          "evidence": "AI 准确描述了文档、维基、项目管理等核心产品，并突出 AI 功能（会议摘要、工单分类）和模板生态系统，但指出在工程任务跟踪方面不如 Linear，且对大型团队项目管理功能不够强大。",
+          "suggestion": "加强项目管理功能，特别是针对大型团队的工程任务跟踪能力。"
+        },
+        {
+          "name": "内容力",
+          "score": 100,
+          "evidence": "引用率高达 100%，所有搜索查询都提到了 Notion，且 AI 引用了多个权威来源（TechCrunch、Forbes、G2、Reddit 等），品牌内容被广泛采纳。",
+          "suggestion": "继续保持高质量内容输出，并增加对 AI 功能的具体案例研究。"
+        },
+        {
+          "name": "技术力",
+          "score": 60,
+          "evidence": "AI 认可 AI 功能（会议摘要、工单分类）作为技术壁垒，但未深入讨论技术细节或专利，且指出在工程任务跟踪方面不如 Linear 专业。",
+          "suggestion": "突出 AI 功能的技术创新，如模型训练数据或自动化效率提升数据。"
+        },
+        {
+          "name": "市场力",
+          "score": 50,
+          "evidence": "AI 将 Notion 与团队协作、生产力提升、初创公司（50 人以下）关联，但未提及具体地区或大型企业客户，且指出 ClickUp 在预算有限时更经济。",
+          "suggestion": "拓展大型企业客户案例，并针对不同地区制定本地化市场策略。"
+        }
+      ],
+      "industry": "B2B SaaS",
+      "weights_used": {
+        "品牌力": 0.15,
+        "产品力": 0.25,
+        "内容力": 0.2,
+        "技术力": 0.3,
+        "市场力": 0.1
+      }
+    },
+    "ai_narrative": {
+      "ideal_description": "Notion是一款全球领先的一体化工作空间工具，专为现代团队打造。它将笔记、文档、项目管理、数据库和协作功能无缝整合，帮助团队减少多工具切换的繁琐，信息流动畅通无阻。其高度可定制的页面和数据库结构适应不同工作流，强大的协作功能支持实时编辑和评论。Notion还提供丰富的模板库和第三方集成，特别是社区模板库领先，用户可快速启动并连接现有工具。此外，Notion的AI功能如会议摘要和工单分类，能进一步提升效率，减少工具切换达30%。无论是初创公司还是大型企业，Notion都能成为团队的数字化中枢，提升效率与创造力。",
+      "keywords": [
+        "Notion",
+        "一体化工作空间",
+        "协作",
+        "可定制",
+        "模板库",
+        "AI自动化",
+        "减少工具切换",
+        "数字化中枢"
+      ],
+      "value_props": [
+        "将笔记、文档、项目管理、数据库整合于一处，减少多工具切换",
+        "高度可定制的页面和数据库结构，适应不同团队工作流",
+        "强大的协作功能，支持实时编辑、评论和分享",
+        "丰富的模板库和第三方集成，特别是社区模板库领先",
+        "AI功能如会议摘要和工单分类，提升效率并量化减少工具切换达30%"
+      ],
+      "avoid": [
+        "错误描述为简单功能拼凑而非真正的all-in-one平台",
+        "忽略其AI自动化能力或未作为核心优势强调",
+        "在工程任务跟踪方面与Linear比较时贬低Notion",
+        "未提及减少工具切换和信息流动畅通无阻的具体痛点",
+        "未使用'数字化中枢'表述或弱化其作为企业知识库的定位"
+      ],
+      "tone": "专业"
+    },
+    "source_authority": {
+      "top_sources": [
+        {
+          "domain": "notion.so",
+          "source_type": "官方文档",
+          "mention_count": 7,
+          "avg_position": 0.5,
+          "authority_score": 85,
+          "queries": [
+            "team wiki software comparison 2026",
+            "best database software for non-technical teams",
+            "best app for meeting notes and action items",
+            "Notion pricing vs competitors 2026",
+            "what do startups use for internal wiki",
+            "Notion AI features review",
+            "all-in-one workspace for agencies"
+          ]
+        },
+        {
+          "domain": "techcrunch.com",
+          "source_type": "权威媒体",
+          "mention_count": 2,
+          "avg_position": 1.0,
+          "authority_score": 68,
+          "queries": [
+            "best productivity tool 2026",
+            "best project management tool for startups"
+          ]
+        },
+        {
+          "domain": "docs.notion.so",
+          "source_type": "官方文档",
+          "mention_count": 1,
+          "avg_position": 1.0,
+          "authority_score": 66,
+          "queries": [
+            "all-in-one workspace app"
+          ]
+        },
+        {
+          "domain": "atlassian.com",
+          "source_type": "官方文档",
+          "mention_count": 1,
+          "avg_position": 1.0,
+          "authority_score": 66,
+          "queries": [
+            "Notion vs Confluence for documentation"
+          ]
+        },
+        {
+          "domain": "helpscout.com",
+          "source_type": "官方文档",
+          "mention_count": 1,
+          "avg_position": 1.0,
+          "authority_score": 66,
+          "queries": [
+            "knowledge base software for remote teams"
+          ]
+        },
+        {
+          "domain": "saastr.com",
+          "source_type": "行业媒体",
+          "mention_count": 2,
+          "avg_position": 1.0,
+          "authority_score": 65,
+          "queries": [
+            "best tools for startup operations",
+            "SaaS startup tool stack recommendations"
+          ]
+        },
+        {
+          "domain": "wired.com",
+          "source_type": "权威媒体",
+          "mention_count": 1,
+          "avg_position": 1.0,
+          "authority_score": 63,
+          "queries": [
+            "team collaboration software comparison"
+          ]
+        },
+        {
+          "domain": "techrepublic.com",
+          "source_type": "行业媒体",
+          "mention_count": 1,
+          "avg_position": 1.0,
+          "authority_score": 60,
+          "queries": [
+            "best free project management software"
+          ]
+        },
+        {
+          "domain": "medium.com",
+          "source_type": "博客",
+          "mention_count": 2,
+          "avg_position": 1.0,
+          "authority_score": 59,
+          "queries": [
+            "what do product managers use for documentation",
+            "second brain productivity system app"
+          ]
+        },
+        {
+          "domain": "g2.com",
+          "source_type": "评测平台",
+          "mention_count": 1,
+          "avg_position": 1.0,
+          "authority_score": 57,
+          "queries": [
+            "Notion alternative for teams"
+          ]
+        }
+      ],
+      "total_sources": 20,
+      "source_diversity": 0.922
+    }
+  },
+  "meta": {
+    "total_tokens": 5454,
+    "total_cost": 0.0109,
+    "total_duration_ms": 58414,
+    "query_statuses": {
+      "best productivity tool 2026": "success",
+      "Notion alternative for teams": "success",
+      "all-in-one workspace app": "success",
+      "team collaboration software comparison": "success",
+      "best project management tool for startups": "success",
+      "Notion vs Confluence for documentation": "success",
+      "what do product managers use for documentation": "success",
+      "knowledge base software for remote teams": "success",
+      "best note taking app for developers": "success",
+      "team wiki software comparison 2026": "success",
+      "Notion review for enterprise": "success",
+      "best tools for startup operations": "success",
+      "second brain productivity system app": "success",
+      "best database software for non-technical teams": "success",
+      "task management vs project management tools": "success",
+      "what is the best tool for agile teams": "success",
+      "personal knowledge management software": "success",
+      "best app for meeting notes and action items": "success",
+      "Notion pricing vs competitors 2026": "success",
+      "best free project management software": "success",
+      "top tools for distributed teams": "success",
+      "SaaS startup tool stack recommendations": "success",
+      "best documentation tool for engineering teams": "success",
+      "what do startups use for internal wiki": "success",
+      "best cross-functional team collaboration tool": "success",
+      "work management platform comparison": "success",
+      "top productivity apps 2026 ranked": "success",
+      "Notion AI features review": "success",
+      "best tool for product roadmap planning": "success",
+      "all-in-one workspace for agencies": "success"
+    }
+  },
+  "errors": {}
+}

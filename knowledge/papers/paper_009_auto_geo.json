@@ -1,0 +1,47 @@
+{
+  "paper_id": "009",
+  "arxiv": "2510.11438",
+  "title": "What Generative Search Engines Like and How to Optimize Web Content Cooperatively",
+  "authors": "Carnegie Mellon University",
+  "date_read": "2026-05-10",
+  "last_reviewed": "2026-05-20",
+  "confidence": "medium",
+  "extracted_strategies": [
+    {
+      "id": "009-01",
+      "name": "引擎特定规则 > 通用规则",
+      "category": "平台特化",
+      "confidence": "high",
+      "source_section": "全文",
+      "what": "每个AI引擎有独特的内容偏好规则。引擎特定优化比通用优化更有效",
+      "why": "ChatGPT偏好FAQ+明确结论，Gemini偏好Google生态+视频——用同一个策略效果打折",
+      "how": "为ChatGPT/Gemini/Perplexity分别制定优化策略而非一套走天下",
+      "template": "templates/engine-specific-strategy.md",
+      "applicable_to": ["所有"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "针对性优化效率更高",
+      "how_to_verify": "分引擎监测引用率和影响力差异"
+    },
+    {
+      "id": "009-02",
+      "name": "使用context engineering",
+      "category": "技术优化",
+      "confidence": "medium",
+      "source_section": "全文",
+      "what": "提取引擎偏好规则作为context engineering——即优化内容的'上下文包装'",
+      "why": "AutoGEO证明提取引擎偏好规则后可以指导内容优化",
+      "how": "在CiteFlow体检中查看各引擎对同品类内容的引用偏好，据此调整内容格式",
+      "template": null,
+      "applicable_to": ["所有"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "基于引擎偏好的精准优化",
+      "how_to_verify": "体检报告中查看引擎引用偏好分析"
+    }
+  ],
+  "key_metrics": {"cost": "AutoGEO_Mini成本仅为API的0.0071倍", "method": "提取preference rules作为context engineering"},
+  "citeflow_relevance": "CiteFlow的引擎偏好分析直接对应这个研究方向"
+}

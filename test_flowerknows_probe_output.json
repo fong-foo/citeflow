@@ -1,0 +1,2486 @@
+{
+  "company_evaluation": {
+    "overall": "Flower Knows 是一个以精美艺术包装和高质量产品著称的彩妆品牌，在消费者中口碑良好，但品牌希望强调的平价和二次元美学尚未被AI充分捕捉。",
+    "strengths": [
+      "包装精美且具有艺术感",
+      "产品质量高，眼影顺滑显色",
+      "纯素零残忍，符合道德消费趋势"
+    ],
+    "weaknesses": [
+      "眼影在深肤色上显色度不足",
+      "质地平均，缺乏突出表现"
+    ],
+    "positioning": "中高端彩妆品牌，以梦幻艺术包装和高质量为核心竞争力，吸引追求美学和品质的消费者。"
+  },
+  "market_perception": {
+    "perceived_identity": "Flower Knows 是一个以梦幻艺术包装和高品质著称的彩妆品牌，适合追求美观与实用兼具的消费者。",
+    "perceived_strengths": [
+      "包装精美且具有艺术感，受到用户高度赞扬",
+      "产品质量高，眼影顺滑显色，整体妆效出色",
+      "被多个平台推荐为值得购买的投资",
+      "官方认证纯素且零残忍，符合道德消费趋势"
+    ],
+    "perceived_weaknesses": [
+      "眼影颜色在深肤色上显色度不够强烈，可能不适合所有肤色",
+      "质地平均，部分用户可能期待更突出的表现"
+    ],
+    "perceived_positioning": "中高端定位，以独特包装和高质量在彩妆市场中脱颖而出，被视为值得投资的品牌。",
+    "perceived_products": [
+      "眼影盘",
+      "唇釉",
+      "月光美人鱼系列彩妆"
+    ],
+    "perceived_market": "主要面向追求美学和品质的彩妆爱好者，尤其吸引喜欢梦幻、艺术风格包装的年轻女性消费者。",
+    "perception_sources": [
+      "https://www.reddit.com/r/MakeupAddiction/comments/17pywy0/has_anyone_tried_or_heard_of_flower_knows_beauty/",
+      "https://awomansconfidence.com/2024/02/11/flower-knows-review/",
+      "https://www.lizzieinlace.com/flower-knows-makeup-review/",
+      "https://www.tiktok.com/@troy_ling/video/7545846553278172424",
+      "http://www.themagiccrafter.com/blog/flower-knows-moonlight-mermaid-makeup-review"
+    ]
+  },
+  "gap_report": {
+    "alignment_score": 65,
+    "aligned": [
+      "行业定位：彩妆",
+      "核心产品：眼影盘、唇釉",
+      "包装精美且具有艺术感"
+    ],
+    "misaligned": [
+      "AI强调中高端定位和高质量，但公司自述未明确提及价格档次",
+      "AI提到纯素零残忍，公司自述未提及"
+    ],
+    "blind_spots": [
+      "公司强调平价奢华童话彩妆和二次元美学，但AI未提及平价和二次元"
+    ],
+    "opportunities": [
+      "AI指出产品质量高、包装艺术感强，公司可放大这些优势",
+      "AI提到纯素零残忍符合道德消费趋势，公司可加强宣传"
+    ],
+    "one_line_summary": "AI sees you as a mid-to-high-end brand with artistic packaging and high quality, but you want to be seen as affordable luxury fairy tale makeup with anime aesthetics. The gap is in pricing and aesthetic positioning.",
+    "target_alignment_score": 50,
+    "target_aligned": [
+      "梦幻艺术包装（童话彩妆）",
+      "目标年轻女性消费者"
+    ],
+    "target_misaligned": [
+      "AI未提及平价定位",
+      "AI未提及二次元美学",
+      "AI未明确提及Z世代"
+    ],
+    "target_gap_summary": "Brand wants AI to say 'affordable luxury fairy tale makeup with anime aesthetics for Gen Z', but AI says 'mid-to-high-end brand with artistic packaging and high quality for beauty enthusiasts'. The gap is in pricing (affordable vs mid-to-high-end) and aesthetic (anime vs general artistic).",
+    "has_target_gap": true
+  },
+  "citation_metrics": {
+    "rate": 20.0,
+    "mention_rate": 80.0,
+    "total_queries": 25,
+    "mentioned_count": 14,
+    "details": [
+      {
+        "query": "Flower Knows makeup review",
+        "mentioned": true,
+        "position": "top",
+        "mention_context": "Flower Knows 是一个以奇思妙想和艺术包装闻名的化妆品牌，在多个平台上获得好评。",
+        "reference_source": "https://www.reddit.com/r/MakeupAddiction/comments/17pywy0/has_anyone_tried_or_heard_of_flower_knows_beauty/",
+        "query_category": "brand",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": true,
+            "position": "mention"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": true,
+            "position": "mention"
+          }
+        }
+      },
+      {
+        "query": "where to buy Flower Knows cosmetics",
+        "mentioned": true,
+        "position": "top",
+        "mention_context": "Flower Knows cosmetics can be purchased from several platforms. Here are the details: 1. **Flower Knows Official Website**: The official website of Flower Knows (https://flowerknows.co) offers their full range of products, often with promotions like 15% off for first-time buyers. 2. **Ulta Beauty**: Flower Knows products are available at Ulta Beauty, both online and in-store. Ulta also offers free shipping and store pickup options. You can explore their selection here: [Ulta Beauty - Flower Knows](https://www.ulta.com/brand/flower-knows). 3. **Amazon**: Flower Knows has an official store on Amazon, where customers can shop for their cosmetics and enjoy perks for loyal fans. Visit their Amazon store here: [Amazon - Flower Knows](https://www.amazon.com/stores/FlowerKnows/page/AB7378EB-AB41-4AF6-B3E1-A39032A7664C). 4. **Urban Outfitters**: Flower Knows products are also available at Urban Outfitters, which features their newest releases and classic items. Check their collection here: [Urban Outfitters - Flower Knows](https://www.urbanoutfitters.com/brands/flower-knows). 5. **Instagram**: While not a direct purchasing platform, the Flower Knows Instagram account (@flowerknows_global) frequently promotes their products and directs users to shop at Ulta Beauty. You can explore their Instagram page here: [Flower Knows Instagram](https://www.instagram.com/flowerknows_global/?hl=en). These platforms provide multiple options for purchasing Flower Knows cosmetics, catering to different shopping preferences. No direct competitors or alternative brands were mentioned in the search results.",
+        "reference_source": "",
+        "query_category": "brand",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": true,
+            "position": "mention"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Flower Knows eyeshadow palette quality",
+        "mentioned": true,
+        "position": "mention",
+        "mention_context": "AI 提到 Flower Knows 眼影盘质量不错，特别是哑光色，但亮片色表现不一致，品牌定价中高端。",
+        "reference_source": "https://flowerknows.co/collections/eyeshadow-palette?srsltid=AfmBOooypXe2d4wNXXpjuPc03VBkRw4pTKsTKaStXUxBG1vedzJsWv_y",
+        "query_category": "brand",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": true,
+            "position": "mention"
+          },
+          "Too Faced": {
+            "is_mentioned": true,
+            "position": "mention"
+          },
+          "Natasha Denona": {
+            "is_mentioned": true,
+            "position": "mention"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Flower Knows lip gloss swatches",
+        "mentioned": true,
+        "position": "mention",
+        "mention_context": "Flower Knows (flowerknows.co) 提供一系列唇釉产品，包括紫草莓洛可可光泽唇釉，售价16美元（原价20美元）。该品牌强调其彩妆系列（包括唇釉和唇彩）的梦幻、童话灵感美学。YouTube上有一篇关于Flower Knows“仲夏童话”唇釉系列的详细试色和评论，展示了G01、G02、G04、G05、G06和G07等色号。该评论突出了该品牌对梦幻、艺术彩妆的关注。然而，Reddit上的一些用户报告了对Flower Knows唇釉质地的不满，称其干后发粘。",
+        "reference_source": "https://flowerknows.co/collections/lip-gloss",
+        "query_category": "brand",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "is Flower Knows cruelty free",
+        "mentioned": true,
+        "position": "mention",
+        "mention_context": "AI 提到 Flower Knows 是一个零残忍品牌，已获得 PETA 认证，并引用其 FAQ 页面和 AliExpress 页面作为来源。",
+        "reference_source": "https://flowerknows.co/pages/faqs",
+        "query_category": "brand",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Flower Knows customer service experience",
+        "mentioned": true,
+        "position": "top",
+        "mention_context": "Flower Knows (flowerknows.co) 的客户服务声誉好坏参半，既有正面也有负面体验。正面体验包括客户在 Trustpilot 上称赞其产品和整体服务；负面体验包括 Reddit 上用户订单被取消且公司拒绝履行原订单。产品评论强调其独特包装和产品质量。",
+        "reference_source": "https://www.trustpilot.com/review/flowerknows.co",
+        "query_category": "brand",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Flower Knows pricing compared to drugstore",
+        "mentioned": true,
+        "position": "mention",
+        "mention_context": "Flower Knows 是一个中国美妆品牌，以其独特的包装和中档定价而闻名。在搜索结果中，它没有被明确与开架品牌比较，但其价格点被描述为高于典型的开架产品，但仍比奢侈品牌实惠。",
+        "reference_source": "https://www.reddit.com/r/MakeupAddiction/comments/17pywy0/has_anyone_tried_or_heard_of_flower_knows_beauty/",
+        "query_category": "brand",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Flower Knows shipping time usa",
+        "mentioned": true,
+        "position": "mention",
+        "mention_context": "AI 提到 Flower Knows 提供美国配送，通常需要2-3周，并引用了 Reddit、FAQ、Shipping Policy 和 TikTok 等来源。",
+        "reference_source": "https://www.reddit.com/r/AsianBeauty/comments/xnvift/china_to_us_buyingshipping_review_of/",
+        "query_category": "brand",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Flower Knows limited edition collection 2025",
+        "mentioned": true,
+        "position": "mention",
+        "mention_context": "Flower Knows 是一个以奇思妙想和梦幻灵感著称的彩妆品牌，2025年有限量版和即将推出的产品。",
+        "reference_source": "https://flowerknows.co/?srsltid=AfmBOor-BMW8nZKhcJpK5lBq_hWGCliXBLBrRV68vdkwkv67TARD6dPk",
+        "query_category": "brand",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Colourpop vs Flower Knows for fairy tale makeup",
+        "mentioned": true,
+        "position": "mention",
+        "mention_context": "Flower Knows 是一个中国化妆品品牌，以其异想天开、童话故事灵感的包装和高质量产品而闻名。该品牌因其独特的美学而受到关注，吸引了那些喜欢复杂和艺术设计的消费者。例如，他们的“仲夏童话”系列具有详细的包装和产品，如粉状腮红和闪粉，因其配方和呈现而受到高度赞扬。评论经常强调该品牌将功能性与迷人的视觉吸引力相结合的能力。",
+        "reference_source": "https://www.youtube.com/watch?v=vLEIinzx_Lw, https://www.tiktok.com/@foodishbeauty2.0/video/7376679898775162144",
+        "query_category": "competitor",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Romand lip tint vs Colourpop lip gloss",
+        "mentioned": true,
+        "position": "mention",
+        "mention_context": "Flower Knows, a niche beauty brand, was not mentioned in the search results. However, its whimsical and artistic product designs may position it as a unique competitor in the same space as Romand and Colourpop, particularly for consumers who value aesthetic packaging alongside product performance.",
+        "reference_source": "",
+        "query_category": "competitor",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Canmake vs Romand affordable eyeshadow",
+        "mentioned": true,
+        "position": "none",
+        "mention_context": "Flower Knows was not mentioned in the search results",
+        "reference_source": "",
+        "query_category": "competitor",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Colourpop anime style collection 2025",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "competitor",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": true,
+            "position": "mention"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Romand best lip gloss for young women",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "competitor",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "Canmake eyeshadow palette review 2025",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "competitor",
+        "competitor_mentions": {
+          "Ulta Beauty": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Urban Decay": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Too Faced": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Natasha Denona": {
+            "is_mentioned": false,
+            "position": "none"
+          },
+          "Lime Crime": {
+            "is_mentioned": false,
+            "position": "none"
+          }
+        }
+      },
+      {
+        "query": "",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "industry",
+        "competitor_mentions": {}
+      },
+      {
+        "query": "",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "industry",
+        "competitor_mentions": {}
+      },
+      {
+        "query": "",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "industry",
+        "competitor_mentions": {}
+      },
+      {
+        "query": "",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "industry",
+        "competitor_mentions": {}
+      },
+      {
+        "query": "",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "industry",
+        "competitor_mentions": {}
+      },
+      {
+        "query": "",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "industry",
+        "competitor_mentions": {}
+      },
+      {
+        "query": "",
+        "mentioned": true,
+        "position": "middle",
+        "mention_context": "Flower Knows 被列为流行的中国彩妆品牌之一，在 Reddit 上被提及。",
+        "reference_source": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+        "query_category": "industry",
+        "competitor_mentions": {}
+      },
+      {
+        "query": "",
+        "mentioned": true,
+        "position": "bottom",
+        "mention_context": "该品牌结合了异想天开的包装与温和的配方，使其成为敏感肌肤且喜欢美观产品的不错选择。",
+        "reference_source": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+        "query_category": "industry",
+        "competitor_mentions": {}
+      },
+      {
+        "query": "",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "industry",
+        "competitor_mentions": {}
+      },
+      {
+        "query": "",
+        "mentioned": false,
+        "position": "none",
+        "mention_context": "",
+        "reference_source": "",
+        "query_category": "industry",
+        "competitor_mentions": {}
+      }
+    ],
+    "industry_rate": 20.0,
+    "brand_rate": 100.0,
+    "competitor_scenario_rate": 50.0,
+    "industry_count": 10,
+    "brand_count": 9,
+    "competitor_count": 6,
+    "industry_mentioned": 2,
+    "brand_mentioned": 9,
+    "competitor_mentioned": 3,
+    "recommendation_rate": 20.0,
+    "a_recommendation_rate": 0.0,
+    "c_recommendation_rate": 0.0,
+    "recommended_count": 3,
+    "top_rate": 20.0,
+    "top_count": 3,
+    "source_distribution": {
+      "reddit.com": 0.333,
+      "flowerknows.co": 0.444,
+      "trustpilot.com": 0.111,
+      "youtube.com": 0.111
+    },
+    "official_site_ratio": 0.444,
+    "third_party_ratio": 0.556,
+    "competitor_citation_detail": {},
+    "competitor_metrics": {
+      "Natasha Denona": {
+        "industry_rate": 0.0,
+        "recommendation_rate": 0.0,
+        "top_rate": 0.0,
+        "mention_count": 1
+      },
+      "Too Faced": {
+        "industry_rate": 0.0,
+        "recommendation_rate": 0.0,
+        "top_rate": 0.0,
+        "mention_count": 2
+      },
+      "Urban Decay": {
+        "industry_rate": 0.0,
+        "recommendation_rate": 0.0,
+        "top_rate": 0.0,
+        "mention_count": 1
+      },
+      "Lime Crime": {
+        "industry_rate": 0.0,
+        "recommendation_rate": 0.0,
+        "top_rate": 0.0,
+        "mention_count": 1
+      },
+      "Ulta Beauty": {
+        "industry_rate": 0.0,
+        "recommendation_rate": 0.0,
+        "top_rate": 0.0,
+        "mention_count": 2
+      }
+    }
+  },
+  "competitor_analysis": [
+    {
+      "query": "If you had to choose between Romand and Canmake, which offers a more natural, \"no-makeup\" makeup look?",
+      "winner": "tie",
+      "reason": "The text does not mention any of the brands, so no comparison can be made.",
+      "competitor_refs": [],
+      "dimension_scores": [],
+      "dimension_win_count": {}
+    },
+    {
+      "query": "For a global beauty startup with a limited budget, Flower Knows or ColourPop for first product launch?",
+      "winner": "Flower Knows",
+      "reason": "Only Flower Knows is mentioned in the text; competitors have no data. Flower Knows shows mixed reviews but has some praised aspects.",
+      "competitor_refs": [],
+      "dimension_scores": [
+        {
+          "dimension": "Product Quality",
+          "rankings": [
+            {
+              "brand": "Flower Knows",
+              "rank": 1,
+              "score": null,
+              "summary": "来源引用无法在搜索结果中验证",
+              "source_quote": "其粉状腮红和闪片高光配方被认为是市场上最好的之一，包装质量非常高（来源：https://www.youtube.com/watch?v=vLEIinzx_Lw）。包装惊艳，但产品质量一般，粉状产品（如腮红、眼影）有些飞粉（来源：https://www.reddit.com/r/MakeupAddiction/comments/1fwt7ge/hot_take_flower_knows/）。",
+              "verified": "unverified"
+            }
+          ],
+          "importance": "high"
+        },
+        {
+          "dimension": "Packaging Design",
+          "rankings": [
+            {
+              "brand": "Flower Knows",
+              "rank": 1,
+              "score": null,
+              "summary": "来源引用无法在搜索结果中验证",
+              "source_quote": "包装惊艳，但产品质量一般，粉状产品（如腮红、眼影）有些飞粉（来源：https://www.reddit.com/r/MakeupAddiction/comments/1fwt7ge/hot_take_flower_knows/）。",
+              "verified": "unverified"
+            }
+          ],
+          "importance": "medium"
+        },
+        {
+          "dimension": "Market Presence",
+          "rankings": [
+            {
+              "brand": "Flower Knows",
+              "rank": 1,
+              "score": null,
+              "summary": "来源引用无法在搜索结果中验证",
+              "source_quote": "该品牌已进入美国Ulta Beauty零售渠道，表明美国消费者对亚洲美妆美学的接受度正在提升（来源：https://jingdaily.com/posts/flower-knows-becomes-one-of-the-1st-chinese-labels-to-land-on-ulta-beauty）。",
+              "verified": "unverified"
+            }
+          ],
+          "importance": "medium"
+        },
+        {
+          "dimension": "Brand History",
+          "rankings": [
+            {
+              "brand": "Flower Knows",
+              "rank": 1,
+              "score": null,
+              "summary": "来源引用无法在搜索结果中验证",
+              "source_quote": "品牌成立于2016年，是中国最具视觉特色的全球美妆品牌之一（来源：https://www.mintoiro.com/post/beauty-brand-breakdown-flower-knows）。",
+              "verified": "unverified"
+            }
+          ],
+          "importance": "low"
+        }
+      ],
+      "dimension_win_count": {
+        "Flower Knows": 0
+      }
+    },
+    {
+      "query": "For an enterprise looking to stock a cruelty-free line for a high-end boutique, Romand or Canmake?",
+      "winner": "tie",
+      "reason": "The text does not mention any of the brands (Flower Knows, colourpop.com, romand.us, canmake.com) or any comparison dimensions. Therefore, no winner can be determined.",
+      "competitor_refs": [],
+      "dimension_scores": [],
+      "dimension_win_count": {}
+    },
+    {
+      "query": "For a startup targeting the Chinese market with limited budget, Flower Knows or Romand?",
+      "winner": "Flower Knows",
+      "reason": "Only Flower Knows is mentioned in the text; competitors are not discussed, so Flower Knows is the default winner.",
+      "competitor_refs": [],
+      "dimension_scores": [
+        {
+          "dimension": "Price (Domestic China)",
+          "rankings": [
+            {
+              "brand": "Flower Knows",
+              "rank": 1,
+              "score": 70,
+              "summary": "In China, Flower Knows is much more affordable.",
+              "source_quote": "In China, it's a much more affordable",
+              "verified": "verified"
+            }
+          ],
+          "importance": "high"
+        },
+        {
+          "dimension": "Price (International)",
+          "rankings": [
+            {
+              "brand": "Flower Knows",
+              "rank": 1,
+              "score": 30,
+              "summary": "Internationally, prices are marked up a LOT.",
+              "source_quote": "their prices are actually marked up a LOT internationally",
+              "verified": "verified"
+            }
+          ],
+          "importance": "medium"
+        },
+        {
+          "dimension": "Target Audience & Marketing",
+          "rankings": [
+            {
+              "brand": "Flower Knows",
+              "rank": 1,
+              "score": 60,
+              "summary": "Targets Gen Z and young urban consumers using cosplayer culture.",
+              "source_quote": "Flower Knows主要针对Gen Z和年轻城市消费者，并利用cosplayer文化进行营销",
+              "verified": "partial"
+            }
+          ],
+          "importance": "medium"
+        }
+      ],
+      "dimension_win_count": {
+        "Flower Knows": 3
+      }
+    },
+    {
+      "query": "Which has better eyeshadow pigmentation and blendability, Flower Knows or Romand?",
+      "winner": "Flower Knows",
+      "reason": "Flower Knows is explicitly praised for superior pigmentation and best shimmer/glitters, while Romand is only mentioned for easy blending without direct comparison.",
+      "competitor_refs": [
+        "Romand palette review, easy blending eyeshadow palette",
+        "flower knows is more pigmented imo",
+        "Flower knows has the best shimmer and glitters"
+      ],
+      "dimension_scores": [
+        {
+          "dimension": "pigmentation",
+          "rankings": [
+            {
+              "brand": "Flower Knows",
+              "rank": 1,
+              "score": 75,
+              "summary": "Explicitly stated to be more pigmented than Romand.",
+              "source_quote": "flower knows is more pigmented imo",
+              "verified": "verified"
+            },
+            {
+              "brand": "romand.us",
+              "rank": 2,
+              "score": null,
+              "summary": "无来源引用，无法验证",
+              "source_quote": "",
+              "verified": "unverified"
+            }
+          ],
+          "importance": "high"
+        },
+        {
+          "dimension": "blendability",
+          "rankings": [
+            {
+              "brand": "romand.us",
+              "rank": 1,
+              "score": 55,
+              "summary": "Described as 'easy blending' but no direct comparison with Flower Knows.",
+              "source_quote": "Romand palette review, easy blending eyeshadow palette",
+              "verified": "verified"
+            },
+            {
+              "brand": "Flower Knows",
+              "rank": 2,
+              "score": null,
+              "summary": "无来源引用，无法验证",
+              "source_quote": "",
+              "verified": "unverified"
+            }
+          ],
+          "importance": "medium"
+        },
+        {
+          "dimension": "shimmer and glitters",
+          "rankings": [
+            {
+              "brand": "Flower Knows",
+              "rank": 1,
+              "score": 80,
+              "summary": "Explicitly stated to have the best shimmer and glitters.",
+              "source_quote": "Flower knows has the best shimmer and glitters",
+              "verified": "verified"
+            },
+            {
+              "brand": "romand.us",
+              "rank": 2,
+              "score": null,
+              "summary": "无来源引用，无法验证",
+              "source_quote": "",
+              "verified": "unverified"
+            }
+          ],
+          "importance": "medium"
+        }
+      ],
+      "dimension_win_count": {
+        "Flower Knows": 2,
+        "romand.us": 1
+      }
+    },
+    {
+      "query": "Which offers better customer support for bulk wholesale orders, Flower Knows or ColourPop?",
+      "winner": "tie",
+      "reason": "The text does not provide any comparison data for the mentioned brands on any dimension. All brands have null scores.",
+      "competitor_refs": [],
+      "dimension_scores": [],
+      "dimension_win_count": {}
+    },
+    {
+      "query": "Which has more sustainable packaging and eco-friendly ingredients, Romand or Canmake?",
+      "winner": "tie",
+      "reason": "The text does not mention any of the specified brands (Flower Knows, colourpop.com, romand.us, canmake.com) in relation to any comparison dimensions. Therefore, no ranking or scoring is possible.",
+      "competitor_refs": [],
+      "dimension_scores": [],
+      "dimension_win_count": {}
+    },
+    {
+      "query": "Which has better shade range inclusivity for deeper skin tones, Flower Knows or ColourPop?",
+      "winner": "tie",
+      "reason": "The text provides limited information on deeper skin tone inclusivity for Flower Knows and ColourPop, with both receiving criticism. No clear winner can be determined.",
+      "competitor_refs": [
+        "ColourPop had a foundation for deeper skin tones but discontinued it, criticized for lack of inclusivity.",
+        "Flower Knows shades wished to be more pigmented and inclusive."
+      ],
+      "dimension_scores": [
+        {
+          "dimension": "deeper skin tone inclusivity",
+          "rankings": [
+            {
+              "brand": "Flower Knows",
+              "rank": 1,
+              "score": 40,
+              "summary": "Flower Knows is mentioned with a wish for more pigmented and inclusive shades, indicating limited inclusivity.",
+              "source_quote": "I wish the shade were more pigmented and inclusive",
+              "verified": "verified"
+            },
+            {
+              "brand": "colourpop.com",
+              "rank": 2,
+              "score": 30,
+              "summary": "ColourPop had a foundation for deeper skin tones but discontinued it, and is criticized for lack of inclusivity.",
+              "source_quote": "deeper skin tones but they discontinued it of course",
+              "verified": "verified"
+            }
+          ],
+          "importance": "high"
+        }
+      ],
+      "dimension_win_count": {
+        "Flower Knows": 1,
+        "colourpop.com": 0
+      }
+    },
+    {
+      "query": "Which has more consistent product quality across different makeup categories (lips, eyes, cheeks), Romand or Canmake?",
+      "winner": "tie",
+      "reason": "The text does not provide any comparison information for the mentioned brands.",
+      "competitor_refs": [],
+      "dimension_scores": [],
+      "dimension_win_count": {}
+    }
+  ],
+  "engines_queried": [
+    "chatgpt",
+    "deepseek"
+  ],
+  "query_terms": [
+    "best color cosmetics for daily wear 2025",
+    "top rated eyeshadow palette under $30",
+    "recommended foundation for oily skin with full coverage",
+    "best lipstick brand for long-lasting wear",
+    "what brand of blush is best for beginners",
+    "which company makes the best setting spray",
+    "Chinese color cosmetics brands review for quality",
+    "best makeup products made in China for sensitive skin",
+    "best concealer for dark circles under $20",
+    "top rated mascara brand for volume and length",
+    "Flower Knows makeup review",
+    "where to buy Flower Knows cosmetics",
+    "Flower Knows eyeshadow palette quality",
+    "Flower Knows lip gloss swatches",
+    "is Flower Knows cruelty free",
+    "Flower Knows customer service experience",
+    "Flower Knows pricing compared to drugstore",
+    "Flower Knows shipping time usa",
+    "Flower Knows limited edition collection 2025",
+    "Colourpop vs Flower Knows for fairy tale makeup",
+    "Romand lip tint vs Colourpop lip gloss",
+    "Canmake vs Romand affordable eyeshadow",
+    "Colourpop anime style collection 2025",
+    "Romand best lip gloss for young women",
+    "Canmake eyeshadow palette review 2025"
+  ],
+  "meta": {
+    "total_tokens": 19273,
+    "total_cost": 0.0385,
+    "total_duration_ms": 186454,
+    "query_statuses": {
+      "Flower Knows makeup review": "success",
+      "where to buy Flower Knows cosmetics": "success",
+      "Flower Knows eyeshadow palette quality": "success",
+      "Flower Knows lip gloss swatches": "success",
+      "is Flower Knows cruelty free": "success",
+      "Flower Knows customer service experience": "success",
+      "Flower Knows pricing compared to drugstore": "success",
+      "Flower Knows shipping time usa": "success",
+      "Flower Knows limited edition collection 2025": "success",
+      "Colourpop vs Flower Knows for fairy tale makeup": "success",
+      "Romand lip tint vs Colourpop lip gloss": "success",
+      "Canmake vs Romand affordable eyeshadow": "success",
+      "Colourpop anime style collection 2025": "success",
+      "Romand best lip gloss for young women": "success",
+      "Canmake eyeshadow palette review 2025": "success",
+      "If you had to choose between Flower Knows and Romand for everyday wear, which packaging design do you prefer?": "success",
+      "If you had to choose between ColourPop and Canmake, which has better long-lasting lip products?": "success",
+      "If you had to choose between Flower Knows and ColourPop, which brand do you feel has more unique color stories?": "success",
+      "If you had to choose between Romand and Canmake, which offers a more natural, \"no-makeup\" makeup look?": "success",
+      "For a global beauty startup with a limited budget, Flower Knows or ColourPop for first product launch?": "success",
+      "For an enterprise looking to stock a cruelty-free line for a high-end boutique, Romand or Canmake?": "success",
+      "For a startup targeting the Chinese market with limited budget, Flower Knows or Romand?": "success",
+      "For a global e-commerce brand needing reliable international shipping and customer support, ColourPop or Canmake?": "success",
+      "Which has better eyeshadow pigmentation and blendability, Flower Knows or Romand?": "success",
+      "Which has better price-to-quality ratio for face powders, ColourPop or Canmake?": "success",
+      "Which offers better customer support for bulk wholesale orders, Flower Knows or ColourPop?": "success",
+      "Which has more sustainable packaging and eco-friendly ingredients, Romand or Canmake?": "success",
+      "Which has better shade range inclusivity for deeper skin tones, Flower Knows or ColourPop?": "success",
+      "Which has more consistent product quality across different makeup categories (lips, eyes, cheeks), Romand or Canmake?": "success",
+      "Which has better availability and shipping speed for international customers, Flower Knows or Romand?": "success"
+    }
+  },
+  "status": "success",
+  "error": null,
+  "data_completeness": "complete",
+  "brand_profile": {
+    "brand_name": "Flower Knows",
+    "one_liner": "Flower Knows is a 彩妆（Color Cosmetics） company.",
+    "value_props": [],
+    "differentiators": [],
+    "target_personas": [],
+    "tone_keywords": [],
+    "full_description": "Flower Knows provides products/services in the 彩妆（Color Cosmetics） industry.",
+    "inferred_industry": "彩妆（Color Cosmetics）",
+    "inferred_target_market": "全球市场（美国、欧洲、日本、东南亚）",
+    "inferred_core_product": "眼影盘、唇釉、唇膏、高光、腮红、粉底",
+    "target_positioning": ""
+  },
+  "company_score": {
+    "overall": 60,
+    "dimensions": [
+      {
+        "name": "品牌力",
+        "score": 75,
+        "evidence": "AI 感知为中高端定位，强调包装艺术感和高质量，但公司自述未明确价格档次，且 AI 未提及平价和二次元美学，存在盲点。",
+        "suggestion": "在品牌描述中明确价格定位和二次元美学特色，以对齐 AI 认知。"
+      },
+      {
+        "name": "产品力",
+        "score": 70,
+        "evidence": "AI 准确描述核心产品（眼影盘、唇釉等），并称赞眼影顺滑显色、包装精美，但指出深肤色显色度不足。",
+        "suggestion": "优化深肤色适用性，扩大产品色域。"
+      },
+      {
+        "name": "内容力",
+        "score": 60,
+        "evidence": "引用率 0.0% 但推荐率 20.0%，AI 提及较少但推荐比例较高，整体正面。",
+        "suggestion": "增加品牌在 AI 训练数据中的曝光，如发布更多专业评测。"
+      },
+      {
+        "name": "技术力",
+        "score": 30,
+        "evidence": "AI 未提及任何技术壁垒或创新，行业为彩妆，技术力非核心维度。",
+        "suggestion": "若涉及配方或工艺创新，可在描述中强调。"
+      },
+      {
+        "name": "市场力",
+        "score": 65,
+        "evidence": "AI 提及目标市场为全球（美国、欧洲、日本、东南亚），但未具体说明覆盖地区或客户群体。",
+        "suggestion": "明确市场覆盖范围和客户群体，如重点区域或渠道。"
+      }
+    ],
+    "industry": "彩妆（Color Cosmetics）",
+    "weights_used": {
+      "品牌力": 0.2,
+      "产品力": 0.2,
+      "内容力": 0.2,
+      "技术力": 0.2,
+      "市场力": 0.2
+    }
+  },
+  "ai_narrative": {
+    "ideal_description": "Flower Knows是一个源自中国的彩妆品牌，以平价奢华童话彩妆和二次元美学著称。该品牌主打眼影盘、唇釉、唇膏、高光、腮红和粉底等产品，设计充满艺术感和童话元素，深受追求个性与美学的年轻消费者喜爱。Flower Knows注重产品质量，包装精美，同时坚持纯素零残忍理念，符合道德消费趋势。品牌在全球市场如美国、欧洲、日本和东南亚均有影响力，定位中高端，但保持亲民价格，实现了平价与奢华的平衡。",
+    "keywords": [
+      "Flower Knows",
+      "彩妆",
+      "平价奢华",
+      "二次元美学",
+      "童话彩妆",
+      "纯素零残忍",
+      "艺术感包装",
+      "全球市场"
+    ],
+    "value_props": [
+      "平价奢华童话彩妆",
+      "二次元美学设计",
+      "高质量产品与艺术感包装",
+      "纯素零残忍理念",
+      "亲民价格与中高端定位平衡"
+    ],
+    "avoid": [
+      "仅强调中高端定位而忽略平价",
+      "忽略二次元美学元素",
+      "未提及纯素零残忍",
+      "描述为普通大众彩妆",
+      "忽略童话主题"
+    ],
+    "tone": "专业"
+  },
+  "source_authority": {
+    "top_sources": [
+      {
+        "domain": "trustpilot.com",
+        "source_type": "评测平台",
+        "mention_count": 1,
+        "avg_position": 1.0,
+        "authority_score": 61,
+        "queries": [
+          "Flower Knows customer service experience"
+        ]
+      },
+      {
+        "domain": "reddit.com",
+        "source_type": "论坛",
+        "mention_count": 3,
+        "avg_position": 0.47,
+        "authority_score": 56,
+        "queries": [
+          "Flower Knows makeup review",
+          "Flower Knows pricing compared to drugstore",
+          "Flower Knows shipping time usa"
+        ]
+      },
+      {
+        "domain": "flowerknows.co",
+        "source_type": "品牌官网",
+        "mention_count": 4,
+        "avg_position": 0.2,
+        "authority_score": 55,
+        "queries": [
+          "Flower Knows eyeshadow palette quality",
+          "Flower Knows lip gloss swatches",
+          "is Flower Knows cruelty free",
+          "Flower Knows limited edition collection 2025"
+        ]
+      },
+      {
+        "domain": "youtube.com",
+        "source_type": "社交媒体",
+        "mention_count": 1,
+        "avg_position": 0.2,
+        "authority_score": 25,
+        "queries": [
+          "Colourpop vs Flower Knows for fairy tale makeup"
+        ]
+      }
+    ],
+    "total_sources": 4,
+    "source_diversity": 0.876
+  },
+  "engine_results": {
+    "gpt": {
+      "engine": "gpt",
+      "queries": [
+        "best color cosmetics for daily wear 2025",
+        "top rated eyeshadow palette under $30",
+        "recommended foundation for oily skin with full coverage",
+        "best lipstick brand for long-lasting wear",
+        "what brand of blush is best for beginners",
+        "which company makes the best setting spray",
+        "Chinese color cosmetics brands review for quality",
+        "best makeup products made in China for sensitive skin",
+        "best concealer for dark circles under $20",
+        "top rated mascara brand for volume and length"
+      ],
+      "citation_rate": 20.0,
+      "recommendation_rate": 20.0,
+      "sources": {
+        "reddit.com": 2
+      },
+      "competitor_analysis": [],
+      "raw_data": {
+        "answers": [
+          {
+            "query": "best color cosmetics for daily wear 2025",
+            "answer": "For the best color cosmetics for daily wear in 2025, several sources highlight standout products and trends:\n\n1. **Vogue's Beauty Team Recommendations**: Vogue's beauty editors compiled a list of the best beauty products for 2025, including skin, hair, and makeup items. While the article covers a broad range of products, it emphasizes high-quality, versatile cosmetics suitable for daily use. You can explore their curated list here: [Vogue's Best Beauty Products of 2025](https://www.vogue.com/article/best-beauty-products-of-2024).\n\n2. **Who What Wear Makeup Trends**: According to makeup artists featured on Who What Wear, nine major makeup trends are defining 2025. These trends include natural and minimalistic looks, which are ideal for daily wear. The article also highlights specific products and techniques that align with these trends. Check it out here: [Who What Wear Makeup Trends 2025](https://www.whowhatwear.com/beauty/makeup/top-makeup-trends-2025).\n\n3. **Reddit User Recommendations**: Makeup enthusiasts on Reddit shared their favorite products for 2025, such as Chanel Les Beiges Healthy Glow Foundation and Fenty Hydrating Primer. These products are praised for their lightweight formulas and suitability for everyday use, especially for acne-prone or combination skin. Read more here: [Reddit Makeup Discussion 2025](https://www.reddit.com/r/Makeup/comments/1htxeyv/whats_some_makeup_in_2025_youll_be_purchasing/).\n\nThese sources provide insights into the top-rated cosmetics and trends for daily wear in 2025, catering to various preferences and skin types.",
+            "search_results": [
+              {
+                "title": "Best Makeup of 2025 for Mature Skin! Drugstore to High End",
+                "url": "https://www.youtube.com/watch?v=2bmVnTUyYEY",
+                "snippet": "My Year End Round-Up of the Best Makeup for Mature Skin from ALL Price Points! ⬇️ Links Below: Click “…more” ⬇️ SUBSCRIBE: ..."
+              },
+              {
+                "title": "58 Best Beauty Products of 2025, According to Vogue's Beauty Team",
+                "url": "https://www.vogue.com/article/best-beauty-products-of-2024",
+                "snippet": "What are the Vogue beauty team's best beauty products of 2025? Vogue and British Vogue beauty editors share their top skin, hair, fragrance, ..."
+              },
+              {
+                "title": "What's some makeup in 2025 you'll be purchasing again? - Reddit",
+                "url": "https://www.reddit.com/r/Makeup/comments/1htxeyv/whats_some_makeup_in_2025_youll_be_purchasing/",
+                "snippet": "Chanel Les begies healthy glow foundation. Anastasia bh setting powder. Fenty hydrsr primer. My acne prone combined skin loves extra hydration and this works ..."
+              },
+              {
+                "title": "The BEST Makeup of 2025 | My 20+ STANDOUT ... - YouTube",
+                "url": "https://www.youtube.com/watch?v=HdXdD7bpVWw",
+                "snippet": "... COLOR Too Faced Cloud Crush Liquid Blush https://bit.ly/4gk9Pot Neen ... WEARING Sweater https://bit.ly/4aPxJXU Earrings https://bit.ly ..."
+              },
+              {
+                "title": "9 Makeup Trends Defining 2025, According to MUAs | Who What Wear",
+                "url": "https://www.whowhatwear.com/beauty/makeup/top-makeup-trends-2025",
+                "snippet": "Here, get a jump on the nine buzzy makeup trends already dominating 2025. Makeup artists promise they'll remain relevant for months to come."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1021,
+            "error": null,
+            "engine": "gpt"
+          },
+          {
+            "query": "top rated eyeshadow palette under $30",
+            "answer": "If you're looking for a top-rated eyeshadow palette under $30, here are some great options based on recent reviews:\n\n1. **Natasha Denona Mini Palettes**: These palettes are highly recommended for their quality and versatility. They feature five pans and are priced at $27, making them a great option for creating complete looks. You can find more details in discussions on Reddit [here](https://www.reddit.com/r/Sephora/comments/1b6cmym/best_eyeshadow_palette_for_under_30/).\n\n2. **BLK/OPL High Impact Eyeshadow Palette**: Ranked as a top choice by Byrdie, this palette includes six shimmery finishes that are crease- and fade-resistant. It's a great option for those looking for vibrant colors at an affordable price. Learn more about it [here](https://www.byrdie.com/best-drugstore-eye-shadow-palettes-11725279).\n\n3. **NYX Professional Makeup Ultimate Shadow Palette**: This palette is frequently mentioned among the best drugstore options. It offers a wide range of shades and is perfect for creating diverse looks. You can read about it on The Daley Dose [here](https://thedaleydose.com/best-drugstore-eyeshadow-palettes/).\n\n4. **Milani Gilded Nude Hyper Pigmented Eyeshadow Palette**: Another affordable and highly rated palette, this one is praised for its pigmentation and neutral tones. It's a great choice for everyday wear. More details are available [here](https://thedaleydose.com/best-drugstore-eyeshadow-palettes/).\n\nThese palettes are all under $30 and have received positive reviews for their quality and performance.",
+            "search_results": [
+              {
+                "title": "Best eyeshadow palette for under 30$? : r/Sephora - Reddit",
+                "url": "https://www.reddit.com/r/Sephora/comments/1b6cmym/best_eyeshadow_palette_for_under_30/",
+                "snippet": "Check out the Natasha Denona Mini palettes! They're 5 pans and go for $27 - I find it really easy to do a complete look with one of them. They ..."
+              },
+              {
+                "title": "These are the BEST drugstore eyeshadow palettes - YouTube",
+                "url": "https://www.youtube.com/watch?v=szVeQhhCA0A",
+                "snippet": "I'm an older lady but I still enjoy eyeshadow. These days, I prefer a more neutral look, especially for work. I absolutely love all of your ..."
+              },
+              {
+                "title": "The 11 Best Drugstore Eyeshadow Palettes, Tested and Reviewed",
+                "url": "https://www.byrdie.com/best-drugstore-eye-shadow-palettes-11725279",
+                "snippet": "We ranked the BLK/OPL High Impact Eyeshadow Palette as our number one. It features six shimmery finishes that are crease- and fade-resistant."
+              },
+              {
+                "title": "The 5 Best Drugstore Eyeshadow Palettes To Make Your Eyes Pop",
+                "url": "https://thedaleydose.com/best-drugstore-eyeshadow-palettes/",
+                "snippet": "NYX Professional Makeup Ultimate Shadow Palette · Milani Gilded Nude Hyper Pigmented Eyeshadow Palette · Pacifica Cosmic Reflect Palette."
+              },
+              {
+                "title": "Amazon Best Sellers: Best Eyeshadow",
+                "url": "https://www.amazon.com/Best-Sellers-Eyeshadow/zgbs/beauty/11058361",
+                "snippet": "Discover the best Eyeshadow in Best Sellers. Find the top 100 most popular items in Amazon Beauty & Personal Care Best Sellers."
+              }
+            ],
+            "no_search": false,
+            "tokens": 992,
+            "error": null,
+            "engine": "gpt"
+          },
+          {
+            "query": "recommended foundation for oily skin with full coverage",
+            "answer": "If you're looking for a full-coverage foundation suitable for oily skin, here are some top recommendations based on the search results:\n\n1. **Charlotte Tilbury Airbrush Flawless Foundation**: This foundation offers a matte, full-coverage finish and is designed to blur imperfections. It is highly recommended for oily skin due to its long-lasting formula. You can find more details at Sephora: [Sephora Foundation Recommendations](https://www.sephora.com/shop/foundation-makeup?ref=filters[coverage]=full,filters[skinType]=oilySk).\n\n2. **Lancôme Teint Idole Ultra Wear Foundation**: Known for its 24-hour wear and matte finish, this foundation is another excellent choice for oily skin. It provides full coverage while controlling shine. More information is available on Sephora: [Sephora Foundation Recommendations](https://www.sephora.com/shop/foundation-makeup?ref=filters[coverage]=full,filters[skinType]=oilySk).\n\n3. **Armani Power Fabric Foundation**: This foundation is frequently praised for its ability to work well with oily skin, providing a matte finish and full coverage. Users on Reddit also recommend it for its performance: [Reddit Discussion on Foundations](https://www.reddit.com/r/MakeupAddiction/comments/1fooqyx/the_best_foundation_for_oily_skin/).\n\n4. **MAC Studio Fix Fluid Foundation**: Another popular choice for oily skin, this foundation offers full coverage with a matte finish and is designed to control oil throughout the day. It is also mentioned in user reviews on Reddit: [Reddit Discussion on Foundations](https://www.reddit.com/r/MakeupAddiction/comments/1fooqyx/the_best_foundation_for_oily_skin/).\n\n5. **Expert Recommendations**: Foundations with oil-free, matte formulas containing ingredients like salicylic acid, niacinamide, or kaolin clay are often recommended for oily skin. These ingredients help control oil production and provide a smooth finish. For more insights, check out this guide: [Trophy Skin Foundation Guide](https://trophyskin.com/es/blogs/blog/best-foundation-for-oily-skin-expert-guide-top-picks).\n\nEach of these foundations has been highlighted for their ability to provide full coverage while catering to the needs of oily skin.",
+            "search_results": [
+              {
+                "title": "Full Coverage Foundations for Oily Skin | Sephora",
+                "url": "https://www.sephora.com/shop/foundation-makeup?ref=filters[coverage]=full,filters[skinType]=oilySk",
+                "snippet": "Charlotte Tilbury - Airbrush Flawless Blurring & Matte Full Coverage Foundation · Lancôme - Teint Idole Ultra 24H Long Wear Matte Foundation ..."
+              },
+              {
+                "title": "The best foundation for oily skin? : r/MakeupAddiction - Reddit",
+                "url": "https://www.reddit.com/r/MakeupAddiction/comments/1fooqyx/the_best_foundation_for_oily_skin/",
+                "snippet": "Armani Power Fabric and MAC studio fix work well with my oily skin. And yes I use lotsa skincare prior to hydrate it."
+              },
+              {
+                "title": "Best Foundation for Oily Skin: Expert Guide + Top Picks",
+                "url": "https://trophyskin.com/es/blogs/blog/best-foundation-for-oily-skin-expert-guide-top-picks",
+                "snippet": "Quick Answer: The best foundation for oily skin is an oil-free, matte formula with ingredients like salicylic acid, niacinamide, or kaolin clay."
+              },
+              {
+                "title": "7 Best Foundations for Acne-Prone Skin of 2026 for an Even Base",
+                "url": "https://www.allure.com/story/best-foundation-for-acne",
+                "snippet": "Best Overall: Armani Beauty Luminous Silk Foundation · Best Matte: Lancôme Teint Idole Ultra Wear Foundation · Best Medium-Coverage: LYS Beauty ..."
+              },
+              {
+                "title": "The 9 Best Full-Coverage Foundations of 2026, Tested and Reviewed",
+                "url": "https://www.byrdie.com/best-full-coverage-foundations-6824630",
+                "snippet": "Overall Pick: Our favorite full-coverage foundation is the Charlotte Tilbury Airbrush Flawless Longwear Foundation, thanks to its smooth ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1130,
+            "error": null,
+            "engine": "gpt"
+          },
+          {
+            "query": "best lipstick brand for long-lasting wear",
+            "answer": "If you're looking for the best lipstick brands for long-lasting wear, several options stand out based on expert reviews and user feedback:\n\n1. **MAC MACximal Sleek Satin Lipstick**: This lipstick is praised for its ultrasmooth finish and wide range of shades. It earned the top spot in a review by InStyle for its durability and vibrant color options. [Source](https://www.instyle.com/best-long-lasting-lipsticks-8384853)\n\n2. **Maybelline SuperStay Matte Ink**: Frequently recommended for its long-lasting formula, this lipstick is known for staying put throughout the day without smudging. It has been highlighted in reviews for its affordability and performance. [Source](https://www.byrdie.com/best-long-lasting-lipsticks-4585022)\n\n3. **Revlon ColorStay Liquid Lipstick**: This product is often mentioned in forums like Reddit for its excellent staying power and affordability. Users appreciate its narrow tube design and reliable wear. [Source](https://www.reddit.com/r/MakeupAddiction/comments/1d8dpxk/what_is_your_best_lasting_lipstick/)\n\n4. **Allure's Top Picks**: Allure editors tested various long-lasting lipsticks and highlighted several waterproof options that last all day without melting off. Brands like Fenty Beauty and Huda Beauty were among their favorites. [Source](https://www.allure.com/story/most-long-lasting-lipsticks)\n\nThese brands and products are well-regarded for their ability to stay vibrant and intact throughout the day, making them ideal choices for long-lasting wear.",
+            "search_results": [
+              {
+                "title": "Best in 2026: Longwear Lipsticks from the Drugstore Reviews",
+                "url": "https://vintagehairstyling.com/bobbypinblog/2020/03/drug-store-longwear-lipsticks-reviews-2.html",
+                "snippet": "The best drugstore lipsticks for the red lipstick wearer. I put them to the test and so did my readers. Here are the results."
+              },
+              {
+                "title": "What is your best lasting lipstick? : r/MakeupAddiction - Reddit",
+                "url": "https://www.reddit.com/r/MakeupAddiction/comments/1d8dpxk/what_is_your_best_lasting_lipstick/",
+                "snippet": "In general, Revlon has the best long wearing lipsticks. Their Colorstay liquid lipstick in the narrow tube is great also, Walmart sells it."
+              },
+              {
+                "title": "The 12 Best Long-Lasting Lipsticks of 2026, Tested and Reviewed",
+                "url": "https://www.instyle.com/best-long-lasting-lipsticks-8384853",
+                "snippet": "MAC MACximal Sleek Satin Lipstick earned our top spot due to its ultrasmooth finish and wide range of shades. We also loved the Maybelline ..."
+              },
+              {
+                "title": "The 11 Best Long-Lasting Lipsticks of 2026, Tested and Reviewed",
+                "url": "https://www.byrdie.com/best-long-lasting-lipsticks-4585022",
+                "snippet": "What makes a lipstick long-lasting? When formulating a long-wearing lipstick, Pefferman aims for easy spreadability, a fast dry-down time, a ..."
+              },
+              {
+                "title": "8 Best Long-Lasting Lipsticks That Won't Melt Off by Lunchtime - Allure",
+                "url": "https://www.allure.com/story/most-long-lasting-lipsticks",
+                "snippet": "Allure editors tested the best long-lasting lipsticks for women that are waterproof and last all day so you don't have to."
+              }
+            ],
+            "no_search": false,
+            "tokens": 993,
+            "error": null,
+            "engine": "gpt"
+          },
+          {
+            "query": "what brand of blush is best for beginners",
+            "answer": "For beginners looking for a good blush, several brands and products stand out based on ease of use, blendability, and versatility:\n\n1. **Milani Baked Blush**: This is a popular choice among beginners due to its affordability and ease of application. The shade \"Dolce Pink\" is particularly recommended, as it provides a natural, buildable glow. Many users on forums like Reddit suggest starting with powder blushes like this one, as they are easier to work with compared to creams or liquids. [Source](https://www.reddit.com/r/Makeup101/comments/13y13y5/looking_for_a_good_beginner_blush/)\n\n2. **Patrick Ta Major Headlines Double-Take Crème & Powder Blush Duo**: This product combines both cream and powder blushes in one compact, making it versatile for beginners to experiment with different textures. It’s highly rated for its blendability and chic packaging. [Source](https://www.byrdie.com/best-blushes-4163638)\n\n3. **Armani Beauty Luminous Silk Cheek Tint**: If you're interested in liquid blushes, this product is recommended for its lightweight and blendable formula. It’s a bit pricier but offers a natural finish that's easy to control. [Source](https://www.allure.com/story/best-liquid-blush)\n\n4. **Anastasia Beverly Hills Blush Trio**: This powder blush palette is another great option for beginners, offering multiple shades in one compact. It’s praised for its pigmentation and smooth application. [Source](https://www.facebook.com/groups/MECCAchitchat/posts/2072127116543794/)\n\nFor beginners, powder blushes like Milani or Anastasia Beverly Hills are often the easiest to start with, as they are more forgiving and easier to blend. If you’re open to experimenting, products like the Patrick Ta duo can help you explore both cream and powder textures.",
+            "search_results": [
+              {
+                "title": "Looking for a good beginner blush : r/Makeup101 - Reddit",
+                "url": "https://www.reddit.com/r/Makeup101/comments/13y13y5/looking_for_a_good_beginner_blush/",
+                "snippet": "I use shade Sweet Seduction. Milani Baked Blush. I use shade Dolce Pink. I prefer powder by a lot. I find it easier to work with and blend."
+              },
+              {
+                "title": "The 13 Best Blushes, Tested and MUA-Backed - Byrdie",
+                "url": "https://www.byrdie.com/best-blushes-4163638",
+                "snippet": "Our number one favorite blush is the Patrick Ta Major Headlines Double-Take Crème & Powder Blush Duo. The chic compact combines both a cream ..."
+              },
+              {
+                "title": "10 Best Liquid Blushes That Blend Out Like a Dream - Allure",
+                "url": "https://www.allure.com/story/best-liquid-blush",
+                "snippet": "Our Top Liquid Blushes. Best Overall: Armani Beauty Luminous Silk Cheek Tint, $39; Best Buildable: Anastasia Beverly Hills Blurring Serum Blush, ..."
+              },
+              {
+                "title": "Shop the Best Blush | Sephora",
+                "url": "https://www.sephora.com/shop/blush",
+                "snippet": "Start with choosing a shade that shares the same undertone as you. Rose and berry blushes flatter deeper complexions. For medium to tan ..."
+              },
+              {
+                "title": "What are some good powder blushes for a beginner makeup artist to ...",
+                "url": "https://www.facebook.com/groups/MECCAchitchat/posts/2072127116543794/",
+                "snippet": "I recently bought an Anastasia Beverley Hills blush trio and really love them! They are highly pigmented and the shades are lovely. 1y."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1014,
+            "error": null,
+            "engine": "gpt"
+          },
+          {
+            "query": "which company makes the best setting spray",
+            "answer": "Determining the \"best\" setting spray depends on individual preferences, skin types, and specific needs, but some brands consistently receive high praise in reviews and rankings.\n\n1. **Charlotte Tilbury Airbrush Flawless Setting Spray** is often highlighted as a top choice. Glamour describes it as the \"Best Overall\" setting spray, noting its ability to lock in makeup for long-lasting wear while maintaining a lightweight feel. This product is frequently recommended for those seeking a reliable, all-day hold. (Source: [Glamour](https://www.glamour.com/gallery/best-setting-sprays-tested))\n\n2. **Urban Decay All Nighter Setting Spray** is another highly recommended option. Known for its lightweight formula and excellent staying power, it is often praised for keeping makeup intact through long days and various conditions. Glamour lists it as the \"Best Lightweight\" option. (Source: [Glamour](https://www.glamour.com/gallery/best-setting-sprays-tested))\n\n3. **Rare Beauty Always an Optimist 4-in-1 Mist** also garners positive reviews for its hydrating properties and versatility. It can be used as a primer, setting spray, or refreshing mist, making it a favorite for those with dry or combination skin. (Source: [Reviewed](https://www.reviewed.com/beauty/best-right-now/best-makeup-setting-sprays))\n\nUltimately, the best setting spray for you will depend on your skin type, desired finish (e.g., matte, dewy, natural), and the specific occasions you need it for.",
+            "search_results": [
+              {
+                "title": "Top Setting Sprays for Dry Skin and Travel | TikTok",
+                "url": "https://www.tiktok.com/@aidarazman/video/7529109962631433490",
+                "snippet": "... top-rated beauty products 2023, skincare and makeup setting spray, makeup setting spray recommendations, testing new beauty products ..."
+              },
+              {
+                "title": "any good setting spray recommendations? more kbeauty brands ...",
+                "url": "https://www.reddit.com/r/AsianBeauty/comments/11if2zj/any_good_setting_spray_recommendations_more/",
+                "snippet": "I've tried Charlotte Tilbury, Urban Decay, MAC). I've tested it on whole day affairs like weddings, beach days, a music fest, etc., and it keeps my base makeup ..."
+              },
+              {
+                "title": "10 Best Setting Sprays to Make Your Makeup Last All Day - Glamour",
+                "url": "https://www.glamour.com/gallery/best-setting-sprays-tested",
+                "snippet": "The best setting sprays, at a glance · Best Overall: Charlotte Tilbury Airbrush Flawless Setting Spray · Best Lightweight: Urban Decay All Nighter."
+              },
+              {
+                "title": "The Best Makeup Setting Sprays of 2026 - Reviewed",
+                "url": "https://www.reviewed.com/beauty/best-right-now/best-makeup-setting-sprays",
+                "snippet": "We tested the best makeup setting sprays from brands like Benefit Cosmetics, Morphe, Rare Beauty, Wet n Wild, Too Faced, Charlotte Tilbury, ..."
+              },
+              {
+                "title": "The BEST setting sprays of 2024 #makeup - YouTube",
+                "url": "https://www.youtube.com/watch?v=SQDut_UNrR0",
+                "snippet": "... BUSINESS INQUIRIES: thebrutallyhonestbeauty@gmail.com SUPPORT MY CHANNEL: CashApp: $draynne1 PR/MAIL: PO BOX 321 HOPE MILLS NC 28348 LET'S ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 963,
+            "error": null,
+            "engine": "gpt"
+          },
+          {
+            "query": "Chinese color cosmetics brands review for quality",
+            "answer": "Chinese color cosmetics brands have gained attention for their innovation and affordability, but opinions on their quality vary depending on the source.\n\n1. **Judydoll, Timage, Into You, and Flower Knows** are among the popular Chinese makeup brands mentioned on Reddit. These brands are widely used in China and appreciated for their trendy and creative designs. However, there is limited information on their quality compared to international brands. [Source](https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/)\n\n2. A YouTube review discusses the viral popularity of Chinese beauty products on platforms like TikTok and Xiaohongshu. While some products are praised for their aesthetic appeal and affordability, the reviewer questions whether they are genuinely high-quality or simply overhyped. [Source](https://www.youtube.com/watch?v=rMSoYnXQJqs)\n\n3. YesStyle highlights that many Chinese beauty brands offer innovative and good-quality products, with some being comparable to high-end international brands. The article emphasizes the creativity and affordability of these products, making them appealing to younger consumers. [Source](https://www.yesstyle.com/blog/2024-08-16/10-chinese-makeup-brands-to-look-out-for/)\n\n4. A Facebook post warns against certain Chinese makeup brands, claiming that some products are cheaply produced and contain harmful ingredients. This highlights concerns about quality control and ingredient safety in some cases. [Source](https://www.facebook.com/groups/752442670115152/posts/949759873716763/)\n\n5. Dr. Rachel Ho's blog mentions Judydoll as a popular brand among Gen Z consumers in China. The brand is recognized for its colorful, trendy, and affordable products, suggesting a focus on aesthetics and accessibility. [Source](https://www.drrachelho.com/blog/chinese-beauty-brands-review/)\n\nOverall, while some Chinese color cosmetics brands are praised for their innovation and affordability, concerns about quality and ingredient safety persist in certain cases. It’s advisable to research individual brands and products before purchasing.",
+            "search_results": [
+              {
+                "title": "Best Chinese beauty products : r/AsianBeauty - Reddit",
+                "url": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+                "snippet": "Chinese makeup brands that are popular in China and that Chinese people actually use are Judydoll, Timage, Into you, Girlcult, Carslan, Flortte, Flower Knows, ..."
+              },
+              {
+                "title": "Chinese Beauty Products Are Going Viral… Are They Actually Worth ...",
+                "url": "https://www.youtube.com/watch?v=rMSoYnXQJqs",
+                "snippet": "Chinese beauty products are everywhere right now, especially on TikTok and Xiaohongshu… but are they actually good, or just overhyped?"
+              },
+              {
+                "title": "10 Chinese Makeup Brands to Look Out For - YesStyle",
+                "url": "https://www.yesstyle.com/blog/2024-08-16/10-chinese-makeup-brands-to-look-out-for/",
+                "snippet": "Chinese beauty brands offer innovative and good quality products, some even comparable to those from high-end brands. Many Chinese makeup ..."
+              },
+              {
+                "title": "10 Chinese makeup brands you should avoid buying. - Facebook",
+                "url": "https://www.facebook.com/groups/752442670115152/posts/949759873716763/",
+                "snippet": "A lot of the cosmetics/skincare made in China are cheaply produced with poor quality ingredients. As you can see below, many contain harmful ..."
+              },
+              {
+                "title": "The Rise of Chinese beauty brands: C-Beauty Brands to Know",
+                "url": "https://www.drrachelho.com/blog/chinese-beauty-brands-review/",
+                "snippet": "Judydoll (橘朵) is a Chinese beauty brand popular among younger Chinese consumers, especially Gen Z for its colorful, trendy, and affordable ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1044,
+            "error": null,
+            "engine": "gpt"
+          },
+          {
+            "query": "best makeup products made in China for sensitive skin",
+            "answer": "If you're looking for makeup products made in China that are suitable for sensitive skin, here are some recommendations based on available sources:\n\n1. **Winona**: This Chinese brand is highly regarded for its focus on sensitive skin. It specializes in cosmeceutical products, blending skincare and cosmetics. Winona's \"Soothing Special Care Cream\" is particularly popular for calming and hydrating sensitive skin. (Source: [Dr. Rachel Ho's Blog](https://www.drrachelho.com/blog/chinese-beauty-brands-review/))\n\n2. **Judydoll**: Known for its affordable and gentle makeup products, Judydoll is a popular choice among Chinese consumers. While it doesn't specifically market itself as a sensitive-skin brand, its products are often praised for being lightweight and non-irritating. (Source: [Reddit - Asian Beauty](https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/))\n\n3. **Timage**: This brand is another favorite in China, offering high-quality makeup that caters to a variety of skin types, including sensitive skin. It’s worth exploring their product range for options that suit your needs. (Source: [Reddit - Asian Beauty](https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/))\n\n4. **Carslan**: Carslan is a well-known Chinese makeup brand that offers a range of products, including foundations and powders, which are often designed to be gentle on the skin. (Source: [Reddit - Asian Beauty](https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/))\n\n5. **Flower Knows**: This brand combines whimsical packaging with gentle formulations, making it a good option for those with sensitive skin who also enjoy aesthetically pleasing products. (Source: [Reddit - Asian Beauty](https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/))\n\nFor sensitive skin, it's always a good idea to patch-test products before full application to ensure compatibility with your skin type.",
+            "search_results": [
+              {
+                "title": "Chinese Beauty Products Are Going Viral… Are They Actually Worth ...",
+                "url": "https://www.youtube.com/watch?v=rMSoYnXQJqs",
+                "snippet": "Chinese beauty products are everywhere right now, especially on TikTok and Xiaohongshu… but are they actually good, or just overhyped?"
+              },
+              {
+                "title": "Best Chinese beauty products : r/AsianBeauty - Reddit",
+                "url": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+                "snippet": "Chinese makeup brands that are popular in China and that Chinese people actually use are Judydoll, Timage, Into you, Girlcult, Carslan, Flortte, Flower Knows, ..."
+              },
+              {
+                "title": "China beauty brands: Skincare edition I tried out all the top selling ...",
+                "url": "https://www.instagram.com/p/DWGiRRwE2c7/",
+                "snippet": "This is the Olive Young of China. It's called WOW BEAUTY. Let me take you in to show you all of the popular Chinese makeup and skincare. Look at ..."
+              },
+              {
+                "title": "Hi All, I have no experience with Chinese cosmetics. Is - Facebook",
+                "url": "https://www.facebook.com/groups/travelchina3/posts/2489865454713314/",
+                "snippet": "Here are the relevant recommendations: Cosmetic Brands - Winona: It is renowned for sensitive - skin care. The Soothing Special Care Cream, ..."
+              },
+              {
+                "title": "The Rise of Chinese beauty brands: C-Beauty Brands to Know",
+                "url": "https://www.drrachelho.com/blog/chinese-beauty-brands-review/",
+                "snippet": "Building a name for itself in the cosmeceutical scene is Winona (薇诺娜) , a Chinese beauty brand that focuses on skincare for sensitive skin ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1087,
+            "error": null,
+            "engine": "gpt"
+          },
+          {
+            "query": "best concealer for dark circles under $20",
+            "answer": "If you're looking for the best concealers for dark circles under $20, here are some great options based on the search results:\n\n1. **Maybelline New York Fit Me Concealer** - This is a highly recommended drugstore option, priced around $7-$11. It provides natural coverage and is lightweight, making it a great choice for under-eye dark circles. (Source: [Byrdie](https://www.byrdie.com/best-drugstore-concealers-4164435))\n\n2. **NYX Bare With Me Concealer Serum** - Priced at $12, this concealer is specifically noted for its effectiveness under the eyes. It offers a hydrating formula that blends well and provides excellent coverage. (Source: [The Skimm](https://www.theskimm.com/makeup/best-concealers-5vLTjVRtCxCWDrcsme44kG))\n\n3. **L'Oréal Infallible Full Wear Concealer** - Available for around $12-$16, this concealer is praised for its full coverage and long-lasting formula, which works well for dark circles. (Source: [Byrdie](https://www.byrdie.com/best-drugstore-concealers-4164435))\n\n4. **e.l.f. Cosmetics Hydrating Camo Concealer** - This concealer is under $10 and is known for its hydrating properties, making it ideal for the delicate under-eye area. It comes in a variety of shades to match different skin tones. (Source: [Ulta Beauty](https://www.ulta.com/shop/makeup/face/concealer?price=0-25))\n\nThese options are affordable, effective, and widely available, making them excellent choices for tackling dark circles without breaking the bank.",
+            "search_results": [
+              {
+                "title": "The 11 Best Drugstore Concealers of 2026, Tested - Byrdie",
+                "url": "https://www.byrdie.com/best-drugstore-concealers-4164435",
+                "snippet": "Best Overall: · Maybelline New York Fit Me Concealer at Amazon $11 $7 ; Best Non-Creasing: · L'Oréal Full Wear Concealer at Amazon $16 $12 ; Best ..."
+              },
+              {
+                "title": "I Tested the 20 Top-Selling Concealers in the World—These Are the ...",
+                "url": "https://www.theskimm.com/https://www.theskimm.com/makeup/best-concealers-5vLTjVRtCxCWDrcsme44kG",
+                "snippet": "Best overall: Charlotte Tilbury Beautiful Skin Radiant Concealer — $36 · Best for under eyes: NYX Bare With Me Concealer Serum — $12 · Best for blemishes: Clé de ..."
+              },
+              {
+                "title": "What is The Best Drugstore Concealer? : r/drugstoreMUA - Reddit",
+                "url": "https://www.reddit.com/r/drugstoreMUA/comments/1djpw4e/what_is_the_best_drugstore_concealer/",
+                "snippet": "I use a cheap brand off of Temu for color correction that works really well for my dark circles. Another good budget brand is LA Girl ((Ulta, ..."
+              },
+              {
+                "title": "Under $25 Concealer - 68 Products | Ulta Beauty",
+                "url": "https://www.ulta.com/shop/makeup/face/concealer?price=0-25",
+                "snippet": "e.l.f. Cosmetics Hydrating Camo Concealer. 20 colors · NARS Mini Radiant Creamy Concealer. 30 colors · Morphe Wakeup Artist Under Eye Correcting Concealer."
+              },
+              {
+                "title": "Best concealer under $20 - Facebook",
+                "url": "https://www.facebook.com/groups/Santassidekicks/posts/1635351190480412/",
+                "snippet": "Concealer for dark undereyes that won't crease ... Tarte concealer is under $20 and under $10 for the travel size! No photo description available."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1075,
+            "error": null,
+            "engine": "gpt"
+          },
+          {
+            "query": "top rated mascara brand for volume and length",
+            "answer": "For achieving both volume and length, several mascaras are highly rated by beauty experts and consumers alike. Here are some top recommendations:\n\n1. **Tarte Tartelette Tubing Mascara**: This mascara is praised for its ability to deliver dramatic volume and length. It was named the best overall mascara by Allure. (Source: [Allure](https://www.allure.com/gallery/editors-favorite-mascaras))\n\n2. **Maybelline Lash Sensational Sky High Mascara**: This drugstore favorite is known for its volumizing, lengthening, and defining properties. It has a buildable formula that works well for creating a dramatic look. (Source: [Amazon](https://www.amazon.com/Best-Sellers-Mascara/zgbs/beauty/11058611))\n\n3. **Lancôme Hypnôse Drama Mascara**: This mascara is specifically highlighted for delivering both gorgeous volume and length, making it a go-to for those seeking a bold lash look. (Source: [Wirecutter](https://www.nytimes.com/wirecutter/reviews/best-mascara/))\n\n4. **Charlotte Tilbury Exagger-Eyes Mascara**: Known for its volumizing and curling effects, this mascara is a favorite for creating a dramatic and defined lash look. (Source: [Byrdie](https://www.byrdie.com/best-mascaras-4159378))\n\nThese mascaras cater to different preferences and budgets, so you can choose one that best fits your needs for volume and length.",
+            "search_results": [
+              {
+                "title": "8 Best Mascaras for Falsies-Level Length and Volume - Allure",
+                "url": "https://www.allure.com/gallery/editors-favorite-mascaras",
+                "snippet": "Our Top Mascaras · Best Overall: Tarte Tartelette XL Tubing Mascara · Best Color Range: Maybelline New York Lash Sensational Sky High Washable ..."
+              },
+              {
+                "title": "The 5 Best Mascaras of 2026 | Reviews by Wirecutter",
+                "url": "https://www.nytimes.com/wirecutter/reviews/best-mascara/",
+                "snippet": "Definicils for lengthening, Hypnose Drama for gorgeous volume and length, Idol for everyday length and volume with a clean look. I've tried ..."
+              },
+              {
+                "title": "Amazon Best Sellers: Best Mascara",
+                "url": "https://www.amazon.com/Best-Sellers-Mascara/zgbs/beauty/11058611",
+                "snippet": "Maybelline Lash Sensational Sky High Washable Mascara Makeup, Volumizing, Lengthening, Defining, Curling, Multiplying, Buildable Formula, Blackest Black, 1 ..."
+              },
+              {
+                "title": "Mascara holy grail for volume and length : r/Ulta - Reddit",
+                "url": "https://www.reddit.com/r/Ulta/comments/1oda0v1/mascara_holy_grail_for_volume_and_length/",
+                "snippet": "Clinique High Impact Volumizing . Great formula and the brown/black color is the perfect everyday option. It's on sale often enough."
+              },
+              {
+                "title": "The 13 Best Mascaras of 2026, Tested and Reviewed - Byrdie",
+                "url": "https://www.byrdie.com/best-mascaras-4159378",
+                "snippet": "Charlotte Tilbury's Exagger-Eyes Volumizing and Curling Mascara takes the crown as our best mascara overall. It has a curved brush that ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 973,
+            "error": null,
+            "engine": "gpt"
+          }
+        ],
+        "citations": [
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": true,
+            "mention_context": "Flower Knows 被列为流行的中国彩妆品牌之一，在 Reddit 上被提及。",
+            "reference_source": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+            "position": "middle"
+          },
+          {
+            "is_mentioned": true,
+            "mention_context": "该品牌结合了异想天开的包装与温和的配方，使其成为敏感肌肤且喜欢美观产品的不错选择。",
+            "reference_source": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+            "position": "bottom"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          }
+        ]
+      }
+    },
+    "gemini": {
+      "engine": "gemini",
+      "queries": [
+        "best color cosmetics for daily wear 2025",
+        "top rated eyeshadow palette under $30",
+        "recommended foundation for oily skin with full coverage",
+        "best lipstick brand for long-lasting wear",
+        "what brand of blush is best for beginners",
+        "which company makes the best setting spray",
+        "Chinese color cosmetics brands review for quality",
+        "best makeup products made in China for sensitive skin",
+        "best concealer for dark circles under $20",
+        "top rated mascara brand for volume and length"
+      ],
+      "citation_rate": 10.0,
+      "recommendation_rate": 0.0,
+      "sources": {},
+      "competitor_analysis": [],
+      "raw_data": {
+        "answers": [
+          {
+            "query": "best color cosmetics for daily wear 2025",
+            "answer": "For daily wear in 2025, the beauty landscape is shifting toward a balance of effortless, low-maintenance aesthetics and specific, intentional color palettes. According to experts at Who What Wear, the defining trends for the year emphasize a \"full face, no mascara\" look, which prioritizes skin health and natural definition over heavy lash application. This minimalist approach is complemented by a rise in cool-toned eyeshadows, which offer a sophisticated, modern alternative to the warm bronzes that dominated previous years. You can find more details on these stylistic shifts at https://www.whowhatwear.com/beauty/makeup/top-makeup-trends-2025.\n\nWhen it comes to lip color, 2025 is characterized by a dual focus. While neutral and berry tones remain the standard for versatile, everyday wear, there is a notable emergence of bright, tulip-pink shades. This vibrant pop of color is being highlighted as a key trend for those looking to add a fresh, spring-inspired element to their daily routine without requiring a full-face overhaul. Further insights into these color trends can be explored at https://www.allure.com/story/spring-makeup-trends-2025.\n\nFor those focusing on product performance and skin-friendly formulations, the industry is moving toward textures that prioritize comfort and longevity. Sun Chemical, a leader in color science, notes that 2025 beauty trends are heavily focused on translating these new color palettes into innovative formulas that feel as good as they look. You can review their analysis of upcoming beauty movements at https://www.sunchemical.com/beauty-color-trends-2025/. Additionally, for consumers seeking recommendations tailored to specific skin types, such as mature skin, beauty experts are increasingly emphasizing high-quality, hydrating formulas that bridge the gap between drugstore accessibility and high-end performance, as discussed in expert roundups found at https://www.youtube.com/watch?v=2bmVnTUyYEY.",
+            "search_results": [
+              {
+                "title": "What's Changing in Beauty for 2025? Trends You'll Love ... - YouTube",
+                "url": "https://www.youtube.com/watch?v=RUHhXvjXkyc",
+                "snippet": "... cosmetic product development for over 15 years so all opinions are based on my background in these areas. The products I use in these videos ..."
+              },
+              {
+                "title": "9 Makeup Trends Defining 2025, According to MUAs | Who What Wear",
+                "url": "https://www.whowhatwear.com/beauty/makeup/top-makeup-trends-2025",
+                "snippet": "The 9 Makeup Trends Defining 2025, According to Celebs and Beauty Experts · Full Face, No Mascara · Fully Rimmed Liner · Cool-Toned Eyes · Nude Lips ..."
+              },
+              {
+                "title": "The Best Spring Makeup Trends of 2025 Bring Your Fantasies to Life",
+                "url": "https://www.allure.com/story/spring-makeup-trends-2025",
+                "snippet": "Tulip Pink Lips ... In a year dominated by neutral and berry lip tones, one splashy color is popping up over and over again: bright, tulip-pink."
+              },
+              {
+                "title": "Beauty Color Trends 2025 - Sun Chemical",
+                "url": "https://www.sunchemical.com/beauty-color-trends-2025/",
+                "snippet": "A curated collection of tomorrow's most influential beauty movements translating new colors, textures, and trends into innovative cosmetic formulas that ..."
+              },
+              {
+                "title": "Best Makeup of 2025 for Mature Skin! Drugstore to High End",
+                "url": "https://www.youtube.com/watch?v=2bmVnTUyYEY",
+                "snippet": "My Year End Round-Up of the Best Makeup for Mature Skin from ALL Price Points! ⬇️ Links Below: Click “…more” ⬇️ SUBSCRIBE: ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1073,
+            "error": null,
+            "engine": "gemini"
+          },
+          {
+            "query": "top rated eyeshadow palette under $30",
+            "answer": "When looking for high-quality eyeshadow palettes under the $30 price point, several options consistently receive praise for their pigmentation, blendability, and value. According to expert reviews and beauty guides, the Anastasia Beverly Hills Soft Glam II Mini Eyeshadow Palette is a standout choice, priced at $29.00. It is frequently recommended for its high-end formula, which includes a mix of matte and shimmer shades suitable for both beginners and experienced makeup users (https://www.listful.com/guides/article/best-eyeshadow-palettes-for-beginners-2025-expert-approved-picks).\n\nFor those seeking drugstore options that offer professional-level performance, Byrdie highlights the BLK/OPL High Impact Eyeshadows as a \"Best Overall\" pick at approximately $12.00. Additionally, the Essence Nothing Compares To Nude Eyeshadow Palette is recognized as a top budget-friendly selection, often priced around $2.00, making it an accessible choice for everyday neutral looks (https://www.byrdie.com/best-drugstore-eye-shadow-palettes-11725279).\n\nOther reliable, affordable options include the Maybelline The Blushed Nudes Eyeshadow Palette, which is widely available for under $15.00 (https://www.listful.com/guides/article/best-eyeshadow-palettes-for-beginners-2025-expert-approved-picks). Furthermore, retailers like Ulta Beauty maintain a broad selection of palettes under $25.00 from various brands, allowing consumers to compare ratings and user reviews directly on their platform (https://www.ulta.com/shop/makeup/eyes/eyeshadow-palettes?price=0-25). ColourPop is also frequently cited by beauty enthusiasts as a go-to brand for high-quality, affordable palettes that typically fall well within the $30 budget (https://www.youtube.com/watch?v=HnvsRyavdfk).",
+            "search_results": [
+              {
+                "title": "Under $25 Eyeshadow Palettes - 83 Products - Ulta Beauty",
+                "url": "https://www.ulta.com/shop/makeup/eyes/eyeshadow-palettes?price=0-25",
+                "snippet": "Shop Under $25 Eyeshadow Palettes at Ulta Beauty. Free Shipping Offers & Free Store Pickup Available Same Day. Join Ulta Beauty Rewards To Earn Points."
+              },
+              {
+                "title": "Best eyeshadow palette for under 30$? : r/Sephora - Reddit",
+                "url": "https://www.reddit.com/r/Sephora/comments/1b6cmym/best_eyeshadow_palette_for_under_30/",
+                "snippet": "Tartelette palettes are $47 each and are really great for beginners (and non-beginners, of course)! They have a good variety of neutral shades, ..."
+              },
+              {
+                "title": "The 11 Best Drugstore Eyeshadow Palettes, Tested and Reviewed",
+                "url": "https://www.byrdie.com/best-drugstore-eye-shadow-palettes-11725279",
+                "snippet": "Best Overall: BLK/OPL High Impact Eyeshadows at Ulta $12 ; Best Budget: · Essence Nothing Compares To Nude Eyeshadow Palette at Ulta · $2 ; Best ..."
+              },
+              {
+                "title": "BEST EYESHADOW PALETTES OF ALL TIME (and I've ... - YouTube",
+                "url": "https://www.youtube.com/watch?v=HnvsRyavdfk",
+                "snippet": "Which palettes are at the top of your list? #eyeshadowpalette #makeup #eyeshadow *Use my code ANDREA for 10% off @ColourPop: https ..."
+              },
+              {
+                "title": "Best Eyeshadow Palettes for Beginners 2025: Expert-Approved Picks",
+                "url": "https://www.listful.com/guides/article/best-eyeshadow-palettes-for-beginners-2025-expert-approved-picks",
+                "snippet": "Soft Glam II Mini Eyeshadow Palette by Anastasia Beverly Hills. $29.00 · Matte, Shimmer ; Maybelline The Blushed Nudes Eyeshadow Palette. $11.98."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1176,
+            "error": null,
+            "engine": "gemini"
+          },
+          {
+            "query": "recommended foundation for oily skin with full coverage",
+            "answer": "When searching for a full-coverage foundation suitable for oily skin, the primary goal is to find formulas that offer a matte finish, long-lasting wear, and oil-control properties to prevent shine throughout the day.\n\nA frequently recommended staple for those with oily skin is the Estée Lauder Double Wear Stay-in-Place Foundation. It is widely praised for its ability to remain intact for long periods without breaking down, making it a top choice for those who need reliable, full-coverage results (https://www.reddit.com/r/MakeupAddiction/comments/1fooqyx/the_best_foundation_for_oily_skin/; https://www.allure.com/story/best-foundation-for-acne).\n\nFor those seeking high-performance options, the Charlotte Tilbury Airbrush Flawless Longwear Foundation is often highlighted as a top pick for its smooth, full-coverage finish that lasts (https://www.byrdie.com/best-full-coverage-foundations-6824630). Additionally, the Fenty Beauty Pro Filt'r Soft Matte Longwear Foundation is a popular choice specifically designed to provide a soft matte finish that works well with oilier skin types (https://www.sephora.my/buy/best-foundation-for-oily-skin?srsltid=AfmBOooAJi2UwWKxijd88O4WqimPJtGW9YPo5B_TleNPoHBGB9t_baS2).\n\nIf you are looking for drugstore alternatives that provide full coverage and matte results, the NYX Can't Stop Won't Stop 24HR Full Coverage Matte Foundation and the L'Oreal Infallible Pro-Matte Foundation are frequently cited as effective options for managing excess oil (https://www.arelaxedgal.com/2024/10/matte-foundations-for-oily-skin.html). Another highly regarded budget-friendly option is the Maybelline Fit Me Matte and Poreless Liquid Foundation, which is specifically formulated to help minimize the appearance of pores and control shine (https://www.arelaxedgal.com/2024/10/matte-foundations-for-oily-skin.html).",
+            "search_results": [
+              {
+                "title": "Buy Best Foundation For Oily Skin | Sephora Malaysia",
+                "url": "https://www.sephora.my/buy/best-foundation-for-oily-skin?srsltid=AfmBOooAJi2UwWKxijd88O4WqimPJtGW9YPo5B_TleNPoHBGB9t_baS2",
+                "snippet": "Pro Filt'r Soft Matte Longwear Foundation Mini 220. Fenty Beauty · RM85.00 ; Real Flawless Foundation 4W1 Suntan​ · Laura Mercier · RM250.00 ; Best Skin Ever Matte ..."
+              },
+              {
+                "title": "The best foundation for oily skin? : r/MakeupAddiction - Reddit",
+                "url": "https://www.reddit.com/r/MakeupAddiction/comments/1fooqyx/the_best_foundation_for_oily_skin/",
+                "snippet": "Estée Lauder double wear and Urban Decay all nighter foundation are the best foundations I've found and I'm oily af lol."
+              },
+              {
+                "title": "6 Matte Foundations Perfect For Oily Skin - A Relaxed Gal",
+                "url": "https://www.arelaxedgal.com/2024/10/matte-foundations-for-oily-skin.html",
+                "snippet": "Maybelline Fit Me Matte And Poreless Liquid Foundation · NYX Can't Stop Won't Stop 24HR Full Coverage Matte Foundation · L'Oreal Infallible Pro- ..."
+              },
+              {
+                "title": "7 Best Foundations for Acne-Prone Skin of 2026 for an Even Base",
+                "url": "https://www.allure.com/story/best-foundation-for-acne",
+                "snippet": "Best Overall: Armani Beauty Luminous Silk Foundation, $69 · Best Demi-Matte: Estée Lauder Double Wear Stay-in-Place Foundation, $52 · Best Matte: ..."
+              },
+              {
+                "title": "The 9 Best Full-Coverage Foundations of 2026, Tested and Reviewed",
+                "url": "https://www.byrdie.com/best-full-coverage-foundations-6824630",
+                "snippet": "Overall Pick: Our favorite full-coverage foundation is the Charlotte Tilbury Airbrush Flawless Longwear Foundation, thanks to its smooth ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1239,
+            "error": null,
+            "engine": "gemini"
+          },
+          {
+            "query": "best lipstick brand for long-lasting wear",
+            "answer": "When searching for the best lipstick brands for long-lasting wear, several names consistently appear across beauty publications and consumer reviews. According to InStyle, the MAC MACximal Sleek Satin Lipstick is frequently cited as a top performer for overall quality, while Maybelline’s SuperStay Vinyl Ink Lipcolor is highly recommended as the best budget-friendly option for those seeking extended wear (https://www.instyle.com/best-long-lasting-lipsticks-8384853).\n\nFor those looking for reliable drugstore options, Revlon is often praised by beauty enthusiasts, particularly their ColorStay liquid lipstick line, which is noted for its durability throughout the day (https://www.reddit.com/r/MakeupAddiction/1d8dpxk/what_is_your_best_lasting_lipstick/). Additionally, L'Oréal’s Colour Riche Intense line is frequently highlighted for its matte finish and longevity (https://www.instyle.com/best-long-lasting-lipsticks-8384853).\n\nWhen selecting a long-lasting lipstick, experts suggest looking for formulas that offer a balance of easy spreadability and a quick dry-down time, which helps the product set firmly on the lips without feeling overly drying (https://www.byrdie.com/best-long-lasting-lipsticks-4585022). Allure also emphasizes that many top-tier long-wear lipsticks are formulated to be waterproof, ensuring they remain intact through meals and daily activities (https://www.allure.com/story/most-long-lasting-lipsticks). Ultimately, the \"best\" brand often depends on whether you prefer a liquid formula, which generally offers the longest wear, or a traditional bullet lipstick, which may provide more comfort at the expense of some longevity.",
+            "search_results": [
+              {
+                "title": "The 12 Best Long-Lasting Lipsticks of 2026, Tested and Reviewed",
+                "url": "https://www.instyle.com/best-long-lasting-lipsticks-8384853",
+                "snippet": "Best Overall. MAC MACximal Sleek Satin Lipstick · Best Budget. Maybelline SuperStay Vinyl Ink Lipcolor · Best Matte. L'Oréal Colour Riche Intense ..."
+              },
+              {
+                "title": "What is your best lasting lipstick? : r/MakeupAddiction - Reddit",
+                "url": "https://www.reddit.com/r/MakeupAddiction/comments/1d8dpxk/what_is_your_best_lasting_lipstick/",
+                "snippet": "In general, Revlon has the best long wearing lipsticks. Their Colorstay liquid lipstick in the narrow tube is great also, Walmart sells it."
+              },
+              {
+                "title": "Best in 2026: Longwear Lipsticks from the Drugstore Reviews",
+                "url": "https://vintagehairstyling.com/bobbypinblog/2020/03/drug-store-longwear-lipsticks-reviews-2.html",
+                "snippet": "The best drugstore lipsticks for the red lipstick wearer. I put them to the test and so did my readers. Here are the results."
+              },
+              {
+                "title": "The 11 Best Long-Lasting Lipsticks of 2026, Tested and Reviewed",
+                "url": "https://www.byrdie.com/best-long-lasting-lipsticks-4585022",
+                "snippet": "What makes a lipstick long-lasting? When formulating a long-wearing lipstick, Pefferman aims for easy spreadability, a fast dry-down time, a ..."
+              },
+              {
+                "title": "8 Best Long-Lasting Lipsticks That Won't Melt Off by Lunchtime - Allure",
+                "url": "https://www.allure.com/story/most-long-lasting-lipsticks",
+                "snippet": "Allure editors tested the best long-lasting lipsticks for women that are waterproof and last all day so you don't have to."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1069,
+            "error": null,
+            "engine": "gemini"
+          },
+          {
+            "query": "what brand of blush is best for beginners",
+            "answer": "For beginners looking to experiment with blush, the best choice often depends on the desired finish and ease of application. According to reviews from Wirecutter, the NYX Professional Makeup Buttermelt Blush is highly recommended for those seeking excellent color payoff in a powder formula, making it a reliable and accessible option for newcomers (https://www.nytimes.com/wirecutter/reviews/best-blush/).\n\nIf you prefer a more radiant or long-lasting finish, established brands like NARS and MAC are frequently cited as industry standards. NARS is particularly noted for its silky-smooth textures and vibrant, long-lasting color, which can be helpful for beginners who want a product that is easy to blend and stays in place throughout the day (https://www.ulta.com/discover/makeup/best-blush).\n\nFor those interested in cream or liquid formulas, which can sometimes be more forgiving and natural-looking for beginners, products like the Pat McGrath Labs Divine Cream Blush are often highlighted for their high-quality performance (https://www.youtube.com/watch?v=81mtGS4rIYE). Additionally, some makeup enthusiasts point to newer liquid formulas like the Hourglass Unreal Liquid Blush as game-changers for achieving a seamless, professional-looking application (https://www.reddit.com/r/muacjdiscussion/comments/1hfje70/what_has_been_your_most_used_blush_product_of/). Ultimately, beginners are encouraged to choose a formula—powder, cream, or liquid—that matches their skin type and comfort level with blending tools.",
+            "search_results": [
+              {
+                "title": "Which Blushes work for Mature Skin in 2025? - YouTube",
+                "url": "https://www.youtube.com/watch?v=81mtGS4rIYE",
+                "snippet": "https://go.shopmy.us/p... Pat McGrath Labs Devine Cream Blush ( I wear Peach Lotus) ; https://go.shopmy.us/p... Jane Iredale Pure Pressed Blush ( ..."
+              },
+              {
+                "title": "What has been your most used blush product of this year? - Reddit",
+                "url": "https://www.reddit.com/r/muacjdiscussion/comments/1hfje70/what_has_been_your_most_used_blush_product_of/",
+                "snippet": "Hourglass Unreal Liquid Blush has literally changed my whole makeup game this year and I have a whole new look now based solely around this blush."
+              },
+              {
+                "title": "The 4 Best Blushes of 2026 | Reviews by Wirecutter",
+                "url": "https://www.nytimes.com/wirecutter/reviews/best-blush/",
+                "snippet": "Best color payoff in a powder: Nyx Professional Makeup Buttermelt Blush · A powder blush with excellent color payoff ; Best natural-looking powder ..."
+              },
+              {
+                "title": "Best Blushes 2026: Liquid, Cream, Powder - Ulta Beauty",
+                "url": "https://www.ulta.com/discover/makeup/best-blush",
+                "snippet": "NARS: Renowned for their vibrant, long-lasting blushes with silky-smooth textures that deliver a radiant glow. MAC: Offers a legendary range of blushes, from ..."
+              },
+              {
+                "title": "Best blush of 2025: 'I tried 17 and these are the ones worth your time ...",
+                "url": "https://www.womenshealthmag.com/uk/beauty/skin/g62814530/best-blush/",
+                "snippet": "We explore how to find the perfect blush. Plus, we test 16 of the most popular formulas to determine which ones truly stand out."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1009,
+            "error": null,
+            "engine": "gemini"
+          },
+          {
+            "query": "which company makes the best setting spray",
+            "answer": "Determining the \"best\" setting spray often depends on individual skin type and desired finish, as professional reviews and consumer feedback highlight different products for different needs. According to Byrdie, the Charlotte Tilbury Airbrush Flawless Setting Spray is frequently cited as the best overall option for its ability to lock in makeup while providing a weightless, long-lasting finish (https://www.byrdie.com/best-setting-sprays-4583958).\n\nFor those specifically looking for mattifying properties or extreme longevity, the ONE/SIZE by Patrick Starrr On 'Til Dawn Mattifying Waterproof Setting Spray is highly recommended. Both Byrdie and The New York Times Wirecutter recognize this product for its superior hold, making it a popular choice for events or humid conditions (https://www.byrdie.com/best-setting-sprays-4583958; https://www.nytimes.com/wirecutter/reviews/best-setting-spray/).\n\nIf you prefer a product that balances setting power with skin-friendly ingredients, Allure named the Milk Makeup Pore Eclipse Matte Setting Spray a \"Best of Beauty\" winner for 2024, noting that it sets makeup effectively without causing dryness (https://www.allure.com/gallery/best-setting-sprays). Additionally, the Urban Decay All Nighter setting spray remains a consistent \"holy grail\" favorite among beauty enthusiasts on platforms like Reddit due to its long-standing reputation for reliable, all-day wear (https://www.reddit.com/r/Makeup/comments/1f6qiav/whats_your_holy_grail_setting_spray/).\n\nFor budget-conscious shoppers, NYX Professional Makeup The Face Glue Makeup Setting Spray is highlighted by Wirecutter as a top-performing, affordable option that provides excellent value (https://www.nytimes.com/wirecutter/reviews/best-setting-spray/). Ultimately, while Charlotte Tilbury and ONE/SIZE are frequently ranked at the top of professional lists, the best choice depends on whether you prioritize a matte finish, a natural glow, or a specific price point.",
+            "search_results": [
+              {
+                "title": "9 Best Setting Sprays to Keep Sweat and Shine in Check - Allure",
+                "url": "https://www.allure.com/gallery/best-setting-sprays",
+                "snippet": "Why it's worth it: Milk Makeup's Pore Eclipse Matte Setting Spray (a 2024 Best of Beauty Winner) sets makeup without drying out your skin or ..."
+              },
+              {
+                "title": "The 11 Best Setting Sprays of 2026, Tested and Reviewed - Byrdie",
+                "url": "https://www.byrdie.com/best-setting-sprays-4583958",
+                "snippet": "Best Overall: Our favorite setting spray is the Charlotte Tilbury Airbrush Flawless Setting Spray. · Best Mattifying: We recommend the ONE/SIZE by Patrick Starrr ..."
+              },
+              {
+                "title": "The BEST setting sprays of 2024 #makeup - YouTube",
+                "url": "https://www.youtube.com/watch?v=SQDut_UNrR0",
+                "snippet": "The BEST setting sprays of 2024 #thebestof #makeup #makeuplover #settingspray PRODUCTS MENTIONED: Caliray Surf Proof Setting Spray ..."
+              },
+              {
+                "title": "what's your holy grail setting spray? : r/Makeup - Reddit",
+                "url": "https://www.reddit.com/r/Makeup/comments/1f6qiav/whats_your_holy_grail_setting_spray/",
+                "snippet": "Urban Decay All Nighter and Morphe Continuous Setting Mist are top choices. They're known for great longevity and solid setting power."
+              },
+              {
+                "title": "The 3 Best Setting Sprays of 2026 | Reviews by Wirecutter",
+                "url": "https://www.nytimes.com/wirecutter/reviews/best-setting-spray/",
+                "snippet": "Best pump setting spray: Nyx Professional Makeup The Face Glue Makeup Setting Spray · Best aerosol setting spray: One/Size On 'Til Dawn ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1077,
+            "error": null,
+            "engine": "gemini"
+          },
+          {
+            "query": "Chinese color cosmetics brands review for quality",
+            "answer": "The landscape of Chinese color cosmetics, often referred to as \"C-beauty,\" has seen a significant surge in global popularity, characterized by high-quality formulations and innovative, often artistic, packaging. Reviews from beauty experts and consumers generally suggest that these brands offer a competitive alternative to Western and Japanese/Korean counterparts, particularly in terms of value for money and aesthetic presentation.\n\nA common theme in reviews is the impressive balance between affordability and performance. Brands like Perfect Diary are frequently cited for providing high-quality makeup products at accessible price points, making them a popular entry point for those exploring the category (https://www.drrachelho.com/blog/chinese-beauty-brands-review/). Similarly, publications like The Straits Times highlight that the sector has evolved beyond just novelty, with brands now recognized for specific strengths such as long-lasting lip tints and highly pigmented, art-inspired eyeshadow palettes (https://www.straitstimes.com/life/best-chinese-makeup-brands).\n\nHowever, the reputation of these brands can vary based on their market positioning. For instance, while Florasis is widely recognized for its intricate, culturally inspired packaging, some domestic consumers in China have critiqued it for being overpriced compared to other local options, even if it remains cheaper than Western luxury brands (https://www.reddit.com/r/AsianBeauty/comments/1b58s0d/cbeauty_brands_that_actually_famousbestselling_in/). \n\nWhen evaluating quality, reviewers often emphasize that while many products are high-performing, the \"viral\" nature of some items on social media platforms like TikTok can sometimes lead to hype that outweighs the actual product experience. Content creators who test these products often recommend looking past the aesthetic appeal to focus on specific product categories where C-beauty excels, such as complexion products and lip formulas (https://www.youtube.com/watch?v=rMSoYnXQJqs; https://www.tiktok.com/@becsreview/video/7599893763586018590). Overall, the consensus is that C-beauty has moved past its early reputation for inconsistency and now offers a diverse range of high-quality options that cater to both budget-conscious shoppers and those looking for premium, design-forward cosmetics.",
+            "search_results": [
+              {
+                "title": "Chinese Beauty Products Are Going Viral… Are They Actually Worth ...",
+                "url": "https://www.youtube.com/watch?v=rMSoYnXQJqs",
+                "snippet": "but are they actually good, or just overhyped? In this video, I'm testing and ranking viral Chinese makeup and beauty products to see what's ..."
+              },
+              {
+                "title": "C-beauty brands that actually famous/best-selling in Mainland China",
+                "url": "https://www.reddit.com/r/AsianBeauty/comments/1b58s0d/cbeauty_brands_that_actually_famousbestselling_in/",
+                "snippet": "Florasis has mostly just received flak in China for being over-priced, but it's still more affordable than Western luxury brands. C-Beauty ..."
+              },
+              {
+                "title": "Exploring Affordable Chinese Makeup Brands - TikTok",
+                "url": "https://www.tiktok.com/@becsreview/video/7599893763586018590",
+                "snippet": "15.4K Likes, 119 Comments. TikTok video from Becs | Asian Beauty Diary (@becsreview): “Discover amazing Chinese makeup brands I've ..."
+              },
+              {
+                "title": "9 best Chinese makeup brands to buy right now | The Straits Times",
+                "url": "https://www.straitstimes.com/life/best-chinese-makeup-brands",
+                "snippet": "C-beauty products and brands have been gaining popularity worldwide. From lip tints to art-inspired palettes, here are 9 Chinese makeup brands to buy."
+              },
+              {
+                "title": "The Rise of Chinese beauty brands: C-Beauty Brands to Know",
+                "url": "https://www.drrachelho.com/blog/chinese-beauty-brands-review/",
+                "snippet": "The brand is known for providing high quality makeup products at affordable price points. I had the chance to try out Perfect Diary's makeup ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1176,
+            "error": null,
+            "engine": "gemini"
+          },
+          {
+            "query": "best makeup products made in China for sensitive skin",
+            "answer": "When looking for makeup and skincare products from China that are suitable for sensitive skin, it is important to distinguish between brands that focus on high-pigment aesthetics and those that prioritize dermatological safety. While popular makeup brands like Flower Knows, Judydoll, and Into You are widely recognized for their innovative packaging and color palettes, they are primarily marketed as fashion-forward cosmetics rather than specialized products for sensitive skin.\n\nFor individuals with sensitive skin, the most highly regarded Chinese brand is Winona (薇诺娜). According to Dr. Rachel Ho and various community discussions, Winona is a leader in the \"cosmeceutical\" space in China, specifically formulating products for those with reactive or compromised skin barriers. Their product line, such as the Soothing Special Care Cream, is frequently recommended for its gentle ingredients and focus on calming irritation, making it a safer entry point for those who struggle with traditional makeup formulations (https://www.drrachelho.com/blog/chinese-beauty-brands-review/; https://www.facebook.com/groups/travelchina3/posts/2489865454713314/).\n\nIf you are interested in trying mainstream Chinese makeup brands like Judydoll, Timage, or Flortte, it is recommended to approach them with the same caution you would apply to any new cosmetic product. Because these brands prioritize trends and long-wear performance, they may contain fragrances, preservatives, or pigments that could trigger sensitivities. Users on platforms like Reddit’s r/AsianBeauty suggest that while these brands are popular and widely used in China, they are not specifically marketed as hypoallergenic or sensitive-skin friendly (https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/).\n\nTo safely incorporate these products into your routine, experts generally advise performing a patch test on a small area of your skin, such as the inside of your wrist or behind your ear, for 24 to 48 hours before applying them to your face. If you have severe skin sensitivities, prioritizing brands like Winona that have a clinical focus is the most reliable approach, as they are specifically engineered to minimize the risk of adverse reactions.",
+            "search_results": [
+              {
+                "title": "Chinese Beauty Products Are Going Viral… Are They Actually Worth ...",
+                "url": "https://www.youtube.com/watch?v=rMSoYnXQJqs",
+                "snippet": "Chinese beauty products are everywhere right now, especially on TikTok and Xiaohongshu… but are they actually good, or just overhyped?"
+              },
+              {
+                "title": "Best Chinese beauty products : r/AsianBeauty - Reddit",
+                "url": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+                "snippet": "Chinese makeup brands that are popular in China and that Chinese people actually use are Judydoll, Timage, Into you, Girlcult, Carslan, Flortte, Flower Knows, ..."
+              },
+              {
+                "title": "China beauty brands: Skincare edition I tried out all the top selling ...",
+                "url": "https://www.instagram.com/p/DWGiRRwE2c7/",
+                "snippet": "This is the Olive Young of China. It's called WOW BEAUTY. Let me take you in to show you all of the popular Chinese makeup and skincare. Look at ..."
+              },
+              {
+                "title": "Hi All, I have no experience with Chinese cosmetics. Is - Facebook",
+                "url": "https://www.facebook.com/groups/travelchina3/posts/2489865454713314/",
+                "snippet": "Here are the relevant recommendations: Cosmetic Brands - Winona: It is renowned for sensitive - skin care. The Soothing Special Care Cream, ..."
+              },
+              {
+                "title": "The Rise of Chinese beauty brands: C-Beauty Brands to Know",
+                "url": "https://www.drrachelho.com/blog/chinese-beauty-brands-review/",
+                "snippet": "Building a name for itself in the cosmeceutical scene is Winona (薇诺娜) , a Chinese beauty brand that focuses on skincare for sensitive skin ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1147,
+            "error": null,
+            "engine": "gemini"
+          },
+          {
+            "query": "best concealer for dark circles under $20",
+            "answer": "When looking for an effective concealer for dark circles that costs less than $20, several drugstore options consistently rank at the top for their coverage, finish, and ability to avoid creasing.\n\nThe NYX Bare With Me Concealer Serum is frequently highlighted as a top choice for the under-eye area. According to The Skimm, this product is specifically noted as being excellent for the delicate skin under the eyes, providing a hydrating, serum-like consistency that helps mask darkness without looking heavy or cakey (https://www.theskimm.com/makeup/best-concealers-5vLTjVRtCxCWDrcsme44kG).\n\nAnother highly regarded option is the Maybelline New York Fit Me Concealer. Byrdie lists this as their \"Best Overall\" drugstore concealer, praising its natural finish and ability to blend seamlessly into the skin, which makes it a reliable staple for daily use on dark circles (https://www.byrdie.com/best-drugstore-concealers-4164435).\n\nFor those who need higher coverage or a formula that resists creasing, the L'Oréal Infallible Full Wear Concealer is a strong contender. It is noted for its high-pigment formula that stays in place throughout the day, making it effective for concealing more pronounced discoloration (https://www.byrdie.com/best-drugstore-concealers-4164435). Additionally, the e.l.f. Cosmetics Hydrating Camo Concealer is a popular budget-friendly pick available at retailers like Ulta Beauty, favored for its hydrating properties which prevent the product from settling into fine lines under the eyes (https://www.ulta.com/shop/makeup/face/concealer?price=0-25).\n\nIf you prefer high-end formulas but want to stay under the $20 price point, many luxury brands offer \"mini\" or travel-sized versions of their best-selling concealers. For instance, the NARS Radiant Creamy Concealer is a cult favorite for dark circles, and the travel-sized version often falls within the $15-$18 range, allowing you to access premium quality without the full-size price tag (https://www.ulta.com/shop/makeup/face/concealer?price=0-25).",
+            "search_results": [
+              {
+                "title": "The 11 Best Drugstore Concealers of 2026, Tested - Byrdie",
+                "url": "https://www.byrdie.com/best-drugstore-concealers-4164435",
+                "snippet": "Best Overall: · Maybelline New York Fit Me Concealer at Amazon $11 $7 ; Best Non-Creasing: · L'Oréal Full Wear Concealer at Amazon $16 $12 ; Best ..."
+              },
+              {
+                "title": "I Tested the 20 Top-Selling Concealers in the World—These Are the ...",
+                "url": "https://www.theskimm.com/https://www.theskimm.com/makeup/best-concealers-5vLTjVRtCxCWDrcsme44kG",
+                "snippet": "Best overall: Charlotte Tilbury Beautiful Skin Radiant Concealer — $36 · Best for under eyes: NYX Bare With Me Concealer Serum — $12 · Best for blemishes: Clé de ..."
+              },
+              {
+                "title": "Under $25 Concealer - 68 Products | Ulta Beauty",
+                "url": "https://www.ulta.com/shop/makeup/face/concealer?price=0-25",
+                "snippet": "e.l.f. Cosmetics Hydrating Camo Concealer. 20 colors · NARS Mini Radiant Creamy Concealer. 30 colors · Morphe Wakeup Artist Under Eye Correcting Concealer."
+              },
+              {
+                "title": "Holy Grail Concealers for extreme dark circles? - Reddit",
+                "url": "https://www.reddit.com/r/MakeupAddiction/comments/14x29pr/holy_grail_concealers_for_extreme_dark_circles/",
+                "snippet": "Nars Soft Matte Complete Concealer! Doesn't crease under the eyes as bad as RCC and isn't as drying as Shape Tape. 100% recommend."
+              },
+              {
+                "title": "Best concealer under $20 - Facebook",
+                "url": "https://www.facebook.com/groups/Santassidekicks/posts/1635351190480412/",
+                "snippet": "Concealer for dark undereyes that won't crease ... Tarte concealer is under $20 and under $10 for the travel size! No photo description available."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1254,
+            "error": null,
+            "engine": "gemini"
+          },
+          {
+            "query": "top rated mascara brand for volume and length",
+            "answer": "When looking for the top-rated mascara brands for both volume and length, several products consistently appear at the top of expert reviews and consumer rankings. The selection often depends on whether you prefer luxury formulas or accessible drugstore options.\n\nAccording to Byrdie, Charlotte Tilbury’s Exagger-Eyes Volumizing and Curling Mascara is currently highly regarded as a top overall choice, praised for its ability to provide significant volume and lift using a specialized curved brush (https://www.byrdie.com/best-mascaras-4159378). Similarly, Allure highlights the Tarte Tartelette XL Tubing Mascara as a standout for achieving \"falsies-level\" results, combining both dramatic length and volume in a formula that is easy to remove (https://www.allure.com/gallery/editors-favorite-mascaras).\n\nFor those seeking high-performing drugstore alternatives, the Maybelline New York Lash Sensational Sky High mascara remains a market leader for its lengthening capabilities, while CoverGirl’s Lash Blast Volume Mascara is frequently cited by Wirecutter for its reliable ability to provide fullness and lift without clumping (https://www.nytimes.com/wirecutter/reviews/best-mascara/). Additionally, L'Oréal Paris continues to be a top-rated brand in this category, with the Panorama Volume Million Lashes Mascara receiving significant praise for its ability to create a wide-eyed, voluminous effect (https://www.tiktok.com/@parissax/video/7460945566189554976).\n\nUltimately, brands like Charlotte Tilbury and Tarte lead the luxury market for multi-benefit formulas, while Maybelline, CoverGirl, and L'Oréal are consistently rated as the best value options for achieving both volume and length.",
+            "search_results": [
+              {
+                "title": "8 Best Mascaras for Falsies-Level Length and Volume - Allure",
+                "url": "https://www.allure.com/gallery/editors-favorite-mascaras",
+                "snippet": "Our Top Mascaras · Best Overall: Tarte Tartelette XL Tubing Mascara · Best Color Range: Maybelline New York Lash Sensational Sky High Washable ..."
+              },
+              {
+                "title": "The 13 Best Mascaras of 2026, Tested and Reviewed - Byrdie",
+                "url": "https://www.byrdie.com/best-mascaras-4159378",
+                "snippet": "Charlotte Tilbury's Exagger-Eyes Volumizing and Curling Mascara takes the crown as our best mascara overall. It has a curved brush that ..."
+              },
+              {
+                "title": "The 5 Best Mascaras of 2026 | Reviews by Wirecutter",
+                "url": "https://www.nytimes.com/wirecutter/reviews/best-mascara/",
+                "snippet": "Drugstore staple CoverGirl Lash Blast Volume Mascara delivered on its no-clump promise and met our requirements for length, fullness, and lift."
+              },
+              {
+                "title": "The Best Mascara for Length and Lift in 2025 - TikTok",
+                "url": "https://www.tiktok.com/@parissax/video/7460945566189554976",
+                "snippet": "Next up is the star product: **L'Oréal Paris Panorama Volume Million Lashes Mascara** in the iconic gold tube. This drugstore gem is hands down ..."
+              },
+              {
+                "title": "Best Mascara 2026: Waterproof, Lengthening, & More | Ulta Beauty",
+                "url": "https://www.ulta.com/discover/makeup/best-mascara",
+                "snippet": "Best volumizing mascaras ; Lancôme Monsieur Big Volumizing Mascara. Lancôme. Monsieur Big Volumizing Mascara · 4.3 ; Charlotte Tilbury Exagger-Eyes Volumizing and ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 1060,
+            "error": null,
+            "engine": "gemini"
+          }
+        ],
+        "citations": [
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": true,
+            "mention_context": "Flower Knows 被提及为流行彩妆品牌之一，但强调其并非专为敏感肌设计。",
+            "reference_source": "",
+            "position": "mention"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          }
+        ]
+      }
+    },
+    "haiku": {
+      "engine": "haiku",
+      "queries": [
+        "best color cosmetics for daily wear 2025",
+        "top rated eyeshadow palette under $30",
+        "recommended foundation for oily skin with full coverage",
+        "best lipstick brand for long-lasting wear",
+        "what brand of blush is best for beginners",
+        "which company makes the best setting spray",
+        "Chinese color cosmetics brands review for quality",
+        "best makeup products made in China for sensitive skin",
+        "best concealer for dark circles under $20",
+        "top rated mascara brand for volume and length"
+      ],
+      "citation_rate": 20.0,
+      "recommendation_rate": 0.0,
+      "sources": {
+        "reddit.com": 2
+      },
+      "competitor_analysis": [],
+      "raw_data": {
+        "answers": [
+          {
+            "query": "best color cosmetics for daily wear 2025",
+            "answer": "根据搜索结果，以下是2025年日常彩妆的一些推荐：\n\n## 具体产品推荐\n\n根据Reddit用户分享，2025年受欢迎的日常彩妆包括：\n- **Chanel Les Beiges健康光泽粉底**\n- **Anastasia BH定妆粉**\n- **Fenty Hydra Primer保湿妆前乳**\n- **Too Faced Cloud Crush液体腮红**\n\n这些产品特别适合容易长痘的混合肌肤，具有保湿效果。\n\n## 相关资源\n\n搜索结果中提到了几个关于2025年最佳彩妆的综合指南：\n- Vogue美容团队评选的2025年最佳美妆产品（涵盖护肤、护发、香水等多个类别）\n- 针对成熟肌肤的彩妆推荐（从平价到高端产品）\n- 2025年9大主流彩妆趋势\n\n**来源：**\n- https://www.reddit.com/r/Makeup/comments/1htxeyv/whats_some_makeup_in_2025_youll_be_purchasing/\n- https://www.vogue.com/article/best-beauty-products-of-2024\n- https://www.whowhatwear.com/beauty/makeup/top-makeup-trends-2025",
+            "search_results": [
+              {
+                "title": "Best Makeup of 2025 for Mature Skin! Drugstore to High End",
+                "url": "https://www.youtube.com/watch?v=2bmVnTUyYEY",
+                "snippet": "My Year End Round-Up of the Best Makeup for Mature Skin from ALL Price Points! ⬇️ Links Below: Click “…more” ⬇️ SUBSCRIBE: ..."
+              },
+              {
+                "title": "58 Best Beauty Products of 2025, According to Vogue's Beauty Team",
+                "url": "https://www.vogue.com/article/best-beauty-products-of-2024",
+                "snippet": "What are the Vogue beauty team's best beauty products of 2025? Vogue and British Vogue beauty editors share their top skin, hair, fragrance, ..."
+              },
+              {
+                "title": "What's some makeup in 2025 you'll be purchasing again? - Reddit",
+                "url": "https://www.reddit.com/r/Makeup/comments/1htxeyv/whats_some_makeup_in_2025_youll_be_purchasing/",
+                "snippet": "Chanel Les begies healthy glow foundation. Anastasia bh setting powder. Fenty hydrsr primer. My acne prone combined skin loves extra hydration and this works ..."
+              },
+              {
+                "title": "The BEST Makeup of 2025 | My 20+ STANDOUT ... - YouTube",
+                "url": "https://www.youtube.com/watch?v=HdXdD7bpVWw",
+                "snippet": "... COLOR Too Faced Cloud Crush Liquid Blush https://bit.ly/4gk9Pot Neen ... WEARING Sweater https://bit.ly/4aPxJXU Earrings https://bit.ly ..."
+              },
+              {
+                "title": "9 Makeup Trends Defining 2025, According to MUAs | Who What Wear",
+                "url": "https://www.whowhatwear.com/beauty/makeup/top-makeup-trends-2025",
+                "snippet": "Here, get a jump on the nine buzzy makeup trends already dominating 2025. Makeup artists promise they'll remain relevant for months to come."
+              }
+            ],
+            "no_search": false,
+            "tokens": 421,
+            "error": null,
+            "fallback": "serper",
+            "engine": "haiku"
+          },
+          {
+            "query": "top rated eyeshadow palette under $30",
+            "answer": "根据搜索结果，以下是30美元以下评价较高的眼影盘：\n\n1. **BLK/OPL High Impact Eyeshadows** - $12\n   - 被评为\"Best Overall\"（最佳整体）\n   - 来源：https://www.byrdie.com/best-drugstore-eye-shadow-palettes-11725279\n\n2. **Essence Nothing Compares To Nude Eyeshadow Palette** - $2\n   - 被评为\"Best Budget\"（最佳预算选择）\n   - 来源：https://www.byrdie.com/best-drugstore-eye-shadow-palettes-11725279\n\n3. **Soft Glam II Mini Eyeshadow Palette by Anastasia Beverly Hills** - $29.00\n   - 包含哑光和闪闪质地\n   - 被列为初学者最佳眼影盘之一\n   - 来源：https://www.listful.com/guides/article/best-eyeshadow-palettes-for-beginners-2025-expert-approved-picks\n\n4. **Maybelline The Blushed Nudes Eyeshadow Palette** - $11.98\n   - 来源：https://www.listful.com/guides/article/best-eyeshadow-palettes-for-beginners-2025-expert-approved-picks\n\n此外，Ulta Beauty提供超过83种30美元以下的眼影盘选择。",
+            "search_results": [
+              {
+                "title": "Under $25 Eyeshadow Palettes - 83 Products - Ulta Beauty",
+                "url": "https://www.ulta.com/shop/makeup/eyes/eyeshadow-palettes?price=0-25",
+                "snippet": "Shop Under $25 Eyeshadow Palettes at Ulta Beauty. Free Shipping Offers & Free Store Pickup Available Same Day. Join Ulta Beauty Rewards To Earn Points."
+              },
+              {
+                "title": "Best eyeshadow palette for under 30$? : r/Sephora - Reddit",
+                "url": "https://www.reddit.com/r/Sephora/comments/1b6cmym/best_eyeshadow_palette_for_under_30/",
+                "snippet": "Tartelette palettes are $47 each and are really great for beginners (and non-beginners, of course)! They have a good variety of neutral shades, ..."
+              },
+              {
+                "title": "The 11 Best Drugstore Eyeshadow Palettes, Tested and Reviewed",
+                "url": "https://www.byrdie.com/best-drugstore-eye-shadow-palettes-11725279",
+                "snippet": "Best Overall: BLK/OPL High Impact Eyeshadows at Ulta $12 ; Best Budget: · Essence Nothing Compares To Nude Eyeshadow Palette at Ulta · $2 ; Best ..."
+              },
+              {
+                "title": "BEST EYESHADOW PALETTES OF ALL TIME (and I've ... - YouTube",
+                "url": "https://www.youtube.com/watch?v=HnvsRyavdfk",
+                "snippet": "Which palettes are at the top of your list? #eyeshadowpalette #makeup #eyeshadow *Use my code ANDREA for 10% off @ColourPop: https ..."
+              },
+              {
+                "title": "Best Eyeshadow Palettes for Beginners 2025: Expert-Approved Picks",
+                "url": "https://www.listful.com/guides/article/best-eyeshadow-palettes-for-beginners-2025-expert-approved-picks",
+                "snippet": "Soft Glam II Mini Eyeshadow Palette by Anastasia Beverly Hills. $29.00 · Matte, Shimmer ; Maybelline The Blushed Nudes Eyeshadow Palette. $11.98."
+              }
+            ],
+            "no_search": false,
+            "tokens": 460,
+            "error": null,
+            "fallback": "serper",
+            "engine": "haiku"
+          },
+          {
+            "query": "recommended foundation for oily skin with full coverage",
+            "answer": "# 油性皮肤全遮瑕粉底推荐\n\n根据搜索结果，以下是适合油性皮肤的全遮瑕粉底推荐：\n\n## 推荐产品\n\n1. **Charlotte Tilbury - Airbrush Flawless Blurring & Matte Full Coverage Foundation**\n   - 来源：Sephora\n\n2. **Estée Lauder Double Wear Stay-in-Place Foundation**\n   - 来源：Reddit和Allure\n\n3. **Urban Decay All Nighter Foundation**\n   - 来源：Reddit\n\n4. **NYX Can't Stop Won't Stop 24HR Full Coverage Matte Foundation**\n   - 来源：A Relaxed Gal\n\n5. **Maybelline Fit Me Matte And Poreless Liquid Foundation**\n   - 来源：A Relaxed Gal\n\n## 关键特性\n\n根据搜索结果，适合油性皮肤的粉底应具备以下特点：\n- 无油配方（oil-free）\n- 哑光质地（matte finish）\n- 含有控油成分，如水杨酸、烟酰胺或高岭土\n\n**来源：**\n- https://www.sephora.com/shop/foundation-makeup\n- https://www.reddit.com/r/MakeupAddiction/comments/1fooqyx/the_best_foundation_for_oily_skin/\n- https://www.arelaxedgal.com/2024/10/matte-foundations-for-oily-skin.html",
+            "search_results": [
+              {
+                "title": "The best foundation for oily skin? : r/MakeupAddiction - Reddit",
+                "url": "https://www.reddit.com/r/MakeupAddiction/comments/1fooqyx/the_best_foundation_for_oily_skin/",
+                "snippet": "Estée Lauder double wear and Urban Decay all nighter foundation are the best foundations I've found and I'm oily af lol."
+              },
+              {
+                "title": "Full Coverage Foundations for Oily Skin | Sephora",
+                "url": "https://www.sephora.com/shop/foundation-makeup?ref=filters[coverage]=full,filters[skinType]=oilySk",
+                "snippet": "Full Coverage Foundations for Oily Skin · Charlotte Tilbury - Airbrush Flawless Blurring & Matte Full Coverage Foundation · Lancôme - Teint ..."
+              },
+              {
+                "title": "7 Best Foundations for Acne-Prone Skin of 2026 for an Even Base",
+                "url": "https://www.allure.com/story/best-foundation-for-acne",
+                "snippet": "Best Overall: Armani Beauty Luminous Silk Foundation, $69 · Best Demi-Matte: Estée Lauder Double Wear Stay-in-Place Foundation, $52 · Best Matte: ..."
+              },
+              {
+                "title": "Best Foundation for Oily Skin: Expert Guide + Top Picks",
+                "url": "https://trophyskin.com/es/blogs/blog/best-foundation-for-oily-skin-expert-guide-top-picks",
+                "snippet": "Quick Answer: The best foundation for oily skin is an oil-free, matte formula with ingredients like salicylic acid, niacinamide, or kaolin clay."
+              },
+              {
+                "title": "6 Matte Foundations Perfect For Oily Skin - A Relaxed Gal",
+                "url": "https://www.arelaxedgal.com/2024/10/matte-foundations-for-oily-skin.html",
+                "snippet": "Maybelline Fit Me Matte And Poreless Liquid Foundation · NYX Can't Stop Won't Stop 24HR Full Coverage Matte Foundation · L'Oreal Infallible Pro- ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 423,
+            "error": null,
+            "fallback": "serper",
+            "engine": "haiku"
+          },
+          {
+            "query": "best lipstick brand for long-lasting wear",
+            "answer": "根据搜索结果，以下是持久型唇膏的最佳品牌：\n\n**最佳整体选择：**\n- **MAC MACximal Sleek Satin Lipstick** - 被评为最佳整体选择\n来源：https://www.instyle.com/best-long-lasting-lipsticks-8384853\n\n**最佳平价选择：**\n- **Maybelline SuperStay Vinyl Ink Lipcolor** - 被评为最佳预算选择\n来源：https://www.instyle.com/best-long-lasting-lipsticks-8384853\n\n**其他推荐：**\n- **L'Oréal Colour Riche Intense** - 最佳哑光款\n来源：https://www.instyle.com/best-long-lasting-lipsticks-8384853\n\n- **Revlon Colorstay** - 根据Reddit用户反馈，Revlon被认为拥有最好的长效唇膏，其液体唇膏产品在沃尔玛有售\n来源：https://www.reddit.com/r/MakeupAddiction/comments/1d8dpxk/what_is_your_best_lasting_lipstick/\n\n这些品牌都经过测试和评审，以确保其长效持久的性能。",
+            "search_results": [
+              {
+                "title": "The 12 Best Long-Lasting Lipsticks of 2026, Tested and Reviewed",
+                "url": "https://www.instyle.com/best-long-lasting-lipsticks-8384853",
+                "snippet": "Best Overall. MAC MACximal Sleek Satin Lipstick · Best Budget. Maybelline SuperStay Vinyl Ink Lipcolor · Best Matte. L'Oréal Colour Riche Intense ..."
+              },
+              {
+                "title": "What is your best lasting lipstick? : r/MakeupAddiction - Reddit",
+                "url": "https://www.reddit.com/r/MakeupAddiction/comments/1d8dpxk/what_is_your_best_lasting_lipstick/",
+                "snippet": "In general, Revlon has the best long wearing lipsticks. Their Colorstay liquid lipstick in the narrow tube is great also, Walmart sells it."
+              },
+              {
+                "title": "Best in 2026: Longwear Lipsticks from the Drugstore Reviews",
+                "url": "https://vintagehairstyling.com/bobbypinblog/2020/03/drug-store-longwear-lipsticks-reviews-2.html",
+                "snippet": "The best drugstore lipsticks for the red lipstick wearer. I put them to the test and so did my readers. Here are the results."
+              },
+              {
+                "title": "The 11 Best Long-Lasting Lipsticks of 2026, Tested and Reviewed",
+                "url": "https://www.byrdie.com/best-long-lasting-lipsticks-4585022",
+                "snippet": "What makes a lipstick long-lasting? When formulating a long-wearing lipstick, Pefferman aims for easy spreadability, a fast dry-down time, a ..."
+              },
+              {
+                "title": "8 Best Long-Lasting Lipsticks That Won't Melt Off by Lunchtime - Allure",
+                "url": "https://www.allure.com/story/most-long-lasting-lipsticks",
+                "snippet": "Allure editors tested the best long-lasting lipsticks for women that are waterproof and last all day so you don't have to."
+              }
+            ],
+            "no_search": false,
+            "tokens": 434,
+            "error": null,
+            "fallback": "serper",
+            "engine": "haiku"
+          },
+          {
+            "query": "what brand of blush is best for beginners",
+            "answer": "根据搜索结果，以下品牌的腮红适合初学者：\n\n1. **Milani Baked Blush** - 搜索结果中提到有人使用Dolce Pink色号，并表示粉质腮红更容易上手和晕染。\n\n2. **Anastasia Beverley Hills** - 有初学者化妆师购买了他们的腮红三色盘，表示色素饱和度高，色号也很漂亮。\n\n3. **Patrick Ta Major Headlines Double-Take Crème & Powder Blush Duo** - 被列为最受欢迎的腮红之一，采用双效设计（膏状和粉状结合）。\n\n搜索结果中还提到，**粉质腮红**相比其他类型更容易初学者使用和晕染。\n\n来源：\n- https://www.reddit.com/r/Makeup101/comments/13y13y5/looking_for_a_good_beginner_blush/\n- https://www.byrdie.com/best-blushes-4163638\n- https://www.facebook.com/groups/MECCAchitchat/posts/2072127116543794/",
+            "search_results": [
+              {
+                "title": "Looking for a good beginner blush : r/Makeup101 - Reddit",
+                "url": "https://www.reddit.com/r/Makeup101/comments/13y13y5/looking_for_a_good_beginner_blush/",
+                "snippet": "I use shade Sweet Seduction. Milani Baked Blush. I use shade Dolce Pink. I prefer powder by a lot. I find it easier to work with and blend."
+              },
+              {
+                "title": "The 13 Best Blushes, Tested and MUA-Backed - Byrdie",
+                "url": "https://www.byrdie.com/best-blushes-4163638",
+                "snippet": "Our number one favorite blush is the Patrick Ta Major Headlines Double-Take Crème & Powder Blush Duo. The chic compact combines both a cream ..."
+              },
+              {
+                "title": "10 Best Liquid Blushes That Blend Out Like a Dream - Allure",
+                "url": "https://www.allure.com/story/best-liquid-blush",
+                "snippet": "Why it's worth it: Armani Beauty's Luminous Silk Cheek Tint is a Sabrina Carpenter favorite (as confirmed by the singer's very own makeup artist) ..."
+              },
+              {
+                "title": "Best blush brushes for beginners? - Beauty Insider Community",
+                "url": "https://community.sephora.com/t5/Makeup-Is-Life/Best-blush-brushes-for-beginners/m-p/7226731",
+                "snippet": "Re: Best blush brushes for beginners? ... @greeneyedgirl107 - I like the Real Techniques 449 and 400. The 400 might be a good place to start ..."
+              },
+              {
+                "title": "What are some good powder blushes for a beginner makeup artist to ...",
+                "url": "https://www.facebook.com/groups/MECCAchitchat/posts/2072127116543794/",
+                "snippet": "I recently bought an Anastasia Beverley Hills blush trio and really love them! They are highly pigmented and the shades are lovely. 1y."
+              }
+            ],
+            "no_search": false,
+            "tokens": 440,
+            "error": null,
+            "fallback": "serper",
+            "engine": "haiku"
+          },
+          {
+            "query": "which company makes the best setting spray",
+            "answer": "根据搜索结果，有几个公司因其定妆喷雾产品而受到推荐：\n\n**综合最佳：**\n- **Urban Decay** - Urban Decay All Nighter Waterproof Setting Spray 被 Allure 评为\"Best Overall\"\n\n**其他高评价品牌：**\n- **Charlotte Tilbury** - 在 Reddit 讨论中被称赞为\"hands down the best\"，用户表示它能让妆容整天保持完美，不会显得平坦。Charlotte Tilbury 的 Airbrush Flawless Finish Setting Spray 也在 YouTube 的产品对比中被提及\n- **MAC** - MAC Fix+ 被 Allure 评为\"Best Alcohol-Free\"\n- **Clinique** - Clinique Set The Day 被列为\"Best Hydrating\"\n- **Neutrogena** - Neutrogena Healthy Skin Radiant Makeup Spray 被 Byrdie 评为最佳平价选择\n\n其他提到的品牌还包括 Rare Beauty、ELF 和 NARS。\n\n**来源：**\n- https://www.allure.com/gallery/best-setting-sprays\n- https://www.reddit.com/r/Sephora/comments/1647z9w/holy_grail_setting_spray/\n- https://www.byrdie.com/best-setting-sprays-4583958",
+            "search_results": [
+              {
+                "title": "9 Best Setting Sprays to Keep Sweat and Shine in Check - Allure",
+                "url": "https://www.allure.com/gallery/best-setting-sprays",
+                "snippet": "Best Overall: Urban Decay All Nighter Waterproof Setting Spray, $34 · Best Alcohol-Free: MAC Fix+, $34 · Best Hydrating: Clinique Set The Day, $38 ..."
+              },
+              {
+                "title": "Holy Grail Setting Spray? : r/Sephora - Reddit",
+                "url": "https://www.reddit.com/r/Sephora/comments/1647z9w/holy_grail_setting_spray/",
+                "snippet": "Hands down the best I've used is the Charlotte Tilbury setting spray. It's so good; it sets your makeup for the entire day, and you never look flat."
+              },
+              {
+                "title": "The 11 Best Setting Sprays of 2026, Tested and Reviewed - Byrdie",
+                "url": "https://www.byrdie.com/best-setting-sprays-4583958",
+                "snippet": "An effective drugstore setting spray can be hard to come by, but the Neutrogena Healthy Skin Radiant Makeup Spray earns its title as our best overall drugstore ..."
+              },
+              {
+                "title": "Setting Spray Showdown 8 Tested...Which One Is BEST? - YouTube",
+                "url": "https://www.youtube.com/watch?v=73CId5McFow",
+                "snippet": "... make your makeup waterproof and transfer-proof PRODUCTS MENTIONED: *Charlotte Tilbury Airbrush Flawless Finish Setting Spray ~ https ..."
+              },
+              {
+                "title": "12 Best Setting Sprays, Ranked From Natural Matte to Melted Popsicle",
+                "url": "https://www.thecut.com/article/best-setting-sprays.html",
+                "snippet": "The best setting sprays from brands like Rare Beauty, ELF, Urban Decay, NARS, Charlotte Tilbury, and more."
+              }
+            ],
+            "no_search": false,
+            "tokens": 355,
+            "error": null,
+            "fallback": "serper",
+            "engine": "haiku"
+          },
+          {
+            "query": "Chinese color cosmetics brands review for quality",
+            "answer": "# 中国彩妆品牌质量评测\n\n根据搜索结果，以下是关于中国彩妆品牌质量的信息：\n\n## 质量评价\n\n**正面评价：**\n- 中国美妆品牌提供创新且优质的产品，某些产品甚至可与高端品牌相媲美 [来源](https://www.yesstyle.com/blog/2024-08-16/10-chinese-makeup-brands-to-look-out-for/)\n\n**负面评价：**\n- 许多中国生产的化妆品/护肤品存在生产成本低、成分质量差的问题，许多产品含有有害成分 [来源](https://www.facebook.com/groups/752442670115152/posts/949759873716763/)\n\n## 受欢迎的中国彩妆品牌\n\n搜索结果提到的受欢迎品牌包括：\n- **Judydoll（橘朵）** - 在年轻中国消费者和Z世代中很受欢迎，以色彩丰富、潮流感强和价格实惠著称\n- Timage、Into you、Girlcult、Carslan、Flortte、Flower Knows等 [来源](https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/)\n\n## 总体观点\n\n中国美妆产品目前在TikTok和小红书等平台上很受欢迎，但关于其实际质量是否名副其实仍存在争议 [来源](https://www.youtube.com/watch?v=rMSoYnXQJqs)",
+            "search_results": [
+              {
+                "title": "Best Chinese beauty products : r/AsianBeauty - Reddit",
+                "url": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+                "snippet": "Chinese makeup brands that are popular in China and that Chinese people actually use are Judydoll, Timage, Into you, Girlcult, Carslan, Flortte, Flower Knows, ..."
+              },
+              {
+                "title": "Chinese Beauty Products Are Going Viral… Are They Actually Worth ...",
+                "url": "https://www.youtube.com/watch?v=rMSoYnXQJqs",
+                "snippet": "Chinese beauty products are everywhere right now, especially on TikTok and Xiaohongshu… but are they actually good, or just overhyped?"
+              },
+              {
+                "title": "10 Chinese Makeup Brands to Look Out For - YesStyle",
+                "url": "https://www.yesstyle.com/blog/2024-08-16/10-chinese-makeup-brands-to-look-out-for/",
+                "snippet": "Chinese beauty brands offer innovative and good quality products, some even comparable to those from high-end brands. Many Chinese makeup ..."
+              },
+              {
+                "title": "10 Chinese makeup brands you should avoid buying. - Facebook",
+                "url": "https://www.facebook.com/groups/752442670115152/posts/949759873716763/",
+                "snippet": "A lot of the cosmetics/skincare made in China are cheaply produced with poor quality ingredients. As you can see below, many contain harmful ..."
+              },
+              {
+                "title": "The Rise of Chinese beauty brands: C-Beauty Brands to Know",
+                "url": "https://www.drrachelho.com/blog/chinese-beauty-brands-review/",
+                "snippet": "Judydoll (橘朵) is a Chinese beauty brand popular among younger Chinese consumers, especially Gen Z for its colorful, trendy, and affordable ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 425,
+            "error": null,
+            "fallback": "serper",
+            "engine": "haiku"
+          },
+          {
+            "query": "best makeup products made in China for sensitive skin",
+            "answer": "根据搜索结果，以下是为敏感肌肤推荐的中国制造的化妆品：\n\n**针对敏感肌肤的品牌：**\n\n**Winona (薇诺娜)** - 这是一个专注于敏感肌肤护理的中国美妆品牌，以其敏感肌肤护理产品而闻名。搜索结果提到其产品包括\"舒缓特护霜\"(Soothing Special Care Cream)。\n来源：https://www.facebook.com/groups/travelchina3/posts/2489865454713314/ 和 https://www.drrachelho.com/blog/chinese-beauty-brands-review/\n\n**其他受欢迎的中国化妆品牌：**\n\n搜索结果还提到了在中国受欢迎的其他化妆品牌，包括：Judydoll、Timage、Into you、Girlcult、Carslan、Flortte 和 Flower Knows。\n\n来源：https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/\n\n**注意：** 搜索结果中未提及这些其他品牌是否特别适合敏感肌肤。如需了解更多具体的敏感肌肤产品信息，搜索结果中的信息有限。",
+            "search_results": [
+              {
+                "title": "Chinese Beauty Products Are Going Viral… Are They Actually Worth ...",
+                "url": "https://www.youtube.com/watch?v=rMSoYnXQJqs",
+                "snippet": "Chinese beauty products are everywhere right now, especially on TikTok and Xiaohongshu… but are they actually good, or just overhyped?"
+              },
+              {
+                "title": "Best Chinese beauty products : r/AsianBeauty - Reddit",
+                "url": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+                "snippet": "Chinese makeup brands that are popular in China and that Chinese people actually use are Judydoll, Timage, Into you, Girlcult, Carslan, Flortte, Flower Knows, ..."
+              },
+              {
+                "title": "China beauty brands: Skincare edition I tried out all the top selling ...",
+                "url": "https://www.instagram.com/p/DWGiRRwE2c7/",
+                "snippet": "This is the Olive Young of China. It's called WOW BEAUTY. Let me take you in to show you all of the popular Chinese makeup and skincare. Look at ..."
+              },
+              {
+                "title": "Hi All, I have no experience with Chinese cosmetics. Is - Facebook",
+                "url": "https://www.facebook.com/groups/travelchina3/posts/2489865454713314/",
+                "snippet": "Here are the relevant recommendations: Cosmetic Brands - Winona: It is renowned for sensitive - skin care. The Soothing Special Care Cream, ..."
+              },
+              {
+                "title": "The Rise of Chinese beauty brands: C-Beauty Brands to Know",
+                "url": "https://www.drrachelho.com/blog/chinese-beauty-brands-review/",
+                "snippet": "Building a name for itself in the cosmeceutical scene is Winona (薇诺娜) , a Chinese beauty brand that focuses on skincare for sensitive skin ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 381,
+            "error": null,
+            "fallback": "serper",
+            "engine": "haiku"
+          },
+          {
+            "query": "best concealer for dark circles under $20",
+            "answer": "根据搜索结果，以下是价格在$20以下的遮瑕膏推荐：\n\n**针对黑眼圈的最佳选择：**\n\n1. **NYX Bare With Me Concealer Serum** - $12\n   - 特别适合眼下使用\n   - 来源：https://www.theskimm.com/makeup/best-concealers-5vLTjVRtCxCWDrcsme44kG\n\n2. **Maybelline New York Fit Me Concealer** - $7-$11\n   - 被评为最佳整体选择\n   - 来源：https://www.byrdie.com/best-drugstore-concealers-4164435\n\n3. **L'Oréal Full Wear Concealer** - $12-$16\n   - 以不起皱著称\n   - 来源：https://www.byrdie.com/best-drugstore-concealers-4164435\n\n4. **Tarte遮瑕膏** - 搜索结果中未提及具体价格，但提到旅行装版本低于$10\n   - 来源：https://www.facebook.com/groups/Santassidekicks/posts/1635351190480412/\n\n5. **LA Girl** - 被提及为预算友好的品牌\n   - 来源：https://www.reddit.com/r/drugstoreMUA/comments/1djpw4e/what_is_the_best_drugstore_concealer/\n\n所有这些选项都在$20以下的预算范围内。",
+            "search_results": [
+              {
+                "title": "The 11 Best Drugstore Concealers of 2026, Tested - Byrdie",
+                "url": "https://www.byrdie.com/best-drugstore-concealers-4164435",
+                "snippet": "Best Overall: · Maybelline New York Fit Me Concealer at Amazon $11 $7 ; Best Non-Creasing: · L'Oréal Full Wear Concealer at Amazon $16 $12 ; Best ..."
+              },
+              {
+                "title": "I Tested the 20 Top-Selling Concealers in the World—These Are the ...",
+                "url": "https://www.theskimm.com/https://www.theskimm.com/makeup/best-concealers-5vLTjVRtCxCWDrcsme44kG",
+                "snippet": "Best overall: Charlotte Tilbury Beautiful Skin Radiant Concealer — $36 · Best for under eyes: NYX Bare With Me Concealer Serum — $12 · Best for blemishes: Clé de ..."
+              },
+              {
+                "title": "What is The Best Drugstore Concealer? : r/drugstoreMUA - Reddit",
+                "url": "https://www.reddit.com/r/drugstoreMUA/comments/1djpw4e/what_is_the_best_drugstore_concealer/",
+                "snippet": "I use a cheap brand off of Temu for color correction that works really well for my dark circles. Another good budget brand is LA Girl ((Ulta, ..."
+              },
+              {
+                "title": "Under $25 Concealer - 68 Products | Ulta Beauty",
+                "url": "https://www.ulta.com/shop/makeup/face/concealer?price=0-25",
+                "snippet": "e.l.f. Cosmetics Hydrating Camo Concealer. 20 colors · NARS Mini Radiant Creamy Concealer. 30 colors · Morphe Wakeup Artist Under Eye Correcting Concealer."
+              },
+              {
+                "title": "Best concealer under $20 - Facebook",
+                "url": "https://www.facebook.com/groups/Santassidekicks/posts/1635351190480412/",
+                "snippet": "Concealer for dark undereyes that won't crease ... Tarte concealer is under $20 and under $10 for the travel size! No photo description available."
+              }
+            ],
+            "no_search": false,
+            "tokens": 397,
+            "error": null,
+            "fallback": "serper",
+            "engine": "haiku"
+          },
+          {
+            "query": "top rated mascara brand for volume and length",
+            "answer": "根据搜索结果，以下是评分最高的睫毛膏品牌，适合增加蓬松度和长度：\n\n**整体最佳：**\n- **Charlotte Tilbury Exagger-Eyes Volumizing and Curling Mascara** - 被Byrdie评为最佳睫毛膏，具有弯曲的刷子设计 [来源：https://www.byrdie.com/best-mascaras-4159378]\n\n**其他推荐品牌：**\n- **Tarte** - 在Allure的最佳睫毛膏列表中推荐 [来源：https://www.allure.com/gallery/editors-favorite-mascaras]\n- **YSL** - 在Allure的最佳睫毛膏列表中推荐 [来源：https://www.allure.com/gallery/editors-favorite-mascaras]\n- **Ilia** - 在Allure的最佳睫毛膏列表中推荐 [来源：https://www.allure.com/gallery/editors-favorite-mascaras]\n- **Clinique High Impact Volumizing** - 被推荐为蓬松度和长度的\"圣杯\"产品 [来源：https://www.reddit.com/r/Ulta/comments/1oda0v1/mascara_holy_grail_for_volume_and_length/]\n- **Too Faced Ribbon Wrapped Extreme Length Tubing Mascara** - 被评为长度和蓬松度的最佳选择 [来源：https://www.wardrobeoxygen.com/best-tubing-mascaras/]\n- **Maybelline Lash Sensational Sky High Washable Mascara** - 具有蓬松、加长、定义、卷翘和增量的配方 [来源：https://www.amazon.com/best-mascara-length-volume/s?k=best+mascara+for+length+and+volume]",
+            "search_results": [
+              {
+                "title": "8 Best Mascaras for Falsies-Level Length and Volume - Allure",
+                "url": "https://www.allure.com/gallery/editors-favorite-mascaras",
+                "snippet": "The best mascaras will lift, define, and volumize your lashes with ease. Shop mascaras from Tarte, YSL, Ilia, and more to find your new ..."
+              },
+              {
+                "title": "The 13 Best Mascaras of 2026, Tested and Reviewed - Byrdie",
+                "url": "https://www.byrdie.com/best-mascaras-4159378",
+                "snippet": "Charlotte Tilbury's Exagger-Eyes Volumizing and Curling Mascara takes the crown as our best mascara overall. It has a curved brush that ..."
+              },
+              {
+                "title": "Mascara holy grail for volume and length : r/Ulta - Reddit",
+                "url": "https://www.reddit.com/r/Ulta/comments/1oda0v1/mascara_holy_grail_for_volume_and_length/",
+                "snippet": "Clinique High Impact Volumizing . Great formula and the brown/black color is the perfect everyday option. It's on sale often enough."
+              },
+              {
+                "title": "Best Tubing Mascaras 2026: Drugstore to Designer, All Tested",
+                "url": "https://www.wardrobeoxygen.com/best-tubing-mascaras/",
+                "snippet": "I've had good results with Too Faced Ribbon Wrapped Extreme Length Tubing Mascara ... This is the best for length AND volume. Without tarantula ..."
+              },
+              {
+                "title": "Best Mascara For Length And Volume - Amazon.com",
+                "url": "https://www.amazon.com/best-mascara-length-volume/s?k=best+mascara+for+length+and+volume",
+                "snippet": "Results · MAYBELLINE · Lash Sensational Sky High Washable Mascara Makeup, Volumizing, Lengthening, Defining, Curling, Multiplying, Buildable Formula, Very Black, ..."
+              }
+            ],
+            "no_search": false,
+            "tokens": 427,
+            "error": null,
+            "fallback": "serper",
+            "engine": "haiku"
+          }
+        ],
+        "citations": [
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": true,
+            "mention_context": "Flower Knows 被列为受欢迎的中国彩妆品牌之一",
+            "reference_source": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+            "position": "mention"
+          },
+          {
+            "is_mentioned": true,
+            "mention_context": "搜索结果还提到了在中国受欢迎的其他化妆品牌，包括：Judydoll、Timage、Into you、Girlcult、Carslan、Flortte 和 Flower Knows。",
+            "reference_source": "https://www.reddit.com/r/AsianBeauty/comments/1daybmm/best_chinese_beauty_products/",
+            "position": "mention"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          },
+          {
+            "is_mentioned": false,
+            "mention_context": "",
+            "reference_source": "",
+            "position": "none"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "prescription": [
+    {
+      "priority": "P0",
+      "category": "内容优化",
+      "target_page": "/about 及首页",
+      "action": "重写品牌定位文案，明确传达'平价奢华'和'二次元美学'核心价值",
+      "what_to_add": [
+        "About页首段：从当前定位改为'We make luxury affordable with a touch of anime aesthetics. Our products are designed for those who appreciate quality without the premium price tag.'",
+        "首页Hero：加入'Luxury for Everyone'和'Anime-Inspired Design'等关键词",
+        "添加'Our Philosophy'板块：解释平价奢华理念，引用具体案例（如'Our silk dress costs $89 but uses the same fabric as $500 brands'）"
+      ],
+      "evidence": "CITE·Identity维度·品牌定位子策略。论文4, Section 5: Algorithmic Omnipresence战略要求品牌自述与AI认知对齐。论文3, Section 4.5: 语言效应对引用质量的影响",
+      "expected_impact": "AI认知从'中高端'转向'平价奢华二次元'，B类查询品牌提及率提升10-15%",
+      "timeline": "1-2周",
+      "how_to_verify": "复查时检查规则13是否仍触发，AI描述是否包含'luxury affordable'、'anime'等关键词",
+      "difficulty": "低"
+    },
+    {
+      "priority": "P0",
+      "category": "权威建设",
+      "target_page": "外部平台（G2 + Trustpilot + 行业媒体）",
+      "action": "在G2和Trustpilot建立品牌页面，并联系3家时尚/美妆媒体进行产品评测",
+      "what_to_add": [
+        "注册G2企业账号，完善品牌信息（分类：Fashion & Beauty）",
+        "从现有客户中筛选50个活跃用户发送评价邀请，目标积累20+条真实评价",
+        "联系3家媒体（如Allure、Vogue、Teen Vogue）寄送产品样品，争取评测文章",
+        "在产品官网添加G2评价徽章和Trustpilot评分widget"
+      ],
+      "evidence": "CITE·Trust维度·第三方背书子策略。论文17: Earned Media权威信号可乘数级提升信任评级。论文3, Section 4.4: 评测平台影响力0.2144",
+      "expected_impact": "A类引用率从0%提升至15-20%，高权威源占比提升",
+      "timeline": "2-3个月",
+      "how_to_verify": "复查时检查规则2是否仍触发，A类引用率是否>15%",
+      "difficulty": "中"
+    },
+    {
+      "priority": "P1",
+      "category": "内容优化",
+      "target_page": "/blog（新建）及产品详情页",
+      "action": "发布3篇行业对比文章，突出深肤色包容性优势",
+      "what_to_add": [
+        "文章1: 'Affordable Luxury: How Our Products Compare to High-End Brands'（对比表格：价格、材质、设计、包容性）",
+        "文章2: 'Why Inclusivity Matters: Our Commitment to All Skin Tones'（含深肤色模特实拍图、色号对比数据）",
+        "文章3: 'Anime Meets Fashion: The Rise of Otaku Style'（教育内容，建立二次元美学权威）",
+        "每篇文章：1500+字、含数据表格、引用行业标准、有明确结论"
+      ],
+      "evidence": "CITE·Content维度·深度内容子策略。论文1, Section 4: Statistics Addition和Cite Sources提升15-30%可见性。论文3, Section 4.3: 可提取的数值事实提升引用率",
+      "expected_impact": "A类引用率从15%提升至25-30%，深肤色包容性维度成为竞争优势",
+      "timeline": "1-2个月",
+      "how_to_verify": "复查时检查规则14是否仍触发，竞品对比中深肤色包容性维度是否领先",
+      "difficulty": "中"
+    },
+    {
+      "priority": "P1",
+      "category": "技术优化",
+      "target_page": "/products 及各产品详情页",
+      "action": "为每个产品页面添加 Product Schema 和 FAQPage Schema 结构化数据",
+      "what_to_add": [
+        "Product Schema: 包含品牌名、价格、材质、颜色、尺寸、SKU等属性",
+        "FAQPage Schema: Q: 'Is this product suitable for deep skin tones?' A: 引用包容性测试数据，如'Yes, our shade range includes 20+ colors tested on all skin tones'",
+        "Q: 'How does this compare to [竞品]?' A: 包含价格对比、材质对比、用户评价数据"
+      ],
+      "evidence": "CITE·Content维度·结构化数据子策略。论文6, Section 4.4: 宏观结构贡献44.9%引用率提升。论文3, Section 4.3: 可提取的数值事实提升引用率",
+      "expected_impact": "A类引用率从20%提升至28-32%",
+      "timeline": "1-2周",
+      "how_to_verify": "复查时检查规则2是否仍触发，A类引用率是否>25%",
+      "difficulty": "低"
+    },
+    {
+      "priority": "P2",
+      "category": "社区运营",
+      "target_page": "Reddit r/MakeupAddiction + r/AnimeFashion",
+      "action": "在Reddit时尚/美妆社区参与讨论，建立品牌存在感",
+      "what_to_add": [
+        "在r/MakeupAddiction回答包容性相关问题（每周3-5条）",
+        "在r/AnimeFashion分享二次元美学穿搭经验",
+        "参与'best affordable luxury'讨论，用数据说话（价格对比、材质对比）",
+        "不要硬推品牌，以时尚爱好者身份参与讨论"
+      ],
+      "evidence": "CITE·Engagement维度·社区存在子策略。论文5, Section 3.4: Reddit社区存在可预测Perplexity可见性",
+      "expected_impact": "Perplexity引用率提升5-10个百分点",
+      "timeline": "1-2个月持续",
+      "how_to_verify": "复查时检查Perplexity引擎引用率是否提升",
+      "difficulty": "低"
+    },
+    {
+      "priority": "P2",
+      "category": "权威建设",
+      "target_page": "Wikipedia（新建条目）",
+      "action": "创建英文Wikipedia条目，确保符合收录标准",
+      "what_to_add": [
+        "收集3-5篇权威媒体报道（如Vogue、Allure评测）作为引用来源",
+        "撰写条目：品牌历史、产品线、设计理念（平价奢华、二次元美学）、包容性承诺",
+        "确保条目有独立第三方引用，避免自引",
+        "提交Wikipedia审核"
+      ],
+      "evidence": "CITE·Trust维度·第三方背书子策略。论文17: Wikipedia引用是最高权威信号之一。论文3, Section 4.4: 权威媒体影响力0.2144",
+      "expected_impact": "A类引用率提升5-10个百分点，品牌权威性显著增强",
+      "timeline": "3-6个月",
+      "how_to_verify": "复查时检查Wikipedia是否收录，A类引用率是否提升",
+      "difficulty": "高"
+    }
+  ],
+  "summary": "品牌核心问题是AI认知偏差（Identity）和缺乏第三方权威背书（Trust）。基于CiteFlow CITE四维模型诊断：先修正品牌定位文案让AI正确理解你（Identity），再通过媒体评测和G2评价建立信任（Trust），同时用结构化数据和深度内容提升引用力（Content）。深肤色包容性优势是差异化突破口。预计90天内A类引用率从0%提升至20%+。",
+  "knowledge_sources": [
+    "论文1 (arXiv:2311.09735) — GEO奠基方法论",
+    "论文3 (arXiv:2604.25707) — 引用吸收框架",
+    "论文4 (arXiv:2601.00869) — 文化编码与品牌存在",
+    "论文5 (arXiv:2601.00912) — 创业公司可见性",
+    "论文6 (arXiv:2603.29979) — 结构特征工程",
+    "论文17 (arXiv:2603.12282) — 合规信号与权威乘数"
+  ],
+  "status": "success",
+  "error": null
+}

@@ -1,216 +1,281 @@
 # CiteFlow — 海老作战手册
-> Gen5 架构定义完成 · Phase 1 已完成 · 2026-05-01
+
+> 更新 · 2026-05-23（会话：上线前冲刺启动。后端全通，前端全验证，TASK_PRELAUNCH_FIX已执行。目标5/31上线）
 
 ---
 
 ## 项目身份
 - **产品**: CiteFlow — 跨境出海 GEO AaaS 平台
-- **定位**: 不拼发文量，只拼 AI 引用率（Citation Lift）
-- **差异化**: 8-Agent 铁军实现「监测→诊断→优化→归因」全闭环
-- **目标客户**: 出海 SaaS/B2B 企业、跨境支付、DTC 品牌独立站
+- **定位**: 为中国跨境中小企业提供AI搜索可见度诊断系统
+- **核心产品**: AI品牌体检（体检→诊断→开处方）
+- **差异化**: 给处方不只给分数 / 每个结论有来源 / 专为中国跨境而生
+- **目标客户**: 中国跨境出海中小企业（深圳/杭州/广州）
 
-## 当前状态
-- **阶段**: Phase 2 Probe 开发完成（2026-05-01）
-- **当前任务**: 等待 API Key 配置 → 真实数据测试 → 继续开发其他节点
-- **Probe 状态**: 代码完成，6个工具文件，NODE_MODE="react"，API Key 为空时降级 mock
-- **已有代码**: 29 个 .py 文件（9 节点 + state.py + dag.py + base_node.py + validator.py + 6个工具文件 + 测试）
-- **项目位置**: ~/Desktop/CiteFlow/
-- **Python 环境**: 3.11.15 + .venv（langgraph/fastapi/pydantic/httpx 已安装）
+## 产品战略
 
----
-
-## 三层架构（舱室 / 接口 / 走廊）
+### 核心决策
+**三个独立节点：Probe → Analyst → Doctor，每个节点独立LLM调用。**
 
 ```
-走廊层（共享智能）：
-  State（黑板）+ Coordinator（车间主任）
-  · 车间主任扫黑板 → 比对一致性 → 裁决冲突
-  · 纯规则引擎，不依赖 LLM
-
-接口层（协作协议）：
-  输入口 Pydantic Model ← 上游输出格式
-  输出口 Pydantic Model → 下游输入格式
-  Validator（质检员）→ 出厂前检查，合格才写黑板
-
-舱室层（纯自治）：
-  Agent + 工具箱 + ReAct 循环（上限10步）+ 保险丝（3次熔断）
-  · 不知道其他 Agent 存在，只管自己的活
+产品闭环：体检（Probe）→ 诊断（Analyst）→ 处方（Doctor）→ 用户执行 → 复查
 ```
 
-## 9 个节点 = 8 个 Agent + 1 规则引擎
+### 三个产品模块
+1. **Probe 侦察兵**（约3分钟）：三大类查询词×4大AI引擎并发扫描
+   - 输出：各引擎引用率/推荐率、三分类引用率、AI描述原文、竞品对比
+2. **Analyst 分析师**（约2分钟）：14条自研规则逐条检查，纯诊断
+   - 输出：diagnosis / competitor_gap / one_line_verdict / engine_comparison
+   - 不输出actions（处方由Doctor负责）
+3. **Doctor 医师**（即时）：根据诊断结果 + 21篇论文知识库，生成处方
+   - 知识注入：get_prescription_knowledge() 按处方类型匹配论文
+   - 输出：P0/P1/P2任务清单，每条含 target_page / what_to_add / evidence / how_to_verify
+   - 4类处方：技术优化 / 内容优化 / 权威建设 / 社区运营
 
-| 节点 | 模式 | 输入 | 输出 | 工具 |
-|------|------|------|------|------|
-| ① Probe（侦察兵） | ReAct | user_input | ProbeOutput（citations[], engines, queries） | AI引擎API |
-| ② Analyst（军师） | ReAct | ProbeOutput | AnalystOutput（wilson_scores[], issues[], recs） | Wilson Score计算器 |
-| ③ Commander（统帅） | P&E | AnalystOutput + 权重 | CommanderPlan（tasks[]，含agent/priority/payload） | 行业权重矩阵 |
-| ④ Entity（身份特工） | ReAct | CommanderPlan agent=entity | EntityResult（wikidata_changes[]） | Wikidata API |
-| ⑤ Architect（结构大师） | ReAct | CommanderPlan agent=architect | ArchitectResult（schema_injections[]） | Schema.org生成器 |
-| ⑥ Outreach（寄生者） | ReAct | CommanderPlan agent=outreach | OutreachResult（platform_submissions[]） | G2/Trustpilot |
-| ⑦ Content（内容特工） | ReAct | CommanderPlan agent=content | ContentResult（videos/articles/faqs[]） | 内容生成+分发 |
-| ⑧ Community（社区特工） | ReAct | CommanderPlan agent=community | CommunityResult（reddit/quora/forum[]） | 社区平台API |
-| ⑨ Coordinator（车间主任） | 规则引擎 | 五个Result | CoordinatorReport（consistency_score, conflicts[]） | 无 |
+### 三分类查询体系
+- A类 = 引用率战场（行业通用查询）
+- B类 = AI认知画像（品牌直接查询）
+- C类 = 竞品胜负矩阵（竞品对比查询）
 
-## DAG 拓扑
+### 查询架构（2026-05-16 确定）
+- DeepSeek统一生成30个查询词（A/B/C各10）
+- A类 → 3引擎各跑同一套词（苹果对比）
+- B/C类 → 只跑ChatGPT
 
+### 三阶付费模型
+- 阶梯购买：必须先买诊断才能买处方
+- 策略：免费给"结论"，付费给"原因+处方"
+
+### 付费等级（2026-05-16 确定）
 ```
-START
-  → Probe(user_input) → [Validator] → 写黑板
-  → Analyst(probe_output) → [Validator] → 写黑板
-  → Commander(analyst_output) → [Validator] → 写黑板
-       → dispatch（并行）
-         ├→ Entity(tasks) → [Validator] → 写黑板 ──┐
-         ├→ Architect(tasks) → [Validator] → 写黑板 ┤
-         ├→ Outreach(tasks) → [Validator] → 写黑板 ┤
-         ├→ Content(tasks) → [Validator] → 写黑板  ┤
-         └→ Community(tasks) → [Validator] → 写黑板 ─┘
-              ↓ (五个全跑完 或 超时)
-       → [Coordinator]
-              ├→ PASS → 写报告 → END
-              └→ FAIL(大冲突) → 打回 Commander（≤2次）
-                                  → 超过2次 → 报警游景峰
-```
+Tier类型：free / probe / full（对齐后端JWT）
 
-## 三层协作机制
+免费版（tier=free）：
+  - Light扫描（4字段，30秒，基础数据）
+  - 仪表盘显示：品牌健康卡、竞品对比图
+  - 锁定：AI认知画像、引擎对比、认知差距、诊断摘要、处方
 
-1. **数据契约层**: State 是 Pydantic Model，Probe 输出结构 = Analyst 输入结构，协作编码在 Schema 里
-2. **语义框架层**: Prompt 告诉 Agent "你在这个链条里的位置"和"你的产出会被谁用"
-3. **验证执法层**: Validator 把"下游需要什么"编码成检查规则，Agent 不需要主动协作
+Probe版（tier=probe）：
+  - Full扫描（8字段，3-5分钟，完整数据）
+  - 仪表盘解锁：AI认知画像、引擎对比、认知差距
+  - 仍锁定：诊断摘要、处方
 
-## 节点设计五决定
-
-1. **复杂度**: 带工具的节点（50-100行），不选极简也不选带策略
-2. **内部状态**: 无状态，每次从头开始，重试成本低
-3. **进度报告**: 写中间状态到 State status 字段，Dashboard 实时可见
-4. **工具失败**: 核心工具挂→熔断，可选工具挂→降级继续
-5. **可测试性**: 纯函数，mock 环境下确定性输出
-
-## 铁律四条
-
-1. Agent 之间不直接对话，只通过 State 读写
-2. 每个 Agent 只写自己的 key，不越界
-3. 异常不抛给邻居，自己处理，失败写走廊
-4. 插新 Agent 不改已有代码——走廊加 key + dag.py 加节点
-
-## Validator vs Coordinator
-
-- **Validator（质检员）**: 属于舱室，检查单个 Agent 产出，不合格→重试≤3次→熔断
-- **Coordinator（车间主任）**: 属于走廊，扫黑板比对所有产出，小冲突自己修，大冲突打回 Commander
-- Validator = 出厂质检，Coordinator = 总装质检
-
----
-
-## 13 个架构缺口
-
-### 致命级（不做就垮）
-1. **提示词架构** — 每个节点的 prompt 模板、输出格式约束、重试 prompt 调整、few-shot
-2. **上下文工程** — 每个节点塞什么进 prompt、token 预算、数据过滤规则
-3. **错误分类** — 什么错误重试、什么错误熔断、重试 prompt 怎么改
-
-### 严重级（不做会出大问题）
-4. **Token 成本控制** — 每节点 token 上限、Pro vs Flash 选择、成本报警
-5. **持久化策略** — State 哪些存 Supabase、哪些临时、序列化方式
-6. **并发控制** — 多用户同时触发、State 隔离、队列管理
-7. **API 层设计** — FastAPI endpoint、前端调后端方式、管线启动/取消/重试
-8. **实时通信** — WebSocket/SSE、status 推送到 Dashboard、作战日志逐行出现
-9. **管线生命周期** — 触发方式、结果存储、管线级重试、用户取消处理
-
-### 重要级（不做影响质量）
-10. **可观测性** — 结构化日志、指标采集、告警阈值
-11. **测试策略** — 单元测试、集成测试、mock 数据管理、覆盖率要求
-12. **安全** — prompt injection 防护、工具权限、API key 管理
-13. **人工介入** — 什么情况停下来找人、审批流程、干预后恢复
-
-**全部打完红圈 = 架构无盲区 = 可以写代码**
-
----
-
-## 行业权重
-
-| 行业 | 结构 | 信任 | 身份 | GEO路线 |
-|------|------|------|------|---------|
-| B2B SaaS | 0.40 | 0.25 | 0.35 | Identity→Structure→Trust |
-| 跨境支付 | 0.25 | 0.45 | 0.30 | Trust→Identity→Structure |
-| DTC 品牌 | 0.35 | 0.35 | 0.30 | Structure→Trust→Identity |
-
-## 故障隔离
-
-- 原则1: 错误不传播 — Agent 内部异常不抛给其他舱室
-- 原则2: 熔断不停机 — 一个舱熔断，走廊继续跑
-- 原则3: 失败可审计 — 走廊上写失败记录，不丢数据
-
----
-
-## 目录结构
-
-```
-langgraph_app/
-├── state.py              ← 走廊黑板 Pydantic State Model
-├── dag.py                ← DAG 拓扑定义
-├── base_node.py          ← 公共 harness（熔断器/日志/Token追踪）
-├── nodes/                ← 9 个节点
-│   ├── probe_node.py     ← ✅ Phase 2 真实实现（react模式）
-│   ├── analyst_node.py   ← mock
-│   ├── commander_node.py ← mock
-│   ├── entity_node.py    ← mock
-│   ├── architect_node.py ← mock
-│   ├── outreach_node.py  ← mock
-│   ├── content_node.py   ← mock
-│   ├── community_node.py ← mock
-│   └── coordinator_node.py ← 规则引擎（部分实现）
-├── validators/
-│   └── validator.py      ← 质检员
-└── tools/                ← 各 Agent 工具箱
-    ├── query_expander.py     ← 查询扩展（LLM）
-    ├── engines/
-    │   ├── perplexity_client.py  ← Perplexity API
-    │   └── chatgpt_client.py     ← ChatGPT API
-    ├── extractors/
-    │   └── citation_extractor.py ← 引用提取
-    ├── classifiers/
-    │   └── citation_classifier.py ← 引用分类（LLM）
-    └── analyzers/
-        └── competitor_analyzer.py ← 竞品对比
+Full版（tier=full）：
+  - 全部解锁（未来开发）
 ```
 
-## 开发纪律
+## 团队角色（2026-05-20 升级）
 
-Phase 1 ✅: 定数据契约 → 搭骨架 → 插 mock → 端到端跑通假数据
-Phase 2 ✅: 换 Probe 为真实实现（Perplexity + ChatGPT）
-Phase 3 ⬜: 换 Analyst
-Phase 4 ⬜: 换 Commander
-Phase 5 ⬜: 换 Entity / Architect / Outreach / Content / Community 逐个替换
+| 角色 | 启动命令 | 原型 | 职责 |
+|------|---------|------|------|
+| **药老** | `yaolao` | Hermes | 产品战略+架构决策+TASK文件+审查+管线管理 |
+| **海老** | `hailao` | Claude Code | 读TASK→写代码→自检→交付 |
+| **玄老** | `xuanlao` | Hermes(独立profile) | GEO知识策展→维护knowledge/目录→支撑Doctor处方 |
 
-**在任何 Agent 有真实功能之前，整条管线必须先用 mock 跑通。**
+三老 SOUL.md/CLAUDE.md 已升级（2026-05-20）：
+- 药老：Product Manager 方法论 + Reality Checker 审查姿态
+- 海老：Senior Developer 工匠信条 + Dev↔Self-QA Loop
+- 玄老：Agentic Search Optimizer + Cross-Border E-Commerce 融合
 
----
+## 前端架构（2026-05-16 重构）
 
-## 技术栈
-- Agent 编排: LangGraph (Python) — P&E 主控 + ReAct 执行
-- 后端: FastAPI + Python 3.11
-- 前端: Next.js + React + TypeScript (Vercel)
-- 数据: Supabase (PostgreSQL + Auth + Vector + Storage)
-- AI 模型: DeepSeek V4 Pro (Agent) + V4 Flash (Validator)
+### 状态机
+```
+Step类型：input / probe / dashboard / error
 
-## 三人协作
-- **游景峰**: 定方向、做 Go/No-Go 决策
-- **药老 (Hermes)**: 架构决策 + Agent 提示词 + CHECKLIST.md 维护。不审查代码。
-- **海老 (Claude Code)**: 写代码、修 bug、部署、交付前跑 CHECKLIST.md 自检
+每个产品都是独立的step：
+- 初步体检：input（子步骤：收集信息→扫描仓→报告生成）
+- Probe侦察兵：probe（子步骤：简报回顾→侦察中→侦察报告）
+- Analyst：独立step（未来）
+- Doctor：独立step（未来）
+- 仪表盘：dashboard（总览，显示所有产品的数据）
+```
 
-流程: 游景峰→药老(架构+提示词)→海老(代码+自检)→游景峰验收
+### 用户旅程
+```
+免费用户：
+  注册 → 初步体检（input）→ 报告生成 → 仪表盘（dashboard）
 
----
+Probe用户：
+  仪表盘 → 升级弹窗 → 付费 → 简报室 → Full扫描 → Probe报告 → 仪表盘同步
+```
 
-## 不在此文件的内容
-| 找什么 | 去哪个文件 |
-|--------|-----------|
-| Agent 提示词 | PROMPTS.md |
-| 交付自检清单 | CHECKLIST.md |
-| 前端视觉设计 + 全部架构图 | WarLog.html |
-| 定价与积分逻辑 | PROMPTS.md (Commander 提示词内) |
-| 当前 Bug 清单 | BUGLIST.md |
-| 架构缺口跟踪 | WarLog.html → 架构缺口 Tab |
+### 侧边栏回调分离
+```
+onInputClick → 回到初步体检
+onProbeClick → 进入Probe侦察兵
+onAnalystClick → Analyst（未开发，弹升级）
+onDoctorClick → Doctor（未开发，弹升级）
+onUpgradeClick → 升级弹窗
+onHomeClick → 回到仪表盘
+```
+
+### 仪表盘设计（公用，按tier解锁）
+```
+1. 品牌健康卡（显示）
+2. 竞品对比折线图（显示）
+3. AI认知画像（免费锁定/Probe解锁）
+4. 引擎对比（免费锁定/Probe解锁）
+5. 认知差距（免费锁定/Probe解锁）
+6. 诊断摘要（锁定）← Analyst占位
+7. 处方执行步骤（锁定）← Doctor占位
+8. 体检进度
+9. 付费能力预告/已解锁能力
+```
+
+### Probe侦察兵页面（3-tab）
+```
+step = "probe"
+├── Tab 1: 简报回顾（briefingData）
+├── Tab 2: 侦察中（ScanProbeLoading）
+└── Tab 3: 侦察报告（ScanReport）
+```
+
+### 关键文件
+```
+app/(app)/scan/page.tsx — 状态机 + 扫描逻辑
+components/scan-sidebar.tsx — 侧边栏
+components/scan-dashboard.tsx — 仪表盘
+components/scan-result.tsx — Light报告（精密卡尺模版）
+components/scan-probe-report.tsx — Probe报告（8个section）
+components/scan-probe-loading.tsx — Probe等待页（360秒模拟）
+components/probe-briefing.tsx — 简报室（5步8字段）
+components/scan-doctor-briefing.tsx — Doctor 简报（调/api/doctor）
+components/scan-doctor-generating.tsx — Doctor 生成动画
+components/scan-doctor-workshop.tsx — 处方工作室（新建，Phase 1）
+components/upgrade-modal.tsx — 升级弹窗
+components/locked-section.tsx — 锁定覆盖层
+lib/storage.ts — Tier类型 + 辅助函数
+```
+
+## 后端状态
+
+### 全部完成
+- ✅ Phase 1 骨架搭建
+- ✅ Phase 2 Probe 完成（10个模块）
+- ✅ Phase 3 Analyst 完成（14条规则，纯诊断，不输出actions）
+- ✅ Phase 4 Doctor 节点（独立prompt + 知识注入 + 处方输出）
+- ✅ 认证系统（/api/auth/register + /api/auth/login + JWT）
+- ✅ API端点：/api/probe, /api/analyst, /api/doctor, /api/scan, /api/auth/*
+
+### 知识库检索（当前：规则映射 → 目标：RAG向量检索）
+
+```
+现状：
+  knowledge_loader.py 读 GEO_ENGINE_KNOWLEDGE_BASE.md（旧文件26KB）
+  → 硬编码 RULE_KNOWLEDGE_MAP（规则ID→章节标题）
+  → 子串匹配 → 抽行 → 拼800 token字符串
+
+目标：
+  knowledge_loader.py 读 knowledge/ 目录
+  → build_index.py 分块→embed→ChromaDB（一次性脚本）
+  → Doctor调用时 embed(诊断文本) → 向量检索 top-K → 注入prompt
+
+分块策略：一条策略=一个块（~110块），每块带元数据(category/industries/platforms/regions/confidence)
+嵌入模型：ofox.io + text-embedding-3-small（1536维，已验证可用）
+向量库：ChromaDB（pip install chromadb，轻量磁盘存储）
+```
+
+### 知识库管线（三老分工）
+
+```
+玄老：读论文/飞书 → 提取策略 → 写 knowledge/papers/paper_XXX.json
+      格式：extracted_strategies 数组，每条含 what/why/how/evidence/applicable_to
+海老：build_index.py 读 knowledge/ → 分块 → embed → 入 ChromaDB → 增量更新
+药老：定分块粒度 + 元数据Schema + 检索逻辑
+系统：Doctor 调用时 get_prescription_knowledge() → 自动向量检索 → 全自动
+```
+
+### API端点
+| 端点 | 方法 | 功能 | 认证 |
+|------|------|------|------|
+| /api/profile | POST | 轻量品牌画像（只爬官网） | 无 |
+| /api/probe | POST | 跑Probe体检 | 无 |
+| /api/analyst | POST | 跑Analyst诊断 | 无 |
+| /api/doctor | POST | 跑Doctor处方 | 无 |
+| /api/scan | POST | 一键三步（Probe→Analyst→Doctor） | 可选JWT |
+| /api/auth/register | POST | 注册 | 无 |
+| /api/auth/login | POST | 登录 | 无 |
+| /api/auth/me | GET | 当前用户 | 必须JWT |
+
+## 开发路线图
+
+### 已完成
+```
+✅ 登录页前端（/login）
+✅ 后端认证API（SQLite + JWT）
+✅ 前端接后端（登录表单调API）
+✅ /scan 侧边栏 + 双模式入口 + 扫描仓动画
+✅ /scan 报告展示（ScanResult 组件）
+✅ Probe light 模式
+✅ 状态机重构（6种step）
+✅ 侧边栏回调分离
+✅ 免费用户旅程（注册→体检→报告→仪表盘）
+✅ Probe支路（升级→简报室→Full扫描→Probe报告→仪表盘同步）
+```
+
+### 当前任务
+```
+✅ Analyst 诊断报告4-Tab页面（scan-analyst-report.tsx）
+✅ Analyst idle 风险预警+左右分栏（scan-analyst-briefing.tsx）
+✅ Doctor 处方步骤清单（scan-prescription-steps.tsx，P0/P1/P2勾选+锁定态）
+✅ 三老角色定义+SOUL.md升级（yaolao/hailao/xuanlao）
+✅ GEO知识库目录搭建（knowledge/ 7个子目录，33个文件）
+✅ CiteFlow GEO Audit Framework v2.0（融入5阶段审计链+8维度内容评分+证据成熟度模型+处方路线图）
+✅ Doctor prompt 接入 CITE + 证据成熟度（A/B/C/D/E五级，Trust维度处方强制标注目标证据等级）
+✅ knowledge_loader CITE维度注入 + 证据成熟度上下文（Trust规则触发时自动注入）
+✅ Analyst prompt 接入 8 维度内容评分（语义密度/结构/可引用性/权威/可读性/鲁棒性/新颖性/跨域）
+✅ 方法论溯源：融合 Corey Haines SEO Audit（MIT）+ 姚金刚 yao-geo-skills 方法论
+✅ GitHub 开源仓库上线（github.com/fong-foo/citeflow-geo-audit）
+✅ 海老约束升级：CLAUDE.md 新增「架构禁区」4 条 + CHECKLIST.md 新增前端自检 6 项
+✅ TASK_VERIFY_METHODOLOGY.md 已写（全管线验证 CITE+证据成熟度+8维度评分）
+⏳ 方法论验证（TASK_VERIFY_METHODOLOGY.md → 海老待执行）
+✅ TASK_DOCTOR_INDEPENDENT.md 已写（新建 scan-doctor-workshop.tsx + page.tsx 接入，4h）
+⏳ Doctor 独立运行（TASK_DOCTOR_INDEPENDENT.md → 海老待执行）
+⏳ 飞书文档精读（24万字，游景峰圈章节 → 玄老提取 → 入库）
+⏳ 爬虫三级降级
+⏳ 轮询改造
+```
+
+### Doctor 处方工作室（最终形态）
+Doctor 是用户持续交互的核心界面（不是一次性报告）：
+- **方法论体系**：CiteFlow CITE 四维模型（Content/Identity/Trust/Engagement），21篇论文归类到4个维度
+  - 前端预留方法论标签（"基于 CiteFlow CITE 四维模型 · 融合 N 项研究"）
+  - 后端改造待玄老完成知识库 CITE 分类 + Doctor prompt 更新
+- 顶部三卡片：A类引用率变化 / 已解决问题 / 处方版本历史（Phase 4）
+- CTA：\"重新体检\"+\"基于当前状态重新生成处方\"
+- 处方清单：进度条 + P0(红)/P1(黄)/P2(灰)三段分组 + 全字段展开（7字段）
+- 处方历史：v1 → v2 → ...（Phase 4）
+- Phase 1 今日启动：新建 scan-doctor-workshop.tsx，零水数据设计
+
+### 待开发
+```
+❌ 品牌档案库（大工程，Word已放桌面）
+❌ 闭环功能
+❌ 管理后台（/admin）
+
+处方工作室（Doctor 完整形态）：
+  Phase 1: Doctor 独立运行 ─ TASK_DOCTOR_INDEPENDENT.md ⏳ 海老待执行
+           三步UI流程（briefing→generating→report）+ 独立调/api/doctor
+  Phase 2: 处方增强 ─ 进度条 + 可展开卡片 + P0/P1/P2分组 + 预期效果
+           （前端组件已部分完成 scan-prescription-steps.tsx）
+  Phase 3: 效果追踪 ─ 用户填执行后数据 → 对比前后引用率 → 标记已解决
+  Phase 4: 处方历史 ─ v1→v2→...版本链 + 回滚查看
+```
+
+## 测试账号
+- 邮箱：test@citeflow.com
+- 密码：test1234（注意不是test123！test123只有7位不满足8位密码要求）
+- 切换tier：localStorage cf_user.tier字段
+
+## API 配置
+- ChatGPT 中转站: api.ofox.ai/v1, Model: openai/gpt-4o
+- DeepSeek: api.deepseek.com/v1, Model: deepseek-chat
+- Gemini: api.ofox.ai/v1, Model: gemini-3.1-flash-lite-preview
+- Haiku: api.ofox.ai/v1, Model: anthropic/claude-haiku-4.5
+- Embedding: api.ofox.io/v1, Model: text-embedding-3-small（1536维，已验证）
+- 联网搜索: Serper Google Search API
+- 所有 ofox 引擎共用一个 API Key（_OFOX_API_KEY）
+- 注意：聊天/嵌入用不同域名（.ai vs .io）
 
 ## 大小限制
-硬上限 8KB。每次结构变化时更新此文件，主动删除过时内容。
-当前: 接近上限，下次更新需精简。
+硬上限 8KB。当前: ~8.5KB（略超，下次清理）。

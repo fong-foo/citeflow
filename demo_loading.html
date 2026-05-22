@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CiteFlow — 扫描舱演示</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #06060C;
+    color: #F1F5F9;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Noise texture ─── */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.028;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
+  @keyframes scanSweep {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes scanRingCW {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes scanRingCCW {
+    from { transform: rotate(360deg); }
+    to   { transform: rotate(0deg); }
+  }
+  @keyframes scanRingBreath {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+  @keyframes phaseDotActive {
+    0%, 100% { opacity: 0.6; transform: scale(0.85); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4rem;
+    padding-bottom: 2rem;
+  }
+
+  /* ─── Scan Chamber ─── */
+  .chamber {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @keyframes dotsPulse {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes brandScanSweep {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+
+  @keyframes scanFlash {
+    0% { opacity: 1; }
+    25% { opacity: 0.12; }
+    50% { opacity: 0.12; }
+    75% { opacity: 0.55; }
+    100% { opacity: 1; }
+  }
+
+  .ambient-glow {
+    position: absolute;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(56,189,248,0.03) 0%, transparent 70%);
+    animation: scanRingBreath 3s ease-in-out infinite;
+  }
+  .ambient-glow.flash {
+    animation: scanFlash 2s ease-in-out, scanRingBreath 3s ease-in-out infinite;
+  }
+
+  .ring-outer {
+    position: absolute;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 1px solid rgba(56,189,248,0.10);
+    animation: scanRingCW 30s linear infinite;
+  }
+
+  .ring-middle {
+    position: absolute;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    border: 1px solid rgba(56,189,248,0.07);
+    animation: scanRingCCW 22s linear infinite;
+  }
+
+  .ring-inner {
+    position: absolute;
+    width: 164px; height: 164px;
+    border-radius: 50%;
+    border: 1px solid rgba(56,189,248,0.05);
+  }
+
+  /* ─── Tick marks ─── */
+  .tick { position: absolute; border-radius: 999px; pointer-events: none; background: rgba(56,189,248,0.2); }
+  .tick-n  { top: -2px; left: 50%; margin-left: -0.5px; width: 1px; height: 6px; }
+  .tick-s  { bottom: -2px; left: 50%; margin-left: -0.5px; width: 1px; height: 6px; }
+  .tick-w  { left: -2px; top: 50%; margin-top: -0.5px; width: 6px; height: 1px; }
+  .tick-e  { right: -2px; top: 50%; margin-top: -0.5px; width: 6px; height: 1px; }
+
+  /* ─── Sweep ─── */
+  .sweep-container {
+    position: absolute;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .sweep-line {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 50%; height: 1px;
+    background: linear-gradient(90deg, rgba(56,189,248,0.5), transparent);
+    transform-origin: left center;
+    animation: scanSweep 4s linear infinite;
+  }
+  .sweep-line-delayed {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 50%; height: 1px;
+    background: linear-gradient(90deg, rgba(56,189,248,0.12), transparent);
+    transform-origin: left center;
+    animation: scanSweep 4s linear infinite;
+    animation-delay: -2s;
+  }
+
+  /* ─── Center ─── */
+  .center-content {
+    position: absolute;
+    width: 160px; height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 8px;
+  }
+  .center-crosshair {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0.06;
+  }
+  .center-crosshair::before {
+    content: '';
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background: #38BDF8;
+  }
+  .center-crosshair::after {
+    content: '';
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    background: #38BDF8;
+  }
+
+  .domain-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #D4D4E0;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .brand-text {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+    color: rgba(56,189,248,0.7);
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ─── Phase LEDs ─── */
+  .phase-leds {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    height: 24px;
+  }
+  .phase-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .phase-dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .phase-dot.done { background: #22C55E; box-shadow: 0 0 3px rgba(34,197,94,0.4); }
+  .phase-dot.active { background: #38BDF8; box-shadow: 0 0 6px rgba(56,189,248,0.5); animation: phaseDotActive 1.8s ease-in-out infinite; }
+  .phase-dot.pending { background: #1E1E2A; }
+  .phase-label {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+  }
+  .phase-label.done { color: #4A7A5A; }
+  .phase-label.active { color: #7DD3FC; }
+  .phase-label.pending { color: #1A1A28; }
+  .phase-sep {
+    display: inline-block;
+    width: 2px; height: 2px;
+    border-radius: 50%;
+    margin: 0 4px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  /* ─── Message ─── */
+  .phase-msg {
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    color: #7E7E9A;
+    margin-bottom: 24px;
+    animation: fadeIn 0.35s ease;
+  }
+
+  /* ─── Timer ─── */
+  .timer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: #7DD3FC;
+    text-shadow: 0 0 20px rgba(56,189,248,0.15);
+    margin-bottom: 20px;
+  }
+  .timer-unit {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #5E5E78;
+    margin-left: 6px;
+  }
+
+  /* ─── Engine tag ─── */
+  .engine-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: #4A4A60;
+    font-weight: 500;
+  }
+  .engine-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #22C55E;
+    box-shadow: 0 0 3px rgba(34,197,94,0.4);
+  }
+
+  .brand-status {
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    text-align: center;
+    margin-top: 16px;
+    color: rgba(255,255,255,0.28);
+  }
+  .loading-dots {
+    display: inline-flex;
+    margin-left: 1px;
+  }
+
+  /* ─── Controls ─── */
+  .controls {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 1;
+  }
+  .controls button {
+    padding: 8px 16px;
+    border-radius: 2px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+    color: #9A9AB0;
+    transition: all 0.2s;
+  }
+  .controls button:hover {
+    background: rgba(255,255,255,0.06);
+    color: #EDEDF5;
+  }
+  .controls button.active {
+    background: rgba(56,189,248,0.10);
+    border-color: rgba(56,189,248,0.20);
+    color: #7DD3FC;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="chamber">
+    <div class="ambient-glow"></div>
+
+    <div class="ring-outer">
+      <span class="tick tick-n"></span>
+      <span class="tick tick-s"></span>
+      <span class="tick tick-w"></span>
+      <span class="tick tick-e"></span>
+    </div>
+
+    <div class="ring-middle"></div>
+    <div class="ring-inner"></div>
+
+    <div class="sweep-container">
+      <div class="sweep-line"></div>
+      <div class="sweep-line-delayed"></div>
+    </div>
+
+    <div class="center-content">
+      <div class="center-crosshair"></div>
+      <span class="domain-text" id="domain">yourbrand.com</span>
+      <span class="brand-text" id="brandName">Your Brand</span>
+    </div>
+  </div>
+
+  <!-- Phase LEDs -->
+  <div class="phase-leds" id="phaseLeds">
+    <div class="phase-item">
+      <span class="phase-dot active" id="dot0"></span>
+      <span class="phase-label active" id="label0">扫描品牌</span>
+    </div>
+    <span class="phase-sep"></span>
+    <div class="phase-item">
+      <span class="phase-dot pending" id="dot1"></span>
+      <span class="phase-label pending" id="label1">引用分析</span>
+    </div>
+    <span class="phase-sep"></span>
+    <div class="phase-item">
+      <span class="phase-dot pending" id="dot2"></span>
+      <span class="phase-label pending" id="label2">竞品分析与评分</span>
+    </div>
+  </div>
+
+  <!-- Phase message -->
+  <p class="phase-msg" id="phaseMsg">抓取官网结构化数据 · 提取品牌实体与属性</p>
+
+  <!-- Timer -->
+  <div class="timer" id="timer">0.0<span class="timer-unit">秒</span></div>
+
+  <!-- Brand status line -->
+  <p style="font-size:13px; letter-spacing:0.03em; text-align:center; color:rgba(255,255,255,0.35); margin-top:0; margin-bottom:20px;">
+    您的品牌 
+    <span id="statusBrand" style="font-weight:600; background:linear-gradient(105deg,#7DD3FC 0%,#7DD3FC 38%,#fff 48%,#7DD3FC 58%,#7DD3FC 100%); background-size:200% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:brandScanSweep 2.8s ease-in-out infinite;">Your Brand</span>
+     正在被精密仪器检查中
+    <span class="loading-dots" style="display:inline-flex; margin-left:2px;">
+      <span class="loading-dot" style="display:inline-block; width:3px; height:3px; border-radius:50%; background:#7DD3FC; box-shadow:0 0 4px rgba(125,211,252,0.5); animation:dotsPulse 1.5s ease-in-out infinite;"></span>
+      <span class="loading-dot" style="display:inline-block; width:3px; height:3px; border-radius:50%; background:#7DD3FC; box-shadow:0 0 4px rgba(125,211,252,0.5); animation:dotsPulse 1.5s ease-in-out 0.3s infinite; margin-left:2px;"></span>
+      <span class="loading-dot" style="display:inline-block; width:3px; height:3px; border-radius:50%; background:#7DD3FC; box-shadow:0 0 4px rgba(125,211,252,0.5); animation:dotsPulse 1.5s ease-in-out 0.6s infinite; margin-left:2px;"></span>
+    </span>
+  </p>
+
+  <!-- Engine tag -->
+  <div class="engine-tag">
+    <span class="engine-dot"></span>
+    AI 联网搜索
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <button onclick="setPhase(0)" id="btn0" class="active">阶段 1: 扫描</button>
+  <button onclick="setPhase(1)" id="btn1">阶段 2: 分析</button>
+  <button onclick="setPhase(2)" id="btn2">阶段 3: 评分</button>
+  <button onclick="resetAll()">重置</button>
+</div>
+
+<script>
+  const phases = [
+    { text: '抓取官网结构化数据 · 提取品牌实体与属性' },
+    { text: '多查询并发扫描 · 计算AI引擎引用率与推荐率' },
+    { text: '综合评分建模 · 提取竞品提及频次与排名' },
+  ];
+
+  let currentPhase = 0;
+  let startTime = Date.now();
+  let timerInterval;
+
+  function setDomainFontSize() {
+    const el = document.getElementById('domain');
+    const len = (el.textContent || '').length;
+    el.style.fontSize = len <= 15 ? '15px' : len <= 22 ? '13px' : len <= 30 ? '11px' : '10px';
+  }
+
+  // Call on load
+  setDomainFontSize();
+
+  function setPhase(idx) {
+    currentPhase = idx;
+    // Flash the scan ring
+    const glow = document.querySelector('.ambient-glow');
+    glow.classList.add('flash');
+    setTimeout(() => glow.classList.remove('flash'), 2000);
+
+    // Update LEDs
+    for (let i = 0; i < 3; i++) {
+      const dot = document.getElementById('dot' + i);
+      const label = document.getElementById('label' + i);
+      dot.className = 'phase-dot';
+      label.className = 'phase-label';
+      if (i < idx) {
+        dot.classList.add('done');
+        label.classList.add('done');
+      } else if (i === idx) {
+        dot.classList.add('active');
+        label.classList.add('active');
+      } else {
+        dot.classList.add('pending');
+        label.classList.add('pending');
+      }
+    }
+    // Update message
+    document.getElementById('phaseMsg').textContent = phases[idx].text;
+    // Update buttons
+    document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById('btn' + idx);
+    if (btn) btn.classList.add('active');
+  }
+
+  function updateTimer() {
+    const elapsed = (Date.now() - startTime) / 1000;
+    document.getElementById('timer').innerHTML = elapsed.toFixed(1) + '<span class="timer-unit">秒</span>';
+    // Auto advance phases
+    if (elapsed >= 35 && currentPhase < 2) setPhase(2);
+    else if (elapsed >= 15 && currentPhase < 1) setPhase(1);
+  }
+
+  function resetAll() {
+    startTime = Date.now();
+    setPhase(0);
+  }
+
+  // Start
+  startTime = Date.now();
+  setPhase(0);
+  timerInterval = setInterval(updateTimer, 100);
+</script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CiteFlow 抖音海报</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1080px; height: 1920px;
+      background: #0A0A0F;
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+      overflow: hidden;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ============= AMBIENT GLOW ============= */
+    .glow-1 {
+      position: absolute; top: 8%; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 600px;
+      background: radial-gradient(ellipse at center, rgba(59,130,246,0.10) 0%, transparent 65%);
+    }
+    .glow-2 {
+      position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(56,189,248,0.07) 0%, transparent 65%);
+    }
+
+    /* ============= SUBTLE GRID ============= */
+    .grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+      background-size: 72px 72px;
+    }
+
+    /* ============= DECORATIVE CIRCLES ============= */
+    .circle-accent {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .c1 {
+      top: 14%; right: 8%;
+      width: 320px; height: 320px;
+      border: 1px solid rgba(59,130,246,0.12);
+    }
+    .c2 {
+      top: 17%; right: 11%;
+      width: 240px; height: 240px;
+      border: 1px solid rgba(59,130,246,0.08);
+    }
+    .c3 {
+      top: 20%; right: 14%;
+      width: 160px; height: 160px;
+      background: radial-gradient(circle at 30% 30%, rgba(59,130,246,0.06), transparent);
+    }
+    .c4 {
+      bottom: 22%; left: 6%;
+      width: 280px; height: 280px;
+      border: 1px solid rgba(56,189,248,0.10);
+    }
+    .c5 {
+      bottom: 25%; left: 9%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle at 70% 70%, rgba(56,189,248,0.05), transparent);
+    }
+
+    /* ============= LINE DECORATIONS ============= */
+    .line-h {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+    }
+    .l1 { top: 31%; left: 10%; right: 10%; }
+    .l2 { bottom: 28%; left: 15%; right: 15%; }
+
+    /* ============= MAIN CONTENT ============= */
+    .main {
+      position: relative; z-index: 10;
+      text-align: center;
+      width: 860px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    /* Large number */
+    .big-stat {
+      font-size: 220px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: #ef4444;
+      margin-bottom: 10px;
+      font-family: 'SF Mono', 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+    }
+
+    .big-stat-label {
+      font-size: 40px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 60px;
+      letter-spacing: 0.04em;
+    }
+
+    /* Separator */
+    .sep {
+      width: 120px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      margin-bottom: 60px;
+    }
+
+    /* Hook line */
+    .hook {
+      font-size: 64px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+      margin-bottom: 30px;
+    }
+    .hook .blue { color: #3B82F6; }
+
+    /* Sub */
+    .sub {
+      font-size: 34px;
+      color: #8892a8;
+      font-weight: 400;
+      line-height: 1.5;
+      margin-bottom: 80px;
+    }
+
+    /* Engine badges */
+    .engine-row {
+      display: flex; gap: 28px;
+      margin-bottom: 80px;
+    }
+    .eng {
+      padding: 18px 38px;
+      border-radius: 14px;
+      border: 1px solid #222228;
+      background: #131318;
+      font-size: 28px;
+      font-weight: 600;
+      color: #8892a8;
+      letter-spacing: 0.02em;
+    }
+    .eng.hl {
+      border-color: rgba(59,130,246,0.5);
+      color: #3B82F6;
+      box-shadow: 0 0 48px rgba(59,130,246,0.10);
+    }
+
+    /* CTA */
+    .cta-btn {
+      display: inline-block;
+      padding: 28px 80px;
+      background: #3B82F6;
+      color: #fff;
+      font-size: 36px;
+      font-weight: 700;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+    }
+
+    .cta-note {
+      margin-top: 24px;
+      font-size: 24px;
+      color: #8892a8;
+    }
+
+    /* ============= BOTTOM BRAND ============= */
+    .brand-bar {
+      position: absolute; bottom: 80px;
+      display: flex; align-items: center; gap: 16px;
+      z-index: 10;
+    }
+    .brand-dot {
+      width: 16px; height: 16px;
+      border-radius: 4px;
+      background: #3B82F6;
+    }
+    .brand-text {
+      font-size: 28px; font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #ffffff;
+    }
+    .brand-sub {
+      font-size: 18px; color: #8892a8;
+      margin-left: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-bg"></div>
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+
+  <!-- Decorative geometry -->
+  <div class="circle-accent c1"></div>
+  <div class="circle-accent c2"></div>
+  <div class="circle-accent c3"></div>
+  <div class="circle-accent c4"></div>
+  <div class="circle-accent c5"></div>
+  <div class="line-h l1"></div>
+  <div class="line-h l2"></div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="big-stat">0%</div>
+    <div class="big-stat-label">中国跨境品牌 AI 平均引用率</div>
+
+    <div class="sep"></div>
+
+    <div class="hook">
+      你的品牌<br>
+      在 <span class="blue">ChatGPT</span> 里<br>
+      搜得到吗？
+    </div>
+
+    <div class="sub">
+      3 分钟 · 4 大 AI 引擎 · 不只给分，给处方
+    </div>
+
+    <div class="engine-row">
+      <div class="eng hl">ChatGPT</div>
+      <div class="eng">Gemini</div>
+      <div class="eng">Claude</div>
+      <div class="eng">Perplexity</div>
+    </div>
+
+    <div class="cta-btn">免费检测</div>
+    <div class="cta-note">专为中国跨境卖家 · 扫码体验</div>
+  </div>
+
+  <div class="brand-bar">
+    <div class="brand-dot"></div>
+    <span class="brand-text">CiteFlow</span>
+    <span class="brand-sub">跨境出海 GEO</span>
+  </div>
+</body>
+</html>
