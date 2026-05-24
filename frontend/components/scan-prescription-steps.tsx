@@ -12,7 +12,6 @@ interface Props {
   lockMessage?: string;
   lockPrice?: string;
   showHeader?: boolean;
-  onRegenerate?: () => void;
 }
 
 const PRIORITY_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; leftBorder: string }> = {
@@ -73,7 +72,7 @@ function extractEstimatedWeeks(summary: string): string {
   return m ? m[1] + " 周" : "4-8 周";
 }
 
-export function ScanPrescriptionSteps({ prescription, summary, domain, locked, lockMessage, lockPrice, showHeader, onRegenerate }: Props) {
+export function ScanPrescriptionSteps({ prescription, summary, domain, locked, lockMessage, lockPrice, showHeader }: Props) {
   const [done, setDone] = useState<Set<number>>(new Set());
   const [initialized, setInitialized] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
@@ -119,27 +118,6 @@ export function ScanPrescriptionSteps({ prescription, summary, domain, locked, l
               <h2 className="text-lg font-semibold" style={{ color: "#EDEDF5" }}>Doctor 处方</h2>
             </div>
             <div className="flex items-center gap-2">
-              {onRegenerate && (
-                <button
-                  onClick={onRegenerate}
-                  className="px-3 py-1.5 text-xs transition-all duration-300"
-                  style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    color: "#9A9AB0",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.08)";
-                    e.currentTarget.style.color = "#C8C8D8";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-                    e.currentTarget.style.color = "#9A9AB0";
-                  }}
-                >
-                  重新生成处方
-                </button>
-              )}
               <button
                 className="px-3 py-1.5 text-xs transition-all duration-300"
                 style={{

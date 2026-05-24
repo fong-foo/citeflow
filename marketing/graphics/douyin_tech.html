@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html style="width:1280px;height:1920px;">
+<head>
+<meta charset="utf-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{
+  width:1280px;height:1920px;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;
+  background:#0A0A0F;color:#fff;
+  overflow:hidden;
+}
+body{
+  display:flex;flex-direction:column;
+  position:relative;
+}
+body::before{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% 10%, rgba(59,130,246,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 90%, rgba(168,85,247,0.03) 0%, transparent 50%);
+}
+header,section,footer{position:relative;z-index:2;}
+
+/* Header */
+header{padding:72px 100px 56px;text-align:center;}
+.header-label{font-family:SF Mono,Menlo,Consolas,monospace;font-size:18px;color:#5E5E78;text-transform:uppercase;letter-spacing:3px;margin-bottom:18px;}
+header h1{font-size:62px;font-weight:800;letter-spacing:-1.2px;line-height:1.15;margin-bottom:18px;}
+header h1 em{font-style:normal;color:#a855f7;}
+header .sub{font-size:24px;color:#8892a8;line-height:1.4;}
+
+/* CITE */
+.cite-section{padding:40px 100px;}
+.section-label{font-family:SF Mono,Menlo,Consolas,monospace;font-size:16px;color:#5E5E78;text-transform:uppercase;letter-spacing:2px;margin-bottom:24px;text-align:center;}
+.cite-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.cite-card{background:#131318;border:1px solid #222228;border-radius:16px;padding:36px 32px;position:relative;overflow:hidden;}
+.cite-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.cite-card:nth-child(1)::before{background:#3B82F6;}
+.cite-card:nth-child(2)::before{background:#a855f7;}
+.cite-card:nth-child(3)::before{background:#22c55e;}
+.cite-card:nth-child(4)::before{background:#f59e0b;}
+.cite-letter{font-family:SF Mono,Menlo,Consolas,monospace;font-size:56px;font-weight:700;line-height:1;margin-bottom:16px;}
+.cite-card:nth-child(1) .cite-letter{color:#3B82F6;}
+.cite-card:nth-child(2) .cite-letter{color:#a855f7;}
+.cite-card:nth-child(3) .cite-letter{color:#22c55e;}
+.cite-card:nth-child(4) .cite-letter{color:#f59e0b;}
+.cite-card h3{font-size:28px;font-weight:700;margin-bottom:10px;letter-spacing:-0.3px;}
+.cite-card p{font-size:17px;color:#8892a8;line-height:1.6;}
+
+/* 数据 */
+.tech-stats{padding:40px 100px;display:flex;gap:18px;}
+.tech-stat{flex:1;background:rgba(59,130,246,0.04);border:1px solid rgba(59,130,246,0.08);border-radius:16px;padding:32px 20px;text-align:center;}
+.tech-stat .num{font-family:SF Mono,Menlo,Consolas,monospace;font-size:44px;font-weight:700;color:#38BDF8;line-height:1;margin-bottom:8px;}
+.tech-stat .lbl{font-size:16px;color:#6b7280;}
+
+/* 引擎 */
+.engines{padding:40px 100px;display:flex;gap:18px;justify-content:center;}
+.engine-chip{background:#131318;border:1px solid #222228;border-radius:14px;padding:24px 34px;text-align:center;min-width:190px;}
+.engine-chip .name{font-family:SF Mono,Menlo,Consolas,monospace;font-size:22px;font-weight:600;margin-bottom:6px;}
+.engine-chip .metric{font-size:15px;color:#22c55e;font-weight:600;}
+
+/* 审计链 */
+.audit-chain{padding:40px 100px;text-align:center;}
+.chain-title{font-family:SF Mono,Menlo,Consolas,monospace;font-size:16px;color:#5E5E78;text-transform:uppercase;letter-spacing:2px;margin-bottom:20px;}
+.chain{display:flex;gap:8px;justify-content:center;align-items:center;}
+.chain-step{background:#131318;border:1px solid #222228;border-radius:12px;padding:18px 22px;font-size:18px;font-weight:600;letter-spacing:-0.2px;}
+.chain-arrow{color:#3B82F6;font-size:22px;font-weight:600;}
+
+/* CTA */
+.cta{padding:40px 100px 100px;text-align:center;}
+.cta-text{font-size:28px;font-weight:700;margin-bottom:14px;letter-spacing:-0.3px;}
+.cta-sub{font-size:20px;color:#6b7280;}
+.cta-sub strong{color:#38BDF8;}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-label">— 技术驱动 · 学术支撑 —</div>
+  <h1>不是<em>拍脑袋</em><br>是科学诊断</h1>
+  <div class="sub">CiteFlow CITE 四维模型 · 融合全球 GEO 研究成果</div>
+</header>
+
+<section class="cite-section">
+  <div class="section-label">CITE 四维诊断模型</div>
+  <div class="cite-grid">
+    <div class="cite-card">
+      <div class="cite-letter">C</div>
+      <h3>内容力 Content</h3>
+      <p>品牌内容是否被 AI 引擎抓取并理解？产品描述、FAQ、博客的技术质量评估</p>
+    </div>
+    <div class="cite-card">
+      <div class="cite-letter">I</div>
+      <h3>身份力 Identity</h3>
+      <p>结构化数据 + Knowledge Graph，AI 能否准确识别你的品牌实体？</p>
+    </div>
+    <div class="cite-card">
+      <div class="cite-letter">T</div>
+      <h3>信任力 Trust</h3>
+      <p>E-E-A-T 信号：评价、媒体报道、行业认证——AI 眼中的可信度</p>
+    </div>
+    <div class="cite-card">
+      <div class="cite-letter">E</div>
+      <h3>社区力 Engagement</h3>
+      <p>社交媒体引用 + UGC 二次传播，在 AI 对话中形成「共识认知」</p>
+    </div>
+  </div>
+</section>
+
+<section class="tech-stats">
+  <div class="tech-stat"><div class="num">21</div><div class="lbl">篇 GEO 学术论文</div></div>
+  <div class="tech-stat"><div class="num">14</div><div class="lbl">条分析规则</div></div>
+  <div class="tech-stat"><div class="num">A→E</div><div class="lbl">5 阶段审计链</div></div>
+  <div class="tech-stat"><div class="num">4</div><div class="lbl">大 AI 引擎</div></div>
+</section>
+
+<section class="engines">
+  <div class="engine-chip"><div class="name">ChatGPT</div><div class="metric">结构化引用</div></div>
+  <div class="engine-chip"><div class="name">Claude</div><div class="metric">深度分析</div></div>
+  <div class="engine-chip"><div class="name">Gemini</div><div class="metric">Google 生态</div></div>
+  <div class="engine-chip"><div class="name">Perplexity</div><div class="metric">实时搜索</div></div>
+</section>
+
+<section class="audit-chain">
+  <div class="chain-title">AI 引用审计链 · 证据成熟度</div>
+  <div class="chain">
+    <div class="chain-step">A 发现</div><div class="chain-arrow">→</div>
+    <div class="chain-step">B 初步</div><div class="chain-arrow">→</div>
+    <div class="chain-step">C 可重复</div><div class="chain-arrow">→</div>
+    <div class="chain-step">D 规模化</div><div class="chain-arrow">→</div>
+    <div class="chain-step">E 优化中</div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="cta-text">citeflow.cc · 让数据说话</div>
+  <div class="cta-sub">开源框架 · MIT 许可 · <strong>学术级 GEO 诊断</strong></div>
+</section>
+</body>
+</html>

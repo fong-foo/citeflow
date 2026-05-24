@@ -19,7 +19,7 @@ interface Props {
   brandName: string;
   lastScanTime: string;
   onViewReport: () => void;
-  onUpgrade: (feature?: "probe" | "analyst" | "doctor") => void;
+  onUpgrade: (feature?: "analyst" | "doctor") => void;
   onNavigateToStep?: (step: "analyst" | "doctor") => void;
 }
 
@@ -747,8 +747,7 @@ function SourceAuthoritySection({
 
 export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTime, onViewReport, onUpgrade, onNavigateToStep }: Props) {
   const isFree = tier === "free";
-  const isProbe = tier === "probe";
-  const isFull = tier === "full";
+  const isPaid = tier === "full";
   const probe = data?.probe || data || {};
 
   // ── Preview modal state ──
@@ -1066,6 +1065,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
   const industryRate = safeNum(probe?.citation_metrics?.industry_rate);
   const recommendationRate = safeNum(probe?.citation_metrics?.recommendation_rate);
   const topRate = safeNum(probe?.citation_metrics?.top_rate);
+  const competitorScenarioRate = safeNum(probe?.citation_metrics?.competitor_scenario_rate);
   const competitors = probe?.competitor_mentions || [];
 
   // ── Full-only (Analyst + Doctor) ──
@@ -1094,14 +1094,14 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
   const hasPrescription = !!(data?.prescription && data.prescription.length > 0);
 
   // ── Analyst / Doctor 解锁状态 ──
-  const isAnalystUnlocked = isFull && hasDiagnosis;
-  const isDoctorUnlocked = isFull && hasPrescription;
+  const isAnalystUnlocked = isPaid && hasDiagnosis;
+  const isDoctorUnlocked = isPaid && hasPrescription;
 
   // ── 产品导航点击（Analyst / Doctor） ──
   function handleProductNavClick(productId: string) {
     if (productId === "dash-analyst") {
       if (!isAnalystUnlocked) {
-        if (isFull) {
+        if (isPaid) {
           dashScrollTo("dash-analyst");
         } else {
           handleLockedModuleClick("diagnosis");
@@ -1111,7 +1111,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
       }
     } else if (productId === "dash-doctor") {
       if (!isDoctorUnlocked) {
-        if (isFull) {
+        if (isPaid) {
           dashScrollTo("dash-doctor");
         } else {
           handleLockedModuleClick("prescription");
@@ -1162,8 +1162,8 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
   const stepDoneMap: Record<string, boolean> = {
     input: true,
     probe: !isFree,
-    analyst: isFull && hasDiagnosis,
-    doctor: isFull && hasPrescription,
+    analyst: isPaid && hasDiagnosis,
+    doctor: isPaid && hasPrescription,
   };
   const completedStepCount = Object.values(stepDoneMap).filter(Boolean).length;
 
@@ -1180,7 +1180,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
 
     const userValues = mode === "light"
       ? [industryRate, recommendationRate, topRate]
-      : [industryRate, recommendationRate, topRate, recommendationRate];
+      : [industryRate, recommendationRate, topRate, competitorScenarioRate];
 
     const userLine: ChartLine = {
       label: brandName || "你的品牌",
@@ -1193,12 +1193,12 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
     // Add competitor lines from per-dimension competitor_metrics (populated by citation analyzer)
     const compMetrics = probe?.citation_metrics?.competitor_metrics;
     if (compMetrics && typeof compMetrics === "object") {
-      const compEntries = Object.entries(compMetrics) as [string, { industry_rate: number; recommendation_rate: number; top_rate: number }][];
+      const compEntries = Object.entries(compMetrics) as [string, { industry_rate: number; recommendation_rate: number; top_rate: number; competitor_scenario_rate: number }][];
       compEntries.slice(0, 3).forEach(([compName, metrics], i) => {
         if (metrics.industry_rate === undefined) return;
         const values = mode === "light"
           ? [metrics.industry_rate, metrics.recommendation_rate, metrics.top_rate]
-          : [metrics.industry_rate, metrics.recommendation_rate, metrics.top_rate, 0];
+          : [metrics.industry_rate, metrics.recommendation_rate, metrics.top_rate, metrics.competitor_scenario_rate || 0];
         lines.push({
           label: compName,
           color: compColors[i % compColors.length],
@@ -1325,10 +1325,10 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
               </span>
 
               {/* 状态图标 */}
-              {!isUnlocked && !isFull && (
+              {!isUnlocked && !isPaid && (
                 <span className="ml-auto text-[10px]" style={{ color: "#4A4A60" }}>🔒</span>
               )}
-              {!isUnlocked && isFull && (
+              {!isUnlocked && isPaid && (
                 <span className="ml-auto text-[10px]" style={{ color: "#60A5FA" }}>▶</span>
               )}
 
@@ -2033,7 +2033,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
 
       {/* Analyst 诊断摘要 */}
       <div id="dash-analyst">
-        {isFull && hasDiagnosis ? (
+        {isPaid && hasDiagnosis ? (
           <ScanDiagnosisSummary
             diagnosis={diagnosis}
             threeLayerChain={threeLayer}
@@ -2042,7 +2042,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
             alignmentSummary={alignmentSummary}
             verdict={verdict}
           />
-        ) : isFull ? (
+        ) : isPaid ? (
           /* Full 用户但无诊断数据 → 引导运行 Analyst */
           <div
             onClick={() => onNavigateToStep?.("analyst")}
@@ -2061,9 +2061,9 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           </div>
         ) : (
           <LockedSection
-            title={isProbe ? "升级解锁 Analyst 诊断报告" : "升级解锁完整诊断"}
+            title={isPaid ? "升级解锁 Analyst 诊断报告" : "升级解锁完整诊断"}
             description="14条自研规则逐条诊断，定位根因，对比竞品差距"
-            lockPrice="¥299/月"
+            lockPrice="¥100/次"
             onUpgrade={() => onUpgrade("analyst")}
             onClick={() => handleLockedModuleClick("diagnosis")}
           >
@@ -2081,13 +2081,13 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
 
       {/* Doctor 处方执行 */}
       <div id="dash-doctor">
-        {isFull && hasPrescription && prescription.length > 0 ? (
+        {isPaid && hasPrescription && prescription.length > 0 ? (
           <ScanPrescriptionSteps
             prescription={prescription}
             summary={prescriptionSummary}
             domain={domain}
           />
-        ) : isFull ? (
+        ) : isPaid ? (
           /* Full 用户但无处方数据 → 引导运行 Doctor */
           <div
             onClick={() => onNavigateToStep?.("doctor")}
@@ -2106,9 +2106,9 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           </div>
         ) : (
           <LockedSection
-            title={isProbe ? "升级解锁 Doctor 处方" : "升级解锁完整处方"}
+            title={isPaid ? "升级解锁 Doctor 处方" : "升级解锁完整处方"}
             description="获取 P0/P1/P2 任务清单，精确到页面和操作步骤，逐个执行提升 AI 引用率"
-            lockPrice="¥299/月"
+            lockPrice="¥100/次"
             onUpgrade={() => onUpgrade("doctor")}
             onClick={() => handleLockedModuleClick("prescription")}
           >
@@ -2191,9 +2191,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
             ? "全部完成"
             : isFree
               ? `已完成 ${completedStepCount}/4 步（升级解锁完整流程）`
-              : isProbe
-                ? `已完成 ${completedStepCount}/4 步（升级解锁 Analyst + Doctor）`
-                : `已完成 ${completedStepCount}/4 步（运行完整扫描解锁全部）`}
+              : `已完成 ${completedStepCount}/4 步（运行完整扫描解锁全部）`}
         </p>
 
         {lastScanTime && (
@@ -2204,22 +2202,22 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
       </motion.section>
 
       {/* SECTION 7 — 付费能力预告 (free + probe only; full users don't see this) */}
-      {!isFull && (
+      {!isPaid && (
         <motion.section
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.28, ease: [0.4, 0, 0.2, 1] }}
           className="px-7 py-7 flex-shrink-0 min-w-0"
           style={{
-            background: isProbe
+            background: isPaid
               ? "linear-gradient(180deg, rgba(34,197,94,0.025) 0%, rgba(34,197,94,0.005) 100%)"
               : "linear-gradient(180deg, rgba(56,189,248,0.025) 0%, rgba(56,189,248,0.005) 100%)",
-            border: isProbe
+            border: isPaid
               ? "1px solid rgba(34,197,94,0.10)"
               : "1px solid rgba(56,189,248,0.08)",
           }}
         >
-          <SectionLabel accent={!isProbe}>{isProbe ? "已解锁能力" : "付费能力预告"}</SectionLabel>
+          <SectionLabel accent={!isPaid}>{isPaid ? "已解锁能力" : "付费能力预告"}</SectionLabel>
 
           {isFree ? (
             /* ── Free user: 4 cards ── */
@@ -2241,30 +2239,30 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           <motion.button
             className="w-full py-3.5 text-sm font-semibold tracking-wide transition-all duration-500"
             style={{
-              background: isProbe
+              background: isPaid
                 ? "rgba(34,197,94,0.10)"
                 : "rgba(56,189,248,0.10)",
-              border: isProbe
+              border: isPaid
                 ? "1px solid rgba(34,197,94,0.20)"
                 : "1px solid rgba(56,189,248,0.18)",
-              color: isProbe ? "#22C55E" : "#7DD3FC",
+              color: isPaid ? "#22C55E" : "#7DD3FC",
             }}
             whileHover={{
-              background: isProbe
+              background: isPaid
                 ? "rgba(34,197,94,0.20)"
                 : "rgba(56,189,248,0.20)",
-              borderColor: isProbe
+              borderColor: isPaid
                 ? "rgba(34,197,94,0.40)"
                 : "rgba(56,189,248,0.38)",
-              boxShadow: isProbe
+              boxShadow: isPaid
                 ? "0 0 36px rgba(34,197,94,0.08)"
                 : "0 0 36px rgba(56,189,248,0.08)",
               scale: 1.01,
             }}
             whileTap={{ scale: 0.99 }}
-            onClick={() => onUpgrade(isFree ? "probe" : "analyst")}
+            onClick={() => onUpgrade("analyst")}
           >
-            {isFree ? "升级解锁 Probe 侦察兵 · ¥50/次" : "升级解锁全套诊断 · ¥299/月"}
+            {isFree ? "升级解锁专业版 · ¥100/次" : "升级解锁全套诊断 · ¥100/次"}
           </motion.button>
         </motion.section>
       )}
@@ -2275,15 +2273,15 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           isOpen={showPreview}
           onClose={() => setShowPreview(false)}
           onUpgrade={() => {
-            const featureMap: Record<string, "probe" | "analyst" | "doctor"> = {
-              "ai_perception": "probe",
-              "engine_comparison": "probe",
-              "gap_report": "probe",
+            const featureMap: Record<string, "analyst" | "doctor"> = {
+              "ai_perception": "analyst",
+              "engine_comparison": "analyst",
+              "gap_report": "analyst",
               "diagnosis": "analyst",
               "prescription": "doctor",
             };
             setShowPreview(false);
-            onUpgrade(featureMap[previewModule?.id || ""] || "probe");
+            onUpgrade(featureMap[previewModule?.id || ""] || "analyst");
           }}
           module={previewModule}
         />

@@ -4,68 +4,36 @@ import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 
 interface Props {
-  feature: "probe" | "analyst" | "doctor";
-  tier: "free" | "probe" | "full";
+  feature: "analyst" | "doctor";
+  tier: "free" | "full";
   onClose: () => void;
   onUpgrade?: () => void;
 }
 
-function getUpgradeType(tier: string, feature: string): "probe" | "full" {
-  if (tier === "free" && feature === "probe") return "probe";
-  if (tier === "free" && (feature === "analyst" || feature === "doctor")) return "full";
-  if (tier === "probe" && (feature === "analyst" || feature === "doctor")) return "full";
-  return "probe";
+function getUpgradeType(tier: string, _feature: string): "full" {
+  return "full";
 }
 
 const UPGRADE_CONFIGS = {
-  "free-probe": {
-    title: "Probe 侦察兵",
-    subtitle: "完整版 AI 可见度侦察",
-    unlocks: [
-      "综合评分、引用率、推荐率、Top率",
-      "AI 怎么描述你的品牌（真实输出）",
-      "三大引擎（ChatGPT/Gemini/Claude）对你的引用差异",
-      "品牌自述 vs AI 认知的差距分析",
-      "竞品在哪些维度赢了你",
-      "谁在讨论你（来源权威度）",
-    ],
-    price: "¥50/次",
-    priceDetail: "一次性付费，解锁完整扫描",
-  },
   "free-full": {
-    title: "解锁完整诊断",
-    subtitle: "一键获取侦察 + 诊断 + 处方",
+    title: "解锁专业版",
+    subtitle: "完整 AI 品牌体检 · 一次性付费",
     unlocks: [
-      "Probe 侦察兵（完整扫描）",
+      "Probe 侦察兵（完整扫描，4引擎交叉对比）",
       "Analyst 诊断师（14条规则根因诊断）",
-      "Doctor 处方（P0/P1/P2任务清单）",
-      "三层分析（现象→原因→影响）",
-      "竞品差距5维度对比",
-      "页面级操作建议（精确到哪个页面改什么）",
+      "Doctor 处方（P0/P1/P2可执行任务清单）",
+      "AI 认知画像 + 竞品差距量化",
+      "每条结论可追溯 AI 原文来源",
+      "3-5 分钟出完整报告",
     ],
-    price: "¥299/月",
-    priceDetail: "含 Probe + Analyst + Doctor",
-  },
-  "probe-full": {
-    title: "解锁深度诊断",
-    subtitle: "你已完成 Probe 扫描，现在升级获取诊断 + 处方",
-    unlocks: [
-      "Analyst 诊断师（14条规则根因诊断）",
-      "Doctor 处方（P0/P1/P2任务清单）",
-      "三层分析（现象→原因→影响）",
-      "竞品差距5维度对比",
-      "页面级操作建议（精确到哪个页面改什么）",
-      "影响/难度/周期评估",
-    ],
-    price: "¥299/月",
-    priceDetail: "含 Analyst 诊断师 + Doctor 处方",
+    price: "¥100/次",
+    priceDetail: "一次性付费，解锁全部功能",
   },
 };
 
 export function UpgradeModal({ feature, tier, onClose, onUpgrade }: Props) {
-  const upgradeType = getUpgradeType(tier, feature);
-  const configKey = `${tier}-${upgradeType}`;
-  const info = UPGRADE_CONFIGS[configKey as keyof typeof UPGRADE_CONFIGS] || UPGRADE_CONFIGS["free-probe"];
+  const configKey = `${tier}-full`;
+  const info = UPGRADE_CONFIGS[configKey as keyof typeof UPGRADE_CONFIGS] || UPGRADE_CONFIGS["free-full"];
 
   return (
     <motion.div

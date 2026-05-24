@@ -1,4 +1,5 @@
 # auth.py — 认证工具（JWT + 密码哈希）
+import os
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 import bcrypt
@@ -6,9 +7,9 @@ from fastapi import HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 # ── 配置 ──────────────────────────────────────────────
-SECRET_KEY = "citeflow-secret-key-change-in-production"
+SECRET_KEY = os.environ.get("SECRET_KEY", "citeflow-dev-secret-change-in-production")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_HOURS = 72
+ACCESS_TOKEN_EXPIRE_HOURS = int(os.environ.get("TOKEN_EXPIRE_HOURS", "72"))
 
 
 # ── 密码哈希 ──────────────────────────────────────────

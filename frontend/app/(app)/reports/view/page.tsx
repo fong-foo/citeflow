@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ScanResult } from "@/components/scan-result";
+import { ScanReport } from "@/components/scan-probe-report";
+import { ScanAnalystReport } from "@/components/scan-analyst-report";
+import { ScanDoctorWorkshop } from "@/components/scan-doctor-workshop";
 import { userKey } from "@/lib/storage";
+
+const noop = () => {};
 
 export default function ReportViewPage() {
   const [report, setReport] = useState<any>(null);
@@ -119,12 +124,51 @@ export default function ReportViewPage() {
       </motion.div>
 
       {/* ═══════ Report Content ═══════ */}
-      <div className="relative z-10 flex-1 flex justify-center px-6 py-10">
-        <ScanResult
-          data={report.data}
-          mode={report.mode || "light"}
-          brandName={report.brandName || ""}
-        />
+      <div className="relative z-10 flex-1 px-6 py-10">
+        {report.type === "probe" && (
+          <div className="w-full max-w-[720px] mx-auto">
+            <ScanResult
+              data={report.data}
+              mode={report.mode || "light"}
+              brandName={report.brandName || ""}
+            />
+          </div>
+        )}
+
+        {report.type === "probe_scout" && (
+          <ScanReport
+            data={report.data}
+            tier="full"
+            mode="full"
+            domain={report.domain || ""}
+            brandName={report.brandName || ""}
+            onUpgrade={noop}
+            onBack={() => window.location.href = "/reports"}
+          />
+        )}
+
+        {report.type === "analyst" && (
+          <div className="w-full max-w-[900px] mx-auto">
+            <ScanAnalystReport
+              data={report.data}
+              mode={report.mode || "full"}
+              onBackToBriefing={() => window.location.href = "/reports"}
+              onViewDoctor={noop}
+            />
+          </div>
+        )}
+
+        {report.type === "doctor" && (
+          <div className="w-full max-w-[900px] mx-auto">
+            <ScanDoctorWorkshop
+              prescription={report.data?.prescription || []}
+              summary={report.data?.prescription_summary || ""}
+              paperCount={report.data?.knowledge_sources?.length || 0}
+              domain={report.domain || ""}
+              brandName={report.brandName || ""}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -201,14 +201,14 @@ export function ScanSidebar({
     }
 
     if (stepId === "analyst") {
-      if (tier === "free" || tier === "probe") return "locked";
+      if (tier === "free") return "locked";
       if (currentStep === "analyst") return "current";
       if (hasAnalystData) return "completed";
       return "available";
     }
 
     if (stepId === "doctor") {
-      if (tier === "free" || tier === "probe") return "locked";
+      if (tier === "free") return "locked";
       if (currentStep === "doctor") return "current";
       if (hasDoctorData) return "completed";
       return "available";
@@ -233,7 +233,7 @@ export function ScanSidebar({
     }
 
     if (stepId === "probe") {
-      if (tier === "free") { onUpgradeClick("probe"); return; }
+      if (tier === "free") { onUpgradeClick("analyst"); return; }
       onProbeClick(); return;
     }
     if (stepId === "analyst") {

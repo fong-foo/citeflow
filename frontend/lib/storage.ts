@@ -17,7 +17,7 @@ export function userKey(base: string): string {
 }
 
 /** 获取当前用户等级 */
-export function getUserTier(): "free" | "probe" | "full" {
+export function getUserTier(): "free" | "full" {
   if (typeof window === "undefined") return "free";
   try {
     const raw = localStorage.getItem("cf_user");
@@ -29,7 +29,7 @@ export function getUserTier(): "free" | "probe" | "full" {
   }
 }
 
-export type Tier = "free" | "probe" | "full";
+export type Tier = "free" | "full";
 export type ScanMode = "light" | "full";
 
 export function setUserTier(tier: Tier): void {
@@ -43,7 +43,7 @@ export function setUserTier(tier: Tier): void {
 }
 
 export function hasProbeAccess(): boolean {
-  return getUserTier() !== "free";
+  return getUserTier() === "full";
 }
 
 export function hasFullAccess(): boolean {

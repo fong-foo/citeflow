@@ -18,10 +18,11 @@
 ## 策略优先级（中国跨境品牌）
 
 ### 立即执行（0-2周）
-1. robots.txt放行AI爬虫
-2. 关键页面添加Product Schema + FAQ Schema
-3. 产品页加入数值统计块（销量/评分/覆盖）
-4. 每个产品页添加对比表格
+1. robots.txt放行全部主要AI爬虫（GPTBot/ClaudeBot/PerplexityBot/Google-Extended/CCBot/meta-externalagent/cohere-ai/Bytespider）
+2. 创建 llms.txt + sitemap.txt 帮助AI爬虫导航
+3. 关键页面添加Product Schema + FAQ Schema
+4. 产品页加入数值统计块（销量/评分/覆盖）
+5. 每个产品页添加对比表格
 
 ### 短期（2-4周）
 5. 三层结构全面优化（宏/中/微）

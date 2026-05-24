@@ -555,10 +555,13 @@ function Section4({ engineResults }: { engineResults: any }) {
               </div>
               {er?.raw_data?.answers && er.raw_data.answers.length > 0 && (
                 <div className="p-3 space-y-2 max-h-52 overflow-y-auto" style={{ background: T.surface }}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[9px] font-mono tracking-wider uppercase px-1.5 py-0.5 rounded" style={{ background: "rgba(56,189,248,0.08)", color: T.accent, border: `1px solid rgba(56,189,248,0.15)` }}>证据</span>
+                  </div>
                   {er.raw_data.answers.slice(0, 5).map((a: any, i: number) => (
                     <div key={i}>
                       <p className="text-[10px] font-mono mb-1" style={{ color: T.muted }}>
-                        Q: {truncate(a?.query || `查询 ${i + 1}`, 60)}
+                        问：{truncate(a?.query || `查询 ${i + 1}`, 60)}
                       </p>
                       <p className="text-[11px] leading-relaxed" style={{ color: T.secondary }}>
                         {truncate(typeof a?.answer === "string" ? a.answer : JSON.stringify(a), 200)}
@@ -628,13 +631,13 @@ function Section5({ competitorAnalysis, brandName }: { competitorAnalysis: any[]
                   cursor: hasDetail ? "pointer" : "default",
                 }}
               >
-                <span style={{ color: T.secondary }} className="leading-relaxed">
+                <span style={{ color: T.secondary }} className="leading-relaxed" title={c.query}>
                   {truncate(c.query, 50)}
                 </span>
                 <span className="text-center font-mono" style={{ color: winnerColor }}>
                   {isWinner ? "我们赢" : isTie ? "平局" : truncate(c.winner, 10)}
                 </span>
-                <span className="text-center leading-relaxed" style={{ color: T.muted }}>
+                <span className="text-center leading-relaxed" style={{ color: T.muted }} title={c.reason}>
                   {truncate(c.reason, 80)}
                 </span>
                 <span className="text-right font-mono text-[8px]" style={{ color: T.muted }}>
@@ -719,7 +722,7 @@ function Section6({ sourceAuthority, citationDetails }: { sourceAuthority: any; 
         <div className="rounded-lg overflow-hidden mb-5" style={{ background: T.card, border: `1px solid ${T.border}` }}>
           <div
             className="grid gap-3 px-4 py-2 text-[10px] font-mono tracking-wider uppercase"
-            style={{ gridTemplateColumns: "1fr 80px 60px 60px", color: T.muted, borderBottom: `1px solid ${T.border}` }}
+            style={{ gridTemplateColumns: "1fr 72px 56px 48px", color: T.muted, borderBottom: `1px solid ${T.border}` }}
           >
             <span>来源</span>
             <span>类型</span>
@@ -731,12 +734,12 @@ function Section6({ sourceAuthority, citationDetails }: { sourceAuthority: any; 
               key={i}
               className="grid gap-3 px-4 py-2 text-[11px]"
               style={{
-                gridTemplateColumns: "1fr 80px 60px 60px",
+                gridTemplateColumns: "1fr 72px 56px 48px",
                 background: i % 2 === 0 ? "transparent" : T.surface,
                 borderBottom: i < sourceAuthority.top_sources.length - 1 ? `1px solid ${T.border}` : "none",
               }}
             >
-              <span className="font-mono" style={{ color: T.accent }}>{s.domain}</span>
+              <span className="font-mono" style={{ color: T.accent, wordBreak: "break-all" }}>{s.domain}</span>
               <span style={{ color: T.secondary }}>{s.source_type || "—"}</span>
               <span className="text-center font-mono" style={{ color: T.text }}>{s.authority_score ?? "—"}</span>
               <span className="text-center font-mono" style={{ color: T.text }}>{s.mention_count ?? "—"}</span>
@@ -764,7 +767,7 @@ function Section6({ sourceAuthority, citationDetails }: { sourceAuthority: any; 
         <div className="rounded-lg overflow-hidden" style={{ background: T.card, border: `1px solid ${T.border}` }}>
           <div
             className="grid gap-3 px-4 py-2 text-[10px] font-mono tracking-wider uppercase"
-            style={{ gridTemplateColumns: "1fr 40px 60px 100px", color: T.muted, borderBottom: `1px solid ${T.border}` }}
+            style={{ gridTemplateColumns: "1fr 36px 50px 1fr", color: T.muted, borderBottom: `1px solid ${T.border}` }}
           >
             <span>查询词</span>
             <span className="text-center">提及</span>
@@ -779,7 +782,7 @@ function Section6({ sourceAuthority, citationDetails }: { sourceAuthority: any; 
                   onClick={() => setExpandedDetail(isOpen ? null : i)}
                   className="w-full grid gap-3 px-4 py-2 text-[11px] transition-colors hover:brightness-110 text-left"
                   style={{
-                    gridTemplateColumns: "1fr 40px 60px 100px",
+                    gridTemplateColumns: "1fr 36px 50px 1fr",
                     background: i % 2 === 0 ? "transparent" : T.surface,
                     borderBottom: i < citationDetails.slice(0, 20).length - 1 ? `1px solid ${T.border}` : "none",
                   }}
@@ -793,8 +796,8 @@ function Section6({ sourceAuthority, citationDetails }: { sourceAuthority: any; 
                   <span className="text-center font-mono" style={{ color: T.muted }}>
                     {d.position || "—"}
                   </span>
-                  <span className="font-mono leading-relaxed" style={{ color: T.accent }}>
-                    {truncate(d.reference_source || "", 18)}
+                  <span className="font-mono leading-relaxed" style={{ color: T.accent, wordBreak: "break-all" }}>
+                    {d.reference_source || "—"}
                   </span>
                 </button>
                 <AnimatePresence>

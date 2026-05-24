@@ -1,6 +1,7 @@
 # brand_profiler.py — 结构化品牌画像生成
 # 从官网爬取内容 → LLM 生成 BrandProfile + 推断行业/市场/产品
 # 输入：user_input（含 target_positioning）+ 官网爬取 → 输出：BrandProfile dict
+# 爬取降级链：Jina Reader → httpx 自爬 → Serper 搜索 → 用户输入兜底
 
 import asyncio
 import json
@@ -13,6 +14,8 @@ from langgraph_app.tools.intro_composer import compose as fallback_compose
 CRAWL_TIMEOUT = 15       # 单页爬取超时（秒），给国际站点足够余量
 CRAWL_TEXT_LIMIT = 8000  # 每页最大字符数（SaaS 首页通常 5k-10k 字符）
 MAX_PAGES = 8            # 最多爬取页数
+JINA_TIMEOUT = 20        # Jina Reader 超时（秒），含 JS 渲染所以比普通爬取长
+JINA_BASE = "https://r.jina.ai"
 
 # 可分类的 HTTP/连接异常 — 用于诊断爬取失败原因
 import httpcore
@@ -100,7 +103,65 @@ def map_industry_category(industry: str) -> str:
     return "_default"
 
 
-# ─── 爬虫核心 ───────────────────────────────────────────────
+# ─── Jina Reader（Level 0：URL → Markdown，支持 JS 渲染）────────
+
+async def _fetch_with_jina(domain: str) -> tuple[str | None, int, int, dict]:
+    """用 Jina Reader 抓取品牌官网首页 + About 页，返回干净的 Markdown。
+    支持 JS 渲染（Puppeteer），解决 SPA 站点 httpx 拿不到内容的问题。
+    失败时返回 (None, 0, 0, error_status)，上层自动降级到 httpx 自爬。
+    """
+    if not domain:
+        return None, 0, 0, {"success": False, "pages_ok": 0, "total_chars": 0, "errors": ["empty_domain"]}
+
+    try:
+        import httpx
+    except ImportError:
+        return None, 0, 0, {"success": False, "pages_ok": 0, "total_chars": 0, "errors": ["import_error"]}
+
+    async def _fetch_one(client, url: str) -> str | None:
+        try:
+            resp = await client.get(
+                f"{JINA_BASE}/{url}",
+                timeout=JINA_TIMEOUT,
+                headers={
+                    "Accept": "text/markdown",
+                    "User-Agent": "CiteFlow/1.0",
+                },
+            )
+            if resp.status_code == 200 and resp.text:
+                text = resp.text.strip()
+                return text if len(text) > 100 else None
+            return None
+        except Exception:
+            return None
+
+    async with httpx.AsyncClient() as client:
+        # 并发抓首页 + About 页
+        results = await asyncio.gather(
+            _fetch_one(client, f"https://{domain}"),
+            _fetch_one(client, f"https://{domain}/about"),
+        )
+
+    homepage_text = results[0] or ""
+    about_text = results[1] or ""
+    combined = f"{homepage_text}\n\n{about_text}".strip()
+    pages_ok = (1 if homepage_text else 0) + (1 if about_text else 0)
+    total_chars = len(combined)
+
+    if total_chars < 100:
+        return None, 0, 0, {
+            "success": False, "pages_ok": 0, "total_chars": 0,
+            "errors": ["jina_no_content"],
+            "source": "jina",
+        }
+
+    return combined, pages_ok, total_chars, {
+        "success": True, "pages_ok": pages_ok, "total_chars": total_chars,
+        "errors": [], "source": "jina",
+    }
+
+
+# ─── 爬虫核心（Level 1：httpx 自爬）─────────────────────────
 
 async def _probe_paths(domain: str, client) -> tuple[list[str], list[str]]:
     """HEAD 探测哪些路径存在。403/405 = 服务器拒绝 HEAD 但路径可能存在，保留。
@@ -472,27 +533,44 @@ def _build_prompt_with_search(user_input: dict, search_text: str) -> str:
 # ─── 品牌画像生成 ───────────────────────────────────────────
 
 async def profile(user_input: dict) -> dict:
-    """生成结构化品牌画像。三级降级：爬取官网 → Serper搜索 → 用户输入兜底。"""
+    """生成结构化品牌画像。四级降级：Jina Reader → httpx自爬 → Serper搜索 → 用户输入兜底。"""
     domain = user_input.get("domain", "")
     brand_name = user_input.get("brand_name", "")
 
-    # 第一级：爬取官网
-    page_text, _pages_ok, _chars, crawl_status = await _crawl_website(domain)
-    crawl_success = crawl_status.get("success", False) and _chars > 100
+    page_text = None
+    crawl_status = {}
+    data_source = "user_input"
 
-    if crawl_success:
-        prompt = _build_prompt(user_input, page_text)
-        data_source = "crawl"
-    else:
-        # 第二级：Serper Google 搜索
+    # Level 0：Jina Reader（支持 JS 渲染，SPA 站点能拿到内容）
+    jina_text, jina_pages, jina_chars, jina_status = await _fetch_with_jina(domain)
+    if jina_status.get("success") and jina_chars > 100:
+        page_text = jina_text
+        crawl_status = jina_status
+        data_source = "jina"
+
+    # Level 1：httpx 自爬（Jina 失败时兜底）
+    if not page_text:
+        page_text, _pages_ok, _chars, crawl_status = await _crawl_website(domain)
+        if crawl_status.get("success") and _chars > 100:
+            data_source = "crawl"
+        else:
+            page_text = None
+
+    # Level 2：Serper Google 搜索
+    if not page_text:
         search_result = await _search_brand_with_serper(domain, brand_name)
         if search_result["success"]:
             prompt = _build_prompt_with_search(user_input, search_result["search_text"])
             data_source = "serper_search"
-        else:
-            # 第三级：用户输入兜底
-            prompt = _build_prompt(user_input, None)
-            data_source = "user_input"
+            page_text = search_result["search_text"]  # 用于 _page_text 字段
+
+    # Level 3：用户输入兜底
+    if data_source == "user_input":
+        prompt = _build_prompt(user_input, None)
+    elif data_source == "serper_search":
+        pass  # prompt already set above
+    else:
+        prompt = _build_prompt(user_input, page_text)
 
     try:
         resp = call_api(
@@ -507,14 +585,14 @@ async def profile(user_input: dict) -> dict:
         result = _fallback(user_input)
         result["_crawl_status"] = crawl_status
         result["_data_source"] = data_source
-        result["_page_text"] = page_text[:8000] if crawl_success and page_text else ""
+        result["_page_text"] = page_text[:8000] if page_text else ""
         return result
 
     if not result.get("one_liner") or not result.get("full_description"):
         result = _fallback(user_input)
         result["_crawl_status"] = crawl_status
         result["_data_source"] = data_source
-        result["_page_text"] = page_text[:8000] if crawl_success and page_text else ""
+        result["_page_text"] = page_text[:8000] if page_text else ""
         return result
 
     result.setdefault("brand_name", brand_name)
@@ -530,10 +608,7 @@ async def profile(user_input: dict) -> dict:
         result["inferred_core_product"] = user_input.get("core_product", "")
     result["_crawl_status"] = crawl_status
     result["_data_source"] = data_source
-    if crawl_success:
-        result["_page_text"] = page_text[:8000] if page_text else ""
-    else:
-        result["_page_text"] = ""
+    result["_page_text"] = page_text[:8000] if page_text else ""
     return result
 
 

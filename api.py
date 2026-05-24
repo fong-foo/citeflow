@@ -1,5 +1,6 @@
 # api.py — CiteFlow API
-# 启动: cd ~/Desktop/CiteFlow && source .venv/bin/activate && uvicorn api:app --reload --port 8000
+# 开发: cd ~/Desktop/CiteFlow && source .venv/bin/activate && uvicorn api:app --reload --port 8000
+# 生产: cd ~/Desktop/CiteFlow && source .venv/bin/activate && gunicorn api:app -c gunicorn.conf.py
 
 from fastapi import FastAPI, HTTPException, Depends, Security
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +9,6 @@ from pydantic import BaseModel
 import sys
 import os
 import json
-import sqlite3
 import logging
 import uuid
 import time
@@ -18,7 +18,7 @@ from typing import Optional
 
 from auth import hash_password, verify_password, create_access_token, get_current_user
 from auth import decode_access_token  # 用于可选鉴权
-from auth_db import create_user, get_user_by_email, has_light_scan, set_has_light_scan, update_user_tier, DB_PATH
+from auth_db import create_user, get_user_by_email, has_light_scan, set_has_light_scan, update_user_tier, get_db, DB_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -28,10 +28,20 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 app = FastAPI(title="CiteFlow API")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=os.environ.get("CORS_ORIGINS", "http://localhost:3000").split(","),
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+async def _start_cleanup_loop():
+    """每 5 分钟清理超过 30 分钟的过期扫描任务。"""
+    async def _loop():
+        while True:
+            await asyncio.sleep(300)
+            scan_tasks.cleanup(max_age_seconds=1800)
+    asyncio.create_task(_loop())
 
 
 # ─── Scan Task Store (in-memory, for polling) ─────────────
@@ -95,11 +105,15 @@ class ScanTaskStore:
 
 scan_tasks = ScanTaskStore()
 
+# ─── Concurrency control ─────────────────────────────────
+_MAX_CONCURRENT_SCANS = 5
+_scan_semaphore = asyncio.Semaphore(_MAX_CONCURRENT_SCANS)
+
 
 # ─── Database Init ────────────────────────────────────────
 
 def _init_scan_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     conn.execute(
         "CREATE TABLE IF NOT EXISTS scan_results ("
         "id TEXT PRIMARY KEY, "
@@ -117,7 +131,6 @@ def _init_scan_db():
         "ON scan_results(user_id, created_at DESC)"
     )
     conn.commit()
-    conn.close()
 
 _init_scan_db()
 
@@ -377,7 +390,10 @@ async def _run_scan_task(scan_id: str, state: dict, mode: str, current_user: dic
     """后台执行完整扫描流程，实时更新 ScanTaskStore。"""
     from langgraph_app.nodes.probe_node import probe_node
 
+    acquired = False
     try:
+        await _scan_semaphore.acquire()
+        acquired = True
         # ── Stage 1: Probe ──
         scan_tasks.update(scan_id, progress="正在扫描搜索引擎，查询品牌引用数据...", stage="probe")
         scan_start = time.time()  # 统一时间基准，所有 progress_log 相对此时间偏移
@@ -446,7 +462,7 @@ async def _run_scan_task(scan_id: str, state: dict, mode: str, current_user: dic
             )
             if current_user:
                 try:
-                    conn = sqlite3.connect(DB_PATH)
+                    conn = get_db()
                     conn.execute(
                         "INSERT INTO scan_results (id, user_id, domain, brand_name, mode, result_json) "
                         "VALUES (?, ?, ?, ?, ?, ?)",
@@ -457,7 +473,6 @@ async def _run_scan_task(scan_id: str, state: dict, mode: str, current_user: dic
                          json.dumps(result, ensure_ascii=False))
                     )
                     conn.commit()
-                    conn.close()
                 except Exception as e:
                     logger.warning(f"scan_results write failed: {e}")
             return
@@ -567,7 +582,7 @@ async def _run_scan_task(scan_id: str, state: dict, mode: str, current_user: dic
 
         if current_user:
             try:
-                conn = sqlite3.connect(DB_PATH)
+                conn = get_db()
                 conn.execute(
                     "INSERT INTO scan_results (id, user_id, domain, brand_name, mode, result_json) "
                     "VALUES (?, ?, ?, ?, ?, ?)",
@@ -578,7 +593,6 @@ async def _run_scan_task(scan_id: str, state: dict, mode: str, current_user: dic
                      json.dumps(full_result, ensure_ascii=False))
                 )
                 conn.commit()
-                conn.close()
             except Exception as e:
                 logger.warning(f"scan_results write failed: {e}")
 
@@ -586,6 +600,9 @@ async def _run_scan_task(scan_id: str, state: dict, mode: str, current_user: dic
         scan_tasks.update(scan_id, status="error", progress="扫描超时", error="扫描超时（超过7分钟），请重试")
     except Exception as e:
         scan_tasks.update(scan_id, status="error", progress="扫描失败", error=str(e))
+    finally:
+        if acquired:
+            _scan_semaphore.release()
 
 
 @app.post("/api/scan")
@@ -610,6 +627,13 @@ async def run_full_scan(
                 "error": "每个账号仅限一次免费初步体检，请升级后使用完整版",
                 "code": "LIGHT_SCAN_LIMIT",
             }
+
+    # 并发控制：最多同时跑 _MAX_CONCURRENT_SCANS 个扫描
+    if _scan_semaphore._value <= 0:
+        raise HTTPException(
+            status_code=503,
+            detail=f"系统繁忙，当前 {_MAX_CONCURRENT_SCANS} 个扫描正在运行，请稍后重试",
+        )
 
     # 清理过期任务
     scan_tasks.cleanup()
@@ -666,27 +690,24 @@ async def cancel_scan(scan_id: str):
 @app.get("/api/scans")
 async def get_scans(current_user: dict = Depends(get_current_user)):
     """返回当前用户的扫描历史列表（最近20条）"""
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
+    conn = get_db()
     rows = conn.execute(
         "SELECT id, domain, brand_name, mode, created_at "
         "FROM scan_results WHERE user_id = ? "
         "ORDER BY created_at DESC LIMIT 20",
         (current_user["user_id"],)
     ).fetchall()
-    conn.close()
     return {"scans": [dict(r) for r in rows]}
 
 
 @app.get("/api/scan/{scan_id}/result")
 async def get_scan_result(scan_id: str):
     """返回某次扫描的完整结果 JSON"""
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     row = conn.execute(
         "SELECT result_json FROM scan_results WHERE id = ?",
         (scan_id,)
     ).fetchone()
-    conn.close()
     if not row:
         raise HTTPException(status_code=404, detail="scan not found")
     return json.loads(row[0])

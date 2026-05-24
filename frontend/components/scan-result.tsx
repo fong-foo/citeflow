@@ -19,7 +19,7 @@ export function ScanResult({ data, mode, brandName = "", onUpgrade, onViewDashbo
   const isLight = mode === "light";
 
   return (
-    <div className="w-full max-w-[720px]">
+    <div className="w-full max-w-[720px] mx-auto">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}

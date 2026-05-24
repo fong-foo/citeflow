@@ -128,6 +128,10 @@ export function ScanChat({ onComplete }: Props) {
     domain: "", brand_name: "", industry: "", target_market: "", core_product: "",
   });
   const [expandedQueries, setExpandedQueries] = useState<{ query: string; category: string }[]>([]);
+  const [editingQueryIdx, setEditingQueryIdx] = useState<number | null>(null);
+  const [editingQueryText, setEditingQueryText] = useState("");
+  const [addingCategory, setAddingCategory] = useState<string | null>(null);
+  const [newQueryText, setNewQueryText] = useState("");
   const [editForm, setEditForm] = useState({
     domain: "", brand_name: "", industry: "", target_market: "", core_product: "",
   });
@@ -234,7 +238,12 @@ export function ScanChat({ onComplete }: Props) {
           }
           setExpandedQueries(json.queries);
           // 构建查询词预览文案
-          const cats: Record<string, string> = { industry: "行业通用", brand: "品牌直接", competitor: "竞品场景" };
+          const cats: Record<string, string> = { industry: "行业通用查询", brand: "品牌直接查询", competitor: "竞品场景查询" };
+          const descs: Record<string, string> = {
+            industry: "测量品牌在行业通用查询中的AI引用率——用户搜品类词时，AI会不会推荐你",
+            brand: "测量AI搜索引擎对你品牌的直接认知画像——用户搜你品牌名时，AI怎么描述你",
+            competitor: "测量品牌在竞品对比查询中的AI可见度——用户拿你跟竞品比时，AI推荐谁更多",
+          };
           const grouped: Record<string, string[]> = {};
           for (const q of json.queries) {
             const cat = q.category || "industry";
@@ -244,11 +253,11 @@ export function ScanChat({ onComplete }: Props) {
           let previewText = `已生成 ${json.queries.length} 条搜索查询词，分为 ${Object.keys(grouped).length} 类：\n\n`;
           for (const [cat, queries] of Object.entries(grouped)) {
             previewText += `【${cats[cat] || cat}】${queries.length}条\n`;
-            previewText += queries.slice(0, 5).map(q => `  · ${q}`).join("\n");
-            if (queries.length > 5) previewText += `\n  · ...共${queries.length}条`;
+            previewText += `  ${descs[cat] || ""}\n\n`;
+            previewText += queries.map(q => `  · ${q}`).join("\n");
             previewText += "\n\n";
           }
-          previewText += "以上查询词将用于搜索引擎扫描，确认后进入正式体检。";
+          previewText += "以上查询词将输入AI搜索引擎进行扫描，确认无误后开始正式体检。";
           addMessage({ sender: "probe", content: previewText, type: "query_preview" });
           transition("show_queries");
         } catch {
@@ -403,6 +412,31 @@ export function ScanChat({ onComplete }: Props) {
   function handleRegenerateQueries() {
     setExpandedQueries([]);
     transition("expand_queries");
+  }
+
+  function handleDeleteQuery(idx: number) {
+    setExpandedQueries((prev) => prev.filter((_, i) => i !== idx));
+  }
+
+  function handleStartEditQuery(idx: number) {
+    setEditingQueryIdx(idx);
+    setEditingQueryText(expandedQueries[idx].query);
+  }
+
+  function handleSaveEditQuery(idx: number) {
+    if (editingQueryText.trim()) {
+      setExpandedQueries((prev) => prev.map((q, i) => i === idx ? { ...q, query: editingQueryText.trim() } : q));
+    }
+    setEditingQueryIdx(null);
+    setEditingQueryText("");
+  }
+
+  function handleAddQuery(cat: string) {
+    if (newQueryText.trim()) {
+      setExpandedQueries((prev) => [...prev, { query: newQueryText.trim(), category: cat }]);
+      setNewQueryText("");
+      setAddingCategory(null);
+    }
   }
 
   function handleStartEdit() {
@@ -614,36 +648,36 @@ export function ScanChat({ onComplete }: Props) {
         )}
       </AnimatePresence>
 
-      {/* ═══════ Queries confirm bar ═══════ */}
+      {/* ═══════ Query editor (show_queries) ═══════ */}
       {chatState === "show_queries" && (
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-          className="flex gap-3 relative z-10"
+          className="relative z-10"
           style={{
             padding: "12px 0 8px",
             borderTop: "1px solid rgba(255,255,255,0.04)",
           }}
         >
-          <button
-            onClick={handleConfirmQueries}
-            className="flex-1 py-2.5 text-xs font-semibold rounded-sm transition-all duration-300 font-mono tracking-[0.04em]"
-            style={{ background: "#38BDF8", color: "#06060C", border: "none", cursor: "pointer" }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "#7DD3FC"; e.currentTarget.style.boxShadow = "0 0 20px rgba(56,189,248,0.25)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "#38BDF8"; e.currentTarget.style.boxShadow = "none"; }}
-          >
-            确认查询词，开始体检
-          </button>
-          <button
-            onClick={handleRegenerateQueries}
-            className="px-5 py-2.5 text-xs font-medium rounded-sm transition-all duration-300 font-mono tracking-[0.04em]"
-            style={{ background: "rgba(56,189,248,0)", border: "1px solid rgba(56,189,248,0.18)", color: "#7DD3FC", cursor: "pointer" }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.06)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.35)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.18)"; }}
-          >
-            重新生成
-          </button>
+          <QueryEditor
+            queries={expandedQueries}
+            editingIdx={editingQueryIdx}
+            editingText={editingQueryText}
+            addingCat={addingCategory}
+            newText={newQueryText}
+            onEditStart={handleStartEditQuery}
+            onEditChange={(v) => setEditingQueryText(v)}
+            onEditSave={handleSaveEditQuery}
+            onEditCancel={() => { setEditingQueryIdx(null); setEditingQueryText(""); }}
+            onDelete={handleDeleteQuery}
+            onAddStart={(cat) => { setAddingCategory(cat); setNewQueryText(""); }}
+            onAddChange={(v) => setNewQueryText(v)}
+            onAddConfirm={(cat) => handleAddQuery(cat)}
+            onAddCancel={() => { setAddingCategory(null); setNewQueryText(""); }}
+            onConfirm={handleConfirmQueries}
+            onRegenerate={handleRegenerateQueries}
+          />
         </motion.div>
       )}
 
@@ -900,7 +934,174 @@ function ReadoutRow({ label, value, accent }: { label: string; value: string; ac
   );
 }
 
-/* ─── Edit Field ─────────────────────────────────────── */
+/* ─── Query Editor ────────────────────────────────────── */
+
+const CAT_CONFIG: Record<string, { label: string; desc: string; color: string; bg: string; border: string }> = {
+  industry: { label: "A类 · 行业通用", desc: "测量你的品牌在行业通用查询中的AI引用率——用户在搜品类词时，AI会不会提到你", color: "#38BDF8", bg: "rgba(56,189,248,0.06)", border: "rgba(56,189,248,0.15)" },
+  brand: { label: "B类 · 品牌直接", desc: "测量AI搜索引擎对你品牌的直接认知画像——用户搜你品牌名时，AI怎么描述你", color: "#34D399", bg: "rgba(52,211,153,0.06)", border: "rgba(52,211,153,0.15)" },
+  competitor: { label: "C类 · 竞品场景", desc: "测量品牌在竞品对比查询中的AI可见度——用户拿你跟竞品比时，AI推荐谁更多", color: "#F59E0B", bg: "rgba(245,158,11,0.06)", border: "rgba(245,158,11,0.15)" },
+};
+
+function QueryEditor({
+  queries, editingIdx, editingText, addingCat, newText,
+  onEditStart, onEditChange, onEditSave, onEditCancel,
+  onDelete, onAddStart, onAddChange, onAddConfirm, onAddCancel,
+  onConfirm, onRegenerate,
+}: {
+  queries: { query: string; category: string }[];
+  editingIdx: number | null; editingText: string;
+  addingCat: string | null; newText: string;
+  onEditStart: (i: number) => void; onEditChange: (v: string) => void;
+  onEditSave: (i: number) => void; onEditCancel: () => void;
+  onDelete: (i: number) => void;
+  onAddStart: (cat: string) => void; onAddChange: (v: string) => void;
+  onAddConfirm: (cat: string) => void; onAddCancel: () => void;
+  onConfirm: () => void; onRegenerate: () => void;
+}) {
+  const grouped: Record<string, { idx: number; query: string }[]> = {};
+  queries.forEach((q, i) => {
+    const cat = q.category || "industry";
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push({ idx: i, query: q.query });
+  });
+
+  const catOrder = ["industry", "brand", "competitor"];
+
+  return (
+    <div>
+      {catOrder.map((cat) => {
+        const items = grouped[cat];
+        if (!items || items.length === 0) return null;
+        const cfg = CAT_CONFIG[cat] || CAT_CONFIG.industry;
+        return (
+          <div key={cat} style={{ marginBottom: 12 }}>
+            <div style={{ marginBottom: 6 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <span style={{
+                  fontSize: 10, fontWeight: 600, fontFamily: "'JetBrains Mono', monospace",
+                  letterSpacing: "0.06em", color: cfg.color,
+                  padding: "2px 8px", background: cfg.bg,
+                  border: `1px solid ${cfg.border}`,
+                }}>{cfg.label}</span>
+                <span style={{ fontSize: 10, color: "#5E5E78" }}>{items.length}条</span>
+              </div>
+              <p style={{ fontSize: 11, color: "#6E6E88", margin: 0, lineHeight: 1.5 }}>{cfg.desc}</p>
+            </div>
+            {items.map(({ idx, query }) => {
+              const isEditing = editingIdx === idx;
+              return (
+                <div key={idx} style={{
+                  display: "flex", alignItems: "center", gap: 6,
+                  padding: "4px 8px", marginBottom: 4,
+                  background: isEditing ? "rgba(56,189,248,0.04)" : "rgba(255,255,255,0.012)",
+                  border: `1px solid ${isEditing ? "rgba(56,189,248,0.20)" : "rgba(255,255,255,0.03)"}`,
+                  transition: "all 0.2s",
+                }}>
+                  {isEditing ? (
+                    <>
+                      <input
+                        value={editingText}
+                        onChange={(e) => onEditChange(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") onEditSave(idx); if (e.key === "Escape") onEditCancel(); }}
+                        autoFocus
+                        style={{
+                          flex: 1, height: 28, padding: "0 8px", fontSize: 12,
+                          background: "rgba(0,0,0,0.3)", border: "1px solid rgba(56,189,248,0.25)",
+                          color: "#EDEDF5", outline: "none",
+                        }}
+                      />
+                      <button onClick={() => onEditSave(idx)} style={btnMini("rgba(56,189,248,0.15)", "#7DD3FC")}>保存</button>
+                      <button onClick={onEditCancel} style={btnMini("rgba(255,255,255,0.04)", "#5E5E78")}>取消</button>
+                    </>
+                  ) : (
+                    <>
+                      <span style={{ flex: 1, fontSize: 12, color: "#C8C8D8", lineHeight: 1.4 }}>{query}</span>
+                      <button onClick={() => onEditStart(idx)} style={iconBtn}>✎</button>
+                      <button onClick={() => onDelete(idx)} style={iconBtn}>×</button>
+                    </>
+                  )}
+                </div>
+              );
+            })}
+            {/* Add query row */}
+            {addingCat === cat ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 8px", marginBottom: 4 }}>
+                <input
+                  value={newText}
+                  onChange={(e) => onAddChange(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") onAddConfirm(cat); if (e.key === "Escape") onAddCancel(); }}
+                  placeholder="输入新查询词..."
+                  autoFocus
+                  style={{
+                    flex: 1, height: 28, padding: "0 8px", fontSize: 12,
+                    background: "rgba(0,0,0,0.3)", border: `1px solid ${cfg.border}`,
+                    color: "#EDEDF5", outline: "none",
+                  }}
+                />
+                <button onClick={() => onAddConfirm(cat)} style={btnMini("rgba(56,189,248,0.15)", "#7DD3FC")}>添加</button>
+                <button onClick={onAddCancel} style={btnMini("rgba(255,255,255,0.04)", "#5E5E78")}>取消</button>
+              </div>
+            ) : (
+              <button
+                onClick={() => onAddStart(cat)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 4,
+                  padding: "4px 10px", fontSize: 11,
+                  background: "transparent", border: `1px dashed ${cfg.border}`,
+                  color: cfg.color, cursor: "pointer", opacity: 0.6,
+                  transition: "opacity 0.2s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.6"; }}
+              >+ 添加{cfg.label.split("·")[0].trim()}查询词</button>
+            )}
+          </div>
+        );
+      })}
+
+      {/* Action buttons */}
+      <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+        <button
+          onClick={onConfirm}
+          style={{
+            flex: 1, padding: "10px 0", fontSize: 12, fontWeight: 600,
+            fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.04em",
+            background: "#38BDF8", color: "#06060C", border: "none", cursor: "pointer",
+            transition: "all 0.3s",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "#7DD3FC"; e.currentTarget.style.boxShadow = "0 0 20px rgba(56,189,248,0.25)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "#38BDF8"; e.currentTarget.style.boxShadow = "none"; }}
+        >确认查询词，开始体检</button>
+        <button
+          onClick={onRegenerate}
+          style={{
+            padding: "10px 20px", fontSize: 12, fontWeight: 500,
+            fontFamily: "'JetBrains Mono', monospace", letterSpacing: "0.04em",
+            background: "rgba(56,189,248,0)", border: "1px solid rgba(56,189,248,0.18)",
+            color: "#7DD3FC", cursor: "pointer", transition: "all 0.3s",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.06)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.35)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.18)"; }}
+        >重新生成</button>
+      </div>
+    </div>
+  );
+}
+
+function btnMini(bg: string, color: string): React.CSSProperties {
+  return {
+    padding: "2px 8px", fontSize: 10, fontWeight: 500,
+    background: bg, border: "none", color, cursor: "pointer",
+    fontFamily: "'JetBrains Mono', monospace",
+  };
+}
+
+const iconBtn: React.CSSProperties = {
+  width: 22, height: 22, display: "flex", alignItems: "center", justifyContent: "center",
+  fontSize: 13, background: "transparent", border: "none",
+  color: "#5E5E78", cursor: "pointer", padding: 0,
+  transition: "color 0.2s",
+};
 
 function EditField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (

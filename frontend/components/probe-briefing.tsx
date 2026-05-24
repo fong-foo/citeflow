@@ -672,7 +672,7 @@ export function ProbeBriefing({ domain, brandName, industry, targetMarket, coreP
                                   className="w-1 h-1 rounded-full shrink-0"
                                   style={{ background: colors.dot }}
                                 />
-                                <span className="font-mono text-[11px] truncate max-w-[320px]">{q.query}</span>
+                                <span className="font-mono text-[11px] truncate max-w-[320px]" title={q.query}>{q.query}</span>
                                 <button
                                   onClick={() => removeQuery(q.query)}
                                   className="shrink-0 opacity-20 group-hover:opacity-60 transition-opacity"

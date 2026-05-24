@@ -83,7 +83,7 @@ export default function ScanPage() {
 
   // ─── Upgrade modal ───
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const [upgradeFeature, setUpgradeFeature] = useState<"probe" | "analyst" | "doctor">("probe");
+  const [upgradeFeature, setUpgradeFeature] = useState<"analyst" | "doctor">("analyst");
   const [briefingData, setBriefingData] = useState<ProbeFullInput | null>(null);
   const [briefingDefaults, setBriefingDefaults] = useState<{
     domain: string; brandName: string; industry: string; targetMarket: string; coreProduct: string;
@@ -208,7 +208,26 @@ export default function ScanPage() {
           setScanTabIndex(2);
         }
         if (result?.diagnosis || result?.one_line_verdict) setAnalystPhase("report");
+        if (result?.prescription && result.prescription.length > 0) {
+          setDoctorPhase("report");
+        }
         setLastScanTime(formatTime(new Date(latest.created_at).getTime()));
+
+        // 同步写 localStorage 作为离线兜底
+        const saveMode = latest.mode;
+        try {
+          localStorage.setItem(
+            userKey(scanResultKey(saveMode)),
+            JSON.stringify({
+              data: result,
+              mode: latest.mode,
+              domain: latest.domain,
+              brandName: latest.brand_name,
+              timestamp: Date.now(),
+            })
+          );
+        } catch {}
+
         return true;
       } catch {
         return false;
@@ -237,6 +256,9 @@ export default function ScanPage() {
             setInputPhase("report");
             if (parsed.mode === "full") setProbePhase("report");
             if (parsed.data?.diagnosis || parsed.data?.one_line_verdict) setAnalystPhase("report");
+            if (parsed.data?.prescription && parsed.data.prescription.length > 0) {
+              setDoctorPhase("report");
+            }
             if (parsed.domain) setScanDomain(parsed.domain);
             if (parsed.brandName) setScanBrandName(parsed.brandName);
             if (parsed.timestamp) setLastScanTime(formatTime(parsed.timestamp));
@@ -287,30 +309,64 @@ export default function ScanPage() {
     if (!data || !scanDomain) return;
     try {
       const raw = localStorage.getItem(userKey(REPORTS_KEY_BASE));
-      const history = raw ? JSON.parse(raw) : [];
-      const existingIdx = history.findIndex(
-        (r: any) => r.domain === scanDomain && r.brandName === scanBrandName && r.mode === scanMode
-      );
-      const entry = {
+      let history: any[] = raw ? JSON.parse(raw) : [];
+
+      const upsertEntry = (entry: any) => {
+        const existingIdx = history.findIndex(
+          (r: any) => r.type === entry.type && r.domain === entry.domain && r.brandName === entry.brandName
+        );
+        if (existingIdx >= 0) {
+          history[existingIdx] = entry;
+        } else {
+          history.unshift(entry);
+        }
+      };
+
+      // 1) Probe entry (light or full)
+      upsertEntry({
         id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-        type: "probe",
+        type: scanMode === "full" ? "probe_scout" : "probe",
         label: scanMode === "full" ? "Probe 完整侦察报告" : "初步体检报告",
         domain: scanDomain,
         brandName: scanBrandName || scanDomain,
         data,
         mode: scanMode,
         timestamp: Date.now(),
-      };
-      if (existingIdx >= 0) {
-        history[existingIdx] = entry;
-      } else {
-        history.unshift(entry);
-        if (history.length > 50) history.length = 50;
+      });
+
+      // 2) Analyst entry — when diagnosis data is present
+      if (data?.diagnosis || data?.one_line_verdict) {
+        upsertEntry({
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + "_a",
+          type: "analyst",
+          label: "Analyst 诊断师报告",
+          domain: scanDomain,
+          brandName: scanBrandName || scanDomain,
+          data,
+          mode: scanMode,
+          timestamp: Date.now(),
+        });
       }
+
+      // 3) Doctor entry — when prescription data is present
+      if (data?.prescription && data.prescription.length > 0) {
+        upsertEntry({
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + "_d",
+          type: "doctor",
+          label: "处方",
+          domain: scanDomain,
+          brandName: scanBrandName || scanDomain,
+          data,
+          mode: scanMode,
+          timestamp: Date.now(),
+        });
+      }
+
+      if (history.length > 60) history.length = 60;
       localStorage.setItem(userKey(REPORTS_KEY_BASE), JSON.stringify(history));
       window.dispatchEvent(new Event("cf-reports-updated"));
 
-      // 同步更新 scan result key，确保页面刷新后能恢复最新数据（含 analyst 结果）
+      // 同步更新 scan result key，确保页面刷新后能恢复最新数据
       const saveMode = scanMode;
       try { localStorage.setItem(userKey(scanResultKey(saveMode)), JSON.stringify({ data, mode: scanMode, domain: scanDomain, brandName: scanBrandName, timestamp: Date.now() })); } catch {}
     } catch {}
@@ -607,7 +663,7 @@ export default function ScanPage() {
 
   function handleSidebarAnalystClick() {
     if (!data) { alert("请先完成一次品牌体检"); return; }
-    if (tier === "free" || tier === "probe") {
+    if (tier === "free") {
       setUpgradeFeature("analyst");
       setShowUpgrade(true);
       return;
@@ -618,7 +674,7 @@ export default function ScanPage() {
 
   function handleSidebarDoctorClick() {
     if (!data) { alert("请先完成一次品牌体检"); return; }
-    if (tier === "free" || tier === "probe") {
+    if (tier === "free") {
       setUpgradeFeature("doctor");
       setShowUpgrade(true);
       return;
@@ -628,7 +684,7 @@ export default function ScanPage() {
   }
 
   function handleSidebarUpgradeClick(feature?: string) {
-    setUpgradeFeature((feature as "probe" | "analyst" | "doctor") || "probe");
+    setUpgradeFeature((feature as "analyst" | "doctor") || "analyst");
     setShowUpgrade(true);
   }
 
@@ -639,57 +695,24 @@ export default function ScanPage() {
   async function handleUpgradeConfirm() {
     setShowUpgrade(false);
 
-    if (upgradeFeature === "probe") {
-      setUserTier("probe");
-      setTier("probe");
+    setUserTier("full");
+    setTier("full");
 
-      // 同步升级到后端
-      const token = localStorage.getItem("cf_token");
-      if (token) {
-        fetch(`${API_BASE}/api/auth/upgrade`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ tier: "probe" }),
+    const token = localStorage.getItem("cf_token");
+    if (token) {
+      fetch(`${API_BASE}/api/auth/upgrade`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ tier: "full" }),
+      })
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.token) localStorage.setItem("cf_token", d.token);
         })
-          .then((r) => r.json())
-          .then((d) => {
-            if (d.token) localStorage.setItem("cf_token", d.token);
-          })
-          .catch(() => {});
-      }
-
-      const profile = getCachedProfile(scanDomain);
-      const probe = data?.probe || {};
-      setBriefingDefaults({
-        domain: scanDomain,
-        brandName: scanBrandName,
-        industry: probe.brand_profile?.inferred_industry || profile?.inferred_industry || "",
-        targetMarket: probe.brand_profile?.inferred_target_market || profile?.inferred_target_market || "",
-        coreProduct: probe.brand_profile?.inferred_core_product || profile?.inferred_core_product || "",
-        competitorMentions: probe.competitor_mentions || [],
-      });
-      setProbePhase("briefing");
-      setStep("probe");
-    } else if (upgradeFeature === "analyst" || upgradeFeature === "doctor") {
-      setUserTier("full");
-      setTier("full");
-
-      const token = localStorage.getItem("cf_token");
-      if (token) {
-        fetch(`${API_BASE}/api/auth/upgrade`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ tier: "full" }),
-        })
-          .then((r) => r.json())
-          .then((d) => {
-            if (d.token) localStorage.setItem("cf_token", d.token);
-          })
-          .catch(() => {});
-      }
-
-      if (data) setStep(upgradeFeature);
+        .catch(() => {});
     }
+
+    if (data) setStep(upgradeFeature);
   }
 
   // ═══════════════════════════════════════════
@@ -970,9 +993,14 @@ export default function ScanPage() {
                 mode={scanMode}
                 domain={scanDomain}
                 brandName={scanBrandName}
-                onUpgrade={() => { setUpgradeFeature("probe"); setShowUpgrade(true); }}
+                onUpgrade={() => { setUpgradeFeature("analyst"); setShowUpgrade(true); }}
                 onBack={() => setStep("dashboard")}
                 onViewAnalyst={() => {
+                  if (tier === "free") {
+                    setUpgradeFeature("analyst");
+                    setShowUpgrade(true);
+                    return;
+                  }
                   setAnalystPhase("briefing");
                   setStep("analyst");
                 }}
@@ -1054,8 +1082,6 @@ export default function ScanPage() {
                   paperCount={data?.knowledge_sources?.length || 0}
                   domain={scanDomain}
                   brandName={scanBrandName || scanDomain}
-                  onRegenerate={() => setDoctorPhase("briefing")}
-                  onReexamine={() => alert("重新体检功能开发中")}
                 />
               </div>
             </div>
@@ -1152,7 +1178,7 @@ export default function ScanPage() {
                 data={inputReportData || data}
                 mode="light"
                 brandName={scanBrandName}
-                onUpgrade={() => { setUpgradeFeature("probe"); setShowUpgrade(true); }}
+                onUpgrade={() => { setUpgradeFeature("analyst"); setShowUpgrade(true); }}
                 onViewDashboard={() => setStep("dashboard")}
                 onUpgradeToFull={handleUpgradeToFull}
               />

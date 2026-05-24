@@ -21,28 +21,29 @@
 
 ## 修复计划
 
-### 第一层（今天能上，无需新依赖）
+### 第一层 ✅ 已完成（2026-05-23）
 
-**1. 准入控制信号量**
+**1. 准入控制信号量** ✅
 - 文件: `api.py`
 - 改动: 全局 `asyncio.Semaphore(5)`，`_run_scan_task` 入口 acquire，finally release
 - 效果: 最多 5 个扫描同时跑，第 6 个请求返回 503 "系统繁忙"
 
-**2. SQLite WAL 模式 + 连接复用**
+**2. SQLite WAL 模式 + 连接复用** ✅
 - 文件: `auth_db.py`
 - 改动: 
-  - `PRAGMA journal_mode=WAL` 在 `get_db()` 首次调用时执行
-  - 模块级 `_conn` 单例复用（或至少用 `check_same_thread=False` + 线程锁）
+  - `PRAGMA journal_mode=WAL` + `busy_timeout=5000`
+  - 模块级 `_conn` 单例复用 + `check_same_thread=False` + 线程锁
+  - api.py 所有 `sqlite3.connect()` 替换为 `get_db()`
 - 效果: 读并发，写串行但快，不再 database is locked
 
-**3. 生产服务器配置**
-- 文件: 新增 `gunicorn.conf.py` 或改启动命令
-- 改动: `gunicorn -w 4 -k uvicorn.workers.UvicornWorker api:app --bind 0.0.0.0:8000`
+**3. 生产服务器配置** ✅
+- 文件: 新增 `gunicorn.conf.py`
+- 改动: `gunicorn -w 4 -k uvicorn.workers.UvicornWorker api:app --bind 0.0.0.0:8000`，timeout 600s
 - 效果: 4 个 worker 进程，真并发处理 HTTP 请求
 
-**4. ScanTaskStore 自动 TTL**
+**4. ScanTaskStore 自动 TTL** ✅
 - 文件: `api.py`
-- 改动: `ScanTaskStore.__init__` 中启动后台 `asyncio.create_task` 每 5 分钟调 `cleanup()`
+- 改动: `@app.on_event("startup")` 启动后台协程每 5 分钟调 `cleanup(max_age_seconds=1800)`
 - 效果: 过期任务自动清理，不 OOM
 
 ### 第二层（需要 1-2 天）

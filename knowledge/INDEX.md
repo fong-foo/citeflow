@@ -1,7 +1,7 @@
 # CiteFlow 知识库索引
 
-> 玄老维护 · 用于 Doctor 处方生成的知识注入
-> 最后更新：2026-05-20
+> 维护：玄老（GEO 知识策展）+ 药老（架构决策）
+> 最后更新：2026-05-23
 
 ---
 
@@ -11,8 +11,9 @@
 knowledge/
 ├── INDEX.md              ← 你在这里
 ├── STRATEGY_OVERVIEW.md  ← 策略总览（速查表）
+├── geoflow-practices.md  ← GEOFlow 最佳实践提取（AI爬虫检测/llms.txt/RAG）
 ├── papers/               ← 14篇论文精读笔记（结构化 JSON）
-├── templates/            ← 6个可直接复制粘贴的执行模板
+├── templates/            ← 7个可直接复制粘贴的执行模板
 ├── industries/           ← 5个行业特化策略
 ├── platforms/            ← 3个平台特化策略
 ├── regions/              ← 1个地区特化策略
@@ -45,9 +46,10 @@ knowledge/
 
 ### templates/ — 执行模板
 
-| 文件 | 用途 | 处方类型 |
+| file | 用途 | 处方类型 |
 |------|------|---------|
-| technical-schema-robots.md | Schema标记 + AI爬虫放行（完整代码） | 技术优化 |
+| technical-schema-robots.md | Schema标记 + AI爬虫放行（完整UA列表） | 技术优化 |
+| llms-txt-template.md | llms.txt + sitemap.txt AI爬虫导航文件 | 技术优化 |
 | content-structure-prescription.md | 三层结构 + 可提取证据（页面模板） | 内容优化 |
 | authority-building-prescription.md | Earned Media + 媒体评测（执行清单） | 权威建设 |
 | community-presence-prescription.md | Reddit + Quora + 论坛（6月路线图） | 社区建设 |

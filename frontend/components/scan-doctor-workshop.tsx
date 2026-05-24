@@ -12,8 +12,6 @@ interface ScanDoctorWorkshopProps {
   paperCount: number;
   domain: string;
   brandName?: string;
-  onRegenerate: () => void;
-  onReexamine: () => void;
 }
 
 interface PrescriptionItem {
@@ -407,8 +405,6 @@ export function ScanDoctorWorkshop({
   paperCount,
   domain,
   brandName,
-  onRegenerate,
-  onReexamine,
 }: ScanDoctorWorkshopProps) {
   const [done, setDone] = useState<Set<number>>(new Set());
   const [initialized, setInitialized] = useState(false);
@@ -459,21 +455,7 @@ export function ScanDoctorWorkshop({
           textAlign: "center",
         }}
       >
-        <p style={{ fontSize: 14, color: "#9A9AB0", marginBottom: 16 }}>暂无处方数据，请重新生成</p>
-        <button
-          onClick={onRegenerate}
-          style={{
-            padding: "10px 24px",
-            fontSize: 13,
-            fontWeight: 500,
-            color: "#7DD3FC",
-            background: "rgba(56,189,248,0.08)",
-            border: "1px solid rgba(56,189,248,0.18)",
-            cursor: "pointer",
-          }}
-        >
-          📋 重新生成处方
-        </button>
+        <p style={{ fontSize: 14, color: "#9A9AB0" }}>暂无处方数据</p>
       </motion.div>
     );
   }
@@ -621,74 +603,6 @@ export function ScanDoctorWorkshop({
           defaultExpanded={allP1Done}
         />
       )}
-
-      {/* ═══ ZONE 4: CTA Buttons ═══ */}
-      <div style={{
-        display: "flex",
-        gap: 12,
-        justifyContent: "center",
-        marginTop: 28,
-        paddingTop: 20,
-        borderTop: "1px solid rgba(255,255,255,0.04)",
-      }}>
-        <button
-          onClick={onReexamine}
-          style={{
-            padding: "10px 20px",
-            fontSize: 13,
-            fontWeight: 500,
-            color: "#9A9AB0",
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            cursor: "pointer",
-            transition: "all 0.3s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.08)";
-            e.currentTarget.style.color = "#C8C8D8";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-            e.currentTarget.style.color = "#9A9AB0";
-          }}
-        >
-          🔄 重新体检
-        </button>
-
-        <button
-          onClick={onRegenerate}
-          style={{
-            padding: "10px 24px",
-            fontSize: 13,
-            fontWeight: 500,
-            color: "#7DD3FC",
-            background: "rgba(56,189,248,0.08)",
-            border: "1px solid rgba(56,189,248,0.18)",
-            cursor: "pointer",
-            transition: "all 0.3s",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(56,189,248,0.18)";
-            e.currentTarget.style.color = "#EDEDF5";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "rgba(56,189,248,0.08)";
-            e.currentTarget.style.color = "#7DD3FC";
-          }}
-        >
-          📋 重新生成处方
-        </button>
-      </div>
-
-      {/* CTA subtext */}
-      <div style={{ display: "flex", gap: 32, justifyContent: "center", marginTop: 10 }}>
-        <span style={{ fontSize: 10, color: "#5E5E78" }}>
-          重新体检走 Probe → Analyst → Doctor 全流程，约4分钟
-        </span>
-        <span style={{ fontSize: 10, color: "#5E5E78" }}>
-          重新生成处方保留现有数据，只重跑 Doctor，约1分钟
-        </span>
-      </div>
     </motion.div>
   );
 }

@@ -28,7 +28,7 @@ def generate(brand_name: str, competitors: list[str], industry: str) -> list[str
         "in this industry care about — consider product quality, price, support, "
         "and any industry-specific factors (e.g. sustainability for eco brands, "
         "compliance for fintech, durability for hardware, scalability for SaaS)\n"
-        "- All questions in English\n"
+        "- All questions in Chinese\n"
         "- Return EXACTLY 15 questions, one per line, no numbering, no bullets\n"
         "Output format: plain text, one question per line, nothing else."
     )

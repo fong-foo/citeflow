@@ -108,7 +108,9 @@
       "Bash(ps -o lstart -p 1334)",
       "Bash(npx eslint *)",
       "Bash(md5 ~/Desktop/CiteFlow/frontend/components/scan-result.tsx)",
-      "Bash(gh repo *)"
+      "Bash(gh repo *)",
+      "WebFetch(domain:jina.ai)",
+      "Bash(open *)"
     ]
   },
   "enabledPlugins": {

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CiteFlow — AI搜索时代，你的品牌被引用了吗？</title>
+<title>CiteFlow — AI 不推荐你 ≠ 你的产品不好</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,6 +19,11 @@
     --accent: #38BDF8;
     --accent-subtle: rgba(56,189,248,0.10);
     --accent-hover: #7DD3FC;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 72px;
   }
 
   body {
@@ -170,6 +175,14 @@
     justify-content: space-between;
     height: 56px;
   }
+  .nav-center {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
   .nav-logo {
     display: flex;
     align-items: center;
@@ -203,9 +216,60 @@
   }
   .nav-cta:hover { background: var(--accent-hover); transform: scale(1.02); }
 
+  /* ── Announcement Bar ── */
+  .announce {
+    margin: 68px auto 0;
+    max-width: 1280px;
+    background: rgba(19,19,24,0.9);
+    border: 1px solid rgba(56,189,248,0.15);
+    border-radius: 8px;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .announce .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0;
+  }
+  .announce-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: announcePulse 2s ease-in-out infinite;
+  }
+  @keyframes announcePulse {
+    0%, 100% { opacity: 0.4; box-shadow: 0 0 0 0 rgba(56,189,248,0.4); }
+    50% { opacity: 1; box-shadow: 0 0 0 6px rgba(56,189,248,0); }
+  }
+  .announce strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .announce-text {
+    transition: opacity 0.3s, transform 0.3s;
+    display: inline-block;
+  }
+  .announce-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.04);
+    padding: 2px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
   /* ── Section 2: Hero ── */
   .hero {
-    padding: 160px 0 120px;
+    padding: 40px 0 120px;
     position: relative;
     overflow: hidden;
   }
@@ -509,6 +573,60 @@
     text-transform: uppercase;
     letter-spacing: 1px;
   }
+
+  /* Probe mockup chart */
+  .probe-mockup {
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .probe-mockup-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+  }
+  .probe-mockup-engine {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    width: 64px;
+    flex-shrink: 0;
+  }
+  .probe-mockup-bar {
+    flex: 1;
+    height: 14px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .probe-mockup-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .probe-mockup-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-primary);
+    width: 32px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .probe-mockup-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.02);
+    border-left: 2px solid rgba(245,158,11,0.4);
+    border-radius: 0 4px 4px 0;
+    line-height: 1.5;
+  }
+  .probe-mockup-desc strong {
+    color: #f59e0b;
+    font-weight: 500;
+  }
   .workflow-card-body {
     padding: 20px;
   }
@@ -540,14 +658,14 @@
     letter-spacing: -0.2px;
   }
 
-  /* ── Section 4: CITE 四维模型 ── */
+  /* ── Section 4: CITE 六大诊断维度 ── */
   .cite {
     padding: 120px 0;
     position: relative;
   }
   .cite-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     margin-bottom: 32px;
   }
@@ -640,6 +758,87 @@
   }
   .github-link:hover { color: var(--text-primary); }
 
+  /* ── Section: 开源项目长卡片 ── */
+  .oss-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .oss-long-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.015);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .oss-long-card:hover {
+    border-color: rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.025);
+  }
+  .oss-long-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    width: 44px;
+    text-align: center;
+  }
+  .oss-long-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .oss-long-body h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    letter-spacing: -0.2px;
+  }
+  .oss-long-body p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+  .oss-long-meta {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    align-items: center;
+  }
+  .oss-long-meta .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-muted);
+  }
+  .oss-long-arrow {
+    color: var(--accent);
+    font-size: 16px;
+    margin-left: 6px;
+    transition: transform 0.3s, opacity 0.3s;
+    display: inline-block;
+  }
+  .oss-long-card:hover .oss-long-arrow {
+    transform: translateX(6px) scale(1.3);
+    opacity: 1;
+  }
+  .oss-long-card:hover {
+    border-color: rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.03);
+  }
+  .oss-long-card .oss-long-body h4 {
+    transition: color 0.3s;
+  }
+  .oss-long-card:hover .oss-long-body h4 {
+    color: var(--accent);
+  }
+
   /* ── Section 5: Social Proof ── */
   .proof {
     padding: 100px 0;
@@ -695,6 +894,276 @@
     padding: 2px 8px;
     border-radius: 4px;
     color: var(--text-muted);
+  }
+
+  /* ── Section: 为什么选择我们 ── */
+  .why-us {
+    padding: 120px 0;
+    position: relative;
+  }
+  .why-us-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    margin-top: 48px;
+  }
+  .why-us-reasons {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .why-us-reason {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .why-us-reason:hover {
+    border-color: rgba(255,255,255,0.08);
+    transform: translateX(4px);
+  }
+  .why-us-reason-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-subtle);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .why-us-reason-body h4 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    margin-bottom: 4px;
+  }
+  .why-us-reason-body p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .why-us-visual {
+    position: relative;
+  }
+  .why-us-chart-card {
+    background: var(--bg-surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    position: relative;
+    z-index: 1;
+  }
+  .why-us-chart-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .why-us-chart-body {
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .why-us-chart-block {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .why-us-chart-block-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .why-us-chart-block-label .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot.blue { background: var(--accent); }
+  .dot.green { background: #22c55e; }
+  .dot.purple { background: #a855f7; }
+
+  /* 区块1：跨境多市场扫描 */
+  .market-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .market-cell {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+  }
+  .market-cell .flag {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  .market-cell .lang {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .market-cell .status {
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .market-cell .status.ok { color: #22c55e; }
+  .market-cell .status.warn { color: #f59e0b; }
+  .market-cell .status.bad { color: #ef4444; }
+
+  /* 区块2：结论带溯源 */
+  .insight-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 6px;
+    padding: 12px;
+  }
+  .insight-card .finding {
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+  .insight-card .source-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+  .insight-card .source-tag {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: rgba(56,189,248,0.08);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* 区块3：处方清单 */
+  .rx-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .rx-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    border-left: 3px solid transparent;
+  }
+  .rx-item.p0 {
+    background: rgba(239,68,68,0.06);
+    border-left-color: #ef4444;
+  }
+  .rx-item.p1 {
+    background: rgba(245,158,11,0.06);
+    border-left-color: #f59e0b;
+  }
+  .rx-item.p2 {
+    background: rgba(156,163,175,0.05);
+    border-left-color: #9ca3af;
+  }
+  .rx-item .prio {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    width: 24px;
+    flex-shrink: 0;
+  }
+  .rx-item.p0 .prio { color: #ef4444; }
+  .rx-item.p1 .prio { color: #f59e0b; }
+  .rx-item.p2 .prio { color: #9ca3af; }
+  .rx-item .desc {
+    flex: 1;
+    color: var(--text-secondary);
+  }
+  .rx-item .eta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .why-us-glow {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%);
+    top: -40px;
+    right: -40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Section: 使命 ── */
+  .mission {
+    padding: 120px 0;
+    text-align: center;
+    position: relative;
+  }
+  .mission::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.06), transparent);
+  }
+  .mission-quote {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.6px;
+    line-height: 1.4;
+    max-width: 680px;
+    margin: 0 auto 24px;
+    color: var(--text-primary);
+  }
+  .mission-body {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+  .mission-accent {
+    display: inline-block;
+    width: 40px;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0.4;
+    margin-bottom: 32px;
   }
 
   /* ── Section 6: Pricing ── */
@@ -882,11 +1351,12 @@
     .cite-grid { grid-template-columns: repeat(2, 1fr); }
     .proof-stats { grid-template-columns: repeat(2, 1fr); }
     .pricing-cards { grid-template-columns: 1fr; }
+    .why-us-grid { grid-template-columns: 1fr; gap: 40px; }
   }
 
   @media (max-width: 640px) {
     .container { padding: 0 20px; }
-    .hero { padding: 120px 0 80px; }
+    .hero { padding: 32px 0 80px; }
     .hero h1 { font-size: 32px; letter-spacing: -0.6px; }
     .hero-sub { font-size: 15px; }
     .section-title { font-size: 28px; letter-spacing: -0.5px; }
@@ -894,8 +1364,80 @@
     .proof-stats { grid-template-columns: 1fr; gap: 24px; }
     .proof-sources { flex-direction: column; align-items: flex-start; }
     .cite-methodology { flex-wrap: wrap; gap: 16px; }
+    .why-us-grid { grid-template-columns: 1fr; gap: 40px; }
     .footer .container { flex-direction: column; gap: 12px; text-align: center; }
   }
+  /* ── Hero Poster (chat mockup) ── */
+  .hero-poster {
+    background: #0d0d14;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+  .hero-poster-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .hero-poster-body {
+    padding: 16px;
+  }
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .chat-msg {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .chat-msg.user {
+    flex-direction: row-reverse;
+  }
+  .chat-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .chat-bubble {
+    border-radius: 8px;
+    line-height: 1.5;
+  }
+  .poster-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding: 12px 0;
+    margin: 0 16px;
+  }
+  .poster-stat-item {
+    text-align: center;
+  }
+  .poster-stat-item .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .poster-stat-item .num.accent { color: var(--accent); }
+  .poster-stat-item .num.green { color: #22c55e; }
+  .poster-stat-item .num.purple { color: #a855f7; }
+  .poster-stat-item .lbl {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
 </style>
 </head>
 <body>
@@ -924,13 +1466,57 @@
   <div class="container">
     <a href="/" class="nav-logo">
       <img src="/img/logo.png" srcset="/img/logo@2x.png 2x" alt="CiteFlow" height="28" style="display:block;">
+      <span style="font-size:16px;font-weight:600;color:var(--text-primary);letter-spacing:-0.3px;margin-left:8px;">CiteFlow</span>
     </a>
+    <div class="nav-center">
+      <a href="#workflow" class="nav-link">工作流</a>
+      <a href="#why-us" class="nav-link">为什么选择我们</a>
+      <a href="#methodology" class="nav-link">方法论</a>
+      <a href="#opensource" class="nav-link">开源</a>
+      <a href="#mission" class="nav-link">使命</a>
+      <a href="#pricing" class="nav-link">定价</a>
+    </div>
     <div class="nav-right">
       <a href="/login" class="nav-link">登录</a>
-      <button class="nav-cta" onclick="window.location.href='/scan'">进入体检中心</button>
+      <button class="nav-cta" onclick="goToScan()">体检中心</button>
     </div>
   </div>
 </nav>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- Announcement Bar                            -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="announce">
+  <div class="container">
+    <span class="announce-dot"></span>
+    <span class="announce-icon">📑</span>
+    <span class="announce-text" id="announce-text">品牌档案库即将上线 · 扫码报告自动归档，历史对比一目了然</span>
+    <strong class="announce-tag">敬请期待</strong>
+  </div>
+</div>
+
+<script>
+(function() {
+  const el = document.getElementById('announce-text');
+  const items = [
+    '品牌档案库即将上线 · 扫码报告自动归档，历史对比一目了然',
+    '处方历史版本链 · v1→v2→... 每次体检自动留存，随时回溯对比',
+    '闭环复查功能 · 执行处方后重新扫描，量化优化效果',
+    '品牌资产看板 · 多品牌一键切换，团队协作管理',
+  ];
+  let i = 0;
+  setInterval(() => {
+    i = (i + 1) % items.length;
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(4px)';
+    setTimeout(() => {
+      el.textContent = items[i];
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 300);
+  }, 4000);
+})();
+</script>
 
 <!-- ═══════════════════════════════════════════ -->
 <!-- Section 2: Hero                             -->
@@ -941,10 +1527,9 @@
   <div class="hero-decor hero-decor-2"></div>
   <div class="container">
     <div class="reveal">
-      <div class="hero-tag">GEO · AI 搜索可见度诊断平台</div>
-      <h1>AI 搜索时代<br>你的品牌被引用了吗？</h1>
+      <h1>AI 不推荐你 ≠ 你的产品不好。<br>是你没在对的地方说对话。</h1>
       <p class="hero-sub">
-        基于 CiteFlow CITE 四维模型 · 融合全球 GEO 学术研究<br>
+        基于 CiteFlow CITE 六大诊断维度 · 融合全球 GEO 学术研究<br>
         专为中国跨境出海品牌设计
         <span>Over 100 million people search with AI daily. Is your brand part of the conversation?</span>
       </p>
@@ -955,64 +1540,96 @@
       </div>
       <div class="hero-benefits">
         <span><span class="dot"></span> 3 分钟拿到报告</span>
-        <span><span class="dot"></span> 免费测试</span>
-        <span><span class="dot"></span> 无需注册</span>
+        <span><span class="dot"></span> 免费 Light 体检</span>
+        <span><span class="dot"></span> ¥100 解锁完整诊断</span>
       </div>
     </div>
     <div class="hero-visual reveal reveal-delay-2">
-      <div class="hero-mockup">
-        <div class="hero-mockup-header">
+      <!-- 海报：对话窗口 + 宣传文案叠加 -->
+      <div class="hero-poster">
+        <div class="hero-poster-header">
           <div class="hero-mockup-dot"></div>
           <div class="hero-mockup-dot"></div>
           <div class="hero-mockup-dot"></div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-left:auto;">品牌 AI 可见度体检 · 实时进行中</span>
         </div>
-        <div class="hero-mockup-body">
-          <div class="pixel-grid">
-            <!-- Abstract GEO visualization: 8x8 grid of small squares -->
-            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
-              <rect x="0" y="0" width="14" height="14" rx="2" fill="#38BDF8" opacity="0.9"/>
-              <rect x="16" y="0" width="14" height="14" rx="2" fill="#38BDF8" opacity="0.7"/>
-              <rect x="32" y="0" width="14" height="14" rx="2" fill="#38BDF8" opacity="0.5"/>
-              <rect x="0" y="16" width="14" height="14" rx="2" fill="#38BDF8" opacity="0.6"/>
-              <rect x="16" y="16" width="14" height="14" rx="2" fill="#38BDF8" opacity="0.3"/>
-              <rect x="32" y="16" width="14" height="14" rx="2" fill="#22c55e" opacity="0.7"/>
-              <rect x="0" y="32" width="14" height="14" rx="2" fill="#22c55e" opacity="0.4"/>
-              <rect x="16" y="32" width="14" height="14" rx="2" fill="#22c55e" opacity="0.8"/>
-              <rect x="48" y="0" width="14" height="14" rx="2" fill="#9A9AB0" opacity="0.15"/>
-              <rect x="64" y="0" width="14" height="14" rx="2" fill="#9A9AB0" opacity="0.1"/>
-              <rect x="48" y="16" width="14" height="14" rx="2" fill="#9A9AB0" opacity="0.12"/>
-              <rect x="64" y="16" width="14" height="14" rx="2" fill="#9A9AB0" opacity="0.08"/>
-              <rect x="48" y="32" width="14" height="14" rx="2" fill="#9A9AB0" opacity="0.1"/>
-              <rect x="0" y="48" width="14" height="14" rx="2" fill="#5E5E78" opacity="0.12"/>
-              <rect x="16" y="48" width="14" height="14" rx="2" fill="#5E5E78" opacity="0.08"/>
-              <rect x="32" y="48" width="14" height="14" rx="2" fill="#5E5E78" opacity="0.1"/>
-              <rect x="80" y="0" width="14" height="14" rx="2" fill="#a855f7" opacity="0.6"/>
-              <rect x="80" y="16" width="14" height="14" rx="2" fill="#a855f7" opacity="0.4"/>
-              <rect x="80" y="32" width="14" height="14" rx="2" fill="#f59e0b" opacity="0.5"/>
-              <rect x="96" y="0" width="14" height="14" rx="2" fill="#a855f7" opacity="0.3"/>
-              <rect x="96" y="16" width="14" height="14" rx="2" fill="#f59e0b" opacity="0.3"/>
-            </svg>
+        <div class="hero-poster-body">
+          <!-- 三条对话消息 -->
+          <div class="chat-container">
+            <div class="chat-msg bot">
+              <div class="chat-avatar">
+                <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2" y="1" width="4" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="2" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="3" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="4" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="5" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="2" y="6" width="4" height="1" fill="#3B82F6"/>
+                </svg>
+              </div>
+              <div class="chat-bubble" style="background:#1c1c26;border:none;color:#c9d1d9;font-size:13px;padding:10px 14px;max-width:280px;">
+                正在扫描 ugreen.com<br>在 ChatGPT、Gemini、Claude 中的表现…
+              </div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="chat-avatar">
+                <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2" y="1" width="4" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="2" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="3" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="4" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="5" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="2" y="6" width="4" height="1" fill="#3B82F6"/>
+                </svg>
+              </div>
+              <div class="chat-bubble" style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);color:#c9d1d9;font-size:13px;padding:10px 14px;max-width:280px;">
+                你的品牌在 AI 搜索中仅被提及 15% 的查询。<br>竞品 Anker 是 42%。每 10 个潜在客户用 AI 搜索，8 个看不到你。
+              </div>
+            </div>
+            <div class="chat-msg user">
+              <div class="chat-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#9A9AB0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+              <div class="chat-bubble" style="font-family:'JetBrains Mono',monospace;font-size:13px;background:#1E293B;color:var(--text-primary);border-bottom-right-radius:4px;">我应该怎么办？</div>
+            </div>
+            <div class="chat-msg bot">
+              <div class="chat-avatar">
+                <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2" y="1" width="4" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="2" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="3" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="4" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="1" y="5" width="1" height="1" fill="#3B82F6"/>
+                  <rect x="2" y="6" width="4" height="1" fill="#3B82F6"/>
+                </svg>
+              </div>
+              <div class="chat-bubble" style="background:#1c1c26;border:none;color:#c9d1d9;font-size:13px;padding:10px 14px;max-width:280px;">
+                已为您定制处方报告，已分 P0/P1/P2 优先级。<br>7 条优化处方已生成 · 预估 2 周见效
+              </div>
+            </div>
           </div>
-          <div class="stat-label">AI 引用率</div>
-          <div class="stat-value">12.4%</div>
-          <div class="stat-desc">ChatGPT / Claude / Gemini / Perplexity</div>
-          <div class="hero-mockup-grid">
-            <div class="hero-mockup-grid-item">
-              <div class="label">内容力</div>
-              <div class="value">C+</div>
-            </div>
-            <div class="hero-mockup-grid-item">
-              <div class="label">身份力</div>
-              <div class="value">B-</div>
-            </div>
-            <div class="hero-mockup-grid-item">
-              <div class="label">信任力</div>
-              <div class="value good">A-</div>
-            </div>
-            <div class="hero-mockup-grid-item">
-              <div class="label">社区力</div>
-              <div class="value">C</div>
-            </div>
+          <!-- 右下角浮层数据 -->
+        </div>
+        <!-- 底部统计条 -->
+        <div class="poster-stats">
+          <div class="poster-stat-item">
+            <div class="num accent">15%</div>
+            <div class="lbl">行业引用率</div>
+          </div>
+          <div class="poster-stat-item">
+            <div class="num green">8.3%</div>
+            <div class="lbl">AI 推荐率</div>
+          </div>
+          <div class="poster-stat-item">
+            <div class="num purple">Anker</div>
+            <div class="lbl">主要竞品</div>
+          </div>
+          <div class="poster-stat-item">
+            <div class="num" style="color:#f59e0b;">3min</div>
+            <div class="lbl">出结果</div>
           </div>
         </div>
       </div>
@@ -1026,8 +1643,8 @@
 <section class="workflow" id="workflow">
   <div class="container">
     <div class="section-label reveal">工作流</div>
-    <h2 class="section-title reveal reveal-delay-1">3 步闭环：知道问题 → 理解原因 → 知道怎么改</h2>
-    <p class="section-desc reveal reveal-delay-1">不是又一个 SEO 工具。CiteFlow 是 AI 搜索时代的品牌体检中心。</p>
+    <h2 class="section-title reveal reveal-delay-1">从扫描到优化，一次闭环</h2>
+    <p class="section-desc reveal reveal-delay-1">不只告诉你"引用率低"，更告诉你为什么，以及怎么改。</p>
 
     <div class="workflow-steps">
       <!-- Step 1 -->
@@ -1035,11 +1652,30 @@
         <div class="workflow-step-num">01</div>
         <div class="workflow-card">
           <div class="workflow-card-mockup">
-            <img src="/img/probe_screenshot.png" alt="Probe 侦察兵报告" style="width:100%;height:auto;display:block;border-radius:6px;">
+            <div class="probe-mockup">
+              <div class="probe-mockup-row">
+                <span class="probe-mockup-engine">ChatGPT</span>
+                <div class="probe-mockup-bar"><div class="probe-mockup-fill" style="width:23%;background:linear-gradient(90deg,var(--accent),rgba(56,189,248,0.3));"></div></div>
+                <span class="probe-mockup-val">23%</span>
+              </div>
+              <div class="probe-mockup-row">
+                <span class="probe-mockup-engine">Gemini</span>
+                <div class="probe-mockup-bar"><div class="probe-mockup-fill" style="width:18%;background:linear-gradient(90deg,#a855f7,rgba(168,85,247,0.3));"></div></div>
+                <span class="probe-mockup-val">18%</span>
+              </div>
+              <div class="probe-mockup-row">
+                <span class="probe-mockup-engine">Claude</span>
+                <div class="probe-mockup-bar"><div class="probe-mockup-fill" style="width:31%;background:linear-gradient(90deg,#f59e0b,rgba(245,158,11,0.3));"></div></div>
+                <span class="probe-mockup-val">31%</span>
+              </div>
+              <div class="probe-mockup-desc">
+                AI 描述为 <strong>「跨境电商平台」</strong>——品类不明确，差异化缺失
+              </div>
+            </div>
           </div>
           <div class="workflow-card-body">
             <h3>Probe · 侦察兵</h3>
-            <p>4 大 AI 引擎并发扫描，3 类查询词全面探测。3 分钟拿到引用率、认知画像、竞品对比。</p>
+            <p>当客户用 ChatGPT 搜你的品类，你的品牌出现吗？出现时 AI 怎么说你？3 分钟，给你答案。</p>
           </div>
         </div>
       </div>
@@ -1055,7 +1691,7 @@
           </div>
           <div class="workflow-card-body">
             <h3>Analyst · 分析师</h3>
-            <p>14 条自研规则逐条检查。诊断核心问题、量化竞品差距，每个结论都有来源追溯。</p>
+            <p>引用率低不是结果，是信号。定位到具体哪个技术缺陷或内容缺失让 AI 忽略了你——以及竞品在哪赢了你。</p>
           </div>
         </div>
       </div>
@@ -1071,57 +1707,198 @@
           </div>
           <div class="workflow-card-body">
             <h3>Doctor · 处方工作室</h3>
-            <p>P0/P1/P2 分级任务清单 + 执行步骤 + 预期效果。基于 21 篇学术论文的知识注入。</p>
+            <p>给代码，不给建议。每一条处方精确到改哪个页面、加什么标签、预估几天见效。照做就行。</p>
           </div>
         </div>
       </div>
     </div>
 
     <p class="workflow-bottom reveal reveal-delay-4">
-      不只告诉你"被引用率低"——告诉你为什么，以及怎么改。
+      三分钟看清问题，一小时看懂原因，下一步知道怎么改。
     </p>
   </div>
 </section>
 
 <!-- ═══════════════════════════════════════════ -->
-<!-- Section 4: CITE 四维模型                    -->
+<!-- Section: 为什么选择我们                      -->
 <!-- ═══════════════════════════════════════════ -->
-<section class="cite">
+<section class="why-us" id="why-us">
+  <div class="container">
+    <div class="section-label reveal">为什么选择我们</div>
+    <h2 class="section-title reveal reveal-delay-1">为出海品牌而生，不为通用场景妥协</h2>
+    <p class="section-desc reveal reveal-delay-1">不是 SEO 工具的翻译版。从查询词到诊断规则，每个环节都为中文出海品牌重新设计。</p>
+
+    <div class="why-us-grid">
+      <div class="why-us-reasons">
+        <div class="why-us-reason reveal reveal-delay-1">
+          <div class="why-us-reason-icon">1</div>
+          <div class="why-us-reason-body">
+            <h4>专为跨境出海定制</h4>
+            <p>从查询词生成到诊断规则，每个环节都为中文出海品牌重新设计。通用 SEO 工具看不懂你的出海场景。</p>
+          </div>
+        </div>
+        <div class="why-us-reason reveal reveal-delay-2">
+          <div class="why-us-reason-icon">2</div>
+          <div class="why-us-reason-body">
+            <h4>每条结论可追溯</h4>
+            <p>不给黑箱分数。AI 引用了什么、说了什么、在哪个引擎——原文展示，你自己判断。每条结论都有来源。</p>
+          </div>
+        </div>
+        <div class="why-us-reason reveal reveal-delay-3">
+          <div class="why-us-reason-icon">3</div>
+          <div class="why-us-reason-body">
+            <h4>不卖报告，给处方</h4>
+            <p>竞争对手卖你一份 PDF 就结束了。我们给 P0/P1/P2 可执行处方，从问题到方案一站式闭环。</p>
+          </div>
+        </div>
+        <div class="why-us-reason reveal reveal-delay-4">
+          <div class="why-us-reason-icon">4</div>
+          <div class="why-us-reason-body">
+            <h4>开源可审计</h4>
+            <p>方法论开源（MIT），诊断规则可查。你的技术团队可以自己跑一遍验证，也可以用我们的自动化。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="why-us-visual reveal reveal-delay-2">
+        <div class="why-us-glow"></div>
+        <div class="why-us-chart-card">
+          <div class="why-us-chart-header">
+            <div class="hero-mockup-dot"></div>
+            <div class="hero-mockup-dot"></div>
+            <div class="hero-mockup-dot"></div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);margin-left:auto;">Doctor · 处方工作室</span>
+          </div>
+          <div class="why-us-chart-body">
+            <!-- 区块1：三分类查询体系 → 对应「专为跨境出海定制」 -->
+            <div class="why-us-chart-block">
+              <div class="why-us-chart-block-label">
+                <span class="dot blue"></span> 三分类查询体系 · 不只搜品牌名
+              </div>
+              <div class="market-grid">
+                <div class="market-cell">
+                  <div class="flag">🔍</div>
+                  <div class="lang">A 类 · 行业词</div>
+                  <div class="status warn">引用率 23%</div>
+                </div>
+                <div class="market-cell">
+                  <div class="flag">🎯</div>
+                  <div class="lang">B 类 · 品牌词</div>
+                  <div class="status ok">认知准确</div>
+                </div>
+                <div class="market-cell">
+                  <div class="flag">⚔️</div>
+                  <div class="lang">C 类 · 竞品词</div>
+                  <div class="status bad">落后竞品</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 区块2：结论带溯源 → 对应「每条结论可追溯」 -->
+            <div class="why-us-chart-block">
+              <div class="why-us-chart-block-label">
+                <span class="dot green"></span> 诊断结论 · 每条有来源
+              </div>
+              <div class="insight-card">
+                <div class="finding">
+                  AI 描述你的品牌仅用了「跨境电商平台」——<br>未提及产品品类和差异化定位。
+                </div>
+                <div class="source-line">
+                  <span class="source-tag">ChatGPT</span>
+                  <span>第 3 轮搜索 · A 类查询</span>
+                  <span style="margin-left:auto;">原文可查 →</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 区块3：处方 → 对应「不卖报告，给处方」 -->
+            <div class="why-us-chart-block">
+              <div class="why-us-chart-block-label">
+                <span class="dot purple"></span> 可执行处方 · P0 / P1 / P2
+              </div>
+              <div class="rx-list">
+                <div class="rx-item p0">
+                  <span class="prio">P0</span>
+                  <span class="desc">产品页补充品类词和差异化描述</span>
+                  <span class="eta">~3h</span>
+                </div>
+                <div class="rx-item p0">
+                  <span class="prio">P0</span>
+                  <span class="desc">添加 Product Schema 标记</span>
+                  <span class="eta">~2h</span>
+                </div>
+                <div class="rx-item p1">
+                  <span class="prio">P1</span>
+                  <span class="desc">创建品牌 Knowledge Graph 实体页</span>
+                  <span class="eta">~1d</span>
+                </div>
+                <div class="rx-item p1">
+                  <span class="prio">P1</span>
+                  <span class="desc">获取行业媒体产品评测反向链接</span>
+                  <span class="eta">~1w</span>
+                </div>
+                <div class="rx-item p2">
+                  <span class="prio">P2</span>
+                  <span class="desc">上线 llms.txt 引导 AI 爬虫</span>
+                  <span class="eta">~1h</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- Section 4: CITE 六大诊断维度                    -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="cite" id="methodology">
   <div class="container">
     <div class="section-label reveal">方法论</div>
-    <h2 class="section-title reveal reveal-delay-1">CITE 四维诊断模型</h2>
-    <p class="section-desc reveal reveal-delay-1">不是 SEO 换了个名字。是专为 AI 搜索引用优化的系统方法论。</p>
+    <h2 class="section-title reveal reveal-delay-1">六大维度 · 系统诊断</h2>
+    <p class="section-desc reveal reveal-delay-1">从技术地基到品牌资产，六层递进覆盖 AI 搜索可见度的全部影响因素。</p>
 
     <div class="cite-grid">
       <div class="cite-card reveal reveal-delay-1">
-        <div class="cite-card-letter">C</div>
-        <h3>内容力 <span>Content</span></h3>
-        <p>语义密度 · 结构可读性 · 可引用性 · Schema 结构化数据覆盖</p>
+        <div class="cite-card-letter">①</div>
+        <h3>可发现性 <span>Discoverability</span></h3>
+        <p>AI 能找到你吗？robots.txt · AI 爬虫放行 · llms.txt · 多语言站点结构</p>
       </div>
       <div class="cite-card reveal reveal-delay-2">
-        <div class="cite-card-letter">I</div>
-        <h3>身份力 <span>Identity</span></h3>
-        <p>品牌画像 AI 对齐 · Knowledge Graph 实体声明 · 品牌叙事一致性</p>
+        <div class="cite-card-letter">②</div>
+        <h3>结构化数据 <span>Structured Data</span></h3>
+        <p>数据格式对 AI 友好吗？Schema.org · Open Graph · JSON-LD · 产品标记</p>
       </div>
       <div class="cite-card reveal reveal-delay-3">
-        <div class="cite-card-letter">T</div>
-        <h3>信任力 <span>Trust</span></h3>
-        <p>E-E-A-T 质量标准 · 证据成熟度 A/B/C/D/E · 第三方权威引用</p>
+        <div class="cite-card-letter">③</div>
+        <h3>内容力 <span>Content</span></h3>
+        <p>内容值得被 AI 引用吗？三层结构 · FAQ · 数值证据 · 可引用段落</p>
       </div>
       <div class="cite-card reveal reveal-delay-4">
-        <div class="cite-card-letter">E</div>
+        <div class="cite-card-letter">④</div>
+        <h3>身份力 <span>Identity</span></h3>
+        <p>AI 准确理解你是谁吗？品牌画像对齐 · Knowledge Graph · 定位一致性</p>
+      </div>
+      <div class="cite-card reveal reveal-delay-5">
+        <div class="cite-card-letter">⑤</div>
+        <h3>信任力 <span>Trust</span></h3>
+        <p>第三方替你说话吗？媒体评测 · E-E-A-T 标准 · 证据成熟度 A→E</p>
+      </div>
+      <div class="cite-card reveal reveal-delay-5">
+        <div class="cite-card-letter">⑥</div>
         <h3>社区力 <span>Engagement</span></h3>
-        <p>Reddit/HN/Quora 社区可见度 · UGC 信号强度 · 社媒 AI 引用链</p>
+        <p>品牌在目标市场活跃吗？Reddit · Quora · UGC 信号 · 社媒引用链</p>
       </div>
     </div>
 
     <div class="cite-methodology reveal reveal-delay-3">
-      <div class="cite-methodology-item">融合 <span class="tag">E-E-A-T</span> 质量标准</div>
-      <div class="cite-methodology-item"><span class="tag">5 阶段</span> AI 引用审计链</div>
-      <div class="cite-methodology-item">证据成熟度 <span class="tag">A → E</span></div>
-      <a href="#" class="github-link">
+      <div class="cite-methodology-item">基于 <span class="tag">E-E-A-T</span> 质量标准，AI 搜索场景重新设计</div>
+      <div class="cite-methodology-item">方法论 <span class="tag">开源</span>，可自由审计验证</div>
+      <a href="https://github.com/fong-foo/geo-knowledge" class="github-link" target="_blank">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" opacity="0.6"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        开源框架 · MIT 许可
+        CITE 框架 · MIT 许可
       </a>
     </div>
   </div>
@@ -1130,24 +1907,24 @@
 <!-- ═══════════════════════════════════════════ -->
 <!-- Section 5: Social Proof                    -->
 <!-- ═══════════════════════════════════════════ -->
-<section class="proof">
+<section class="proof" id="opensource">
   <div class="container">
     <div class="proof-stats">
       <div class="reveal">
-        <div class="proof-stat-num">21</div>
-        <div class="proof-stat-label">篇 GEO 学术论文</div>
+        <div class="proof-stat-num">4 项目</div>
+        <div class="proof-stat-label">GitHub 全部开源</div>
       </div>
       <div class="reveal reveal-delay-1">
-        <div class="proof-stat-num">4</div>
-        <div class="proof-stat-label">大 AI 引擎覆盖</div>
+        <div class="proof-stat-num">3 引擎</div>
+        <div class="proof-stat-label">交叉对比验证</div>
       </div>
       <div class="reveal reveal-delay-2">
-        <div class="proof-stat-num">14</div>
-        <div class="proof-stat-label">条分析规则</div>
+        <div class="proof-stat-num">6 维度</div>
+        <div class="proof-stat-label">14 条诊断规则</div>
       </div>
       <div class="reveal reveal-delay-3">
-        <div class="proof-stat-num">A/B/C</div>
-        <div class="proof-stat-label">三类查询体系</div>
+        <div class="proof-stat-num">可追溯</div>
+        <div class="proof-stat-label">每条结论有来源</div>
       </div>
     </div>
 
@@ -1155,30 +1932,103 @@
       <div>
         <h4>方法论溯源</h4>
         <div class="proof-source-item">
-          改编自 <span class="badge">Corey Haines</span> SEO Audit Framework (MIT)
+          基于 <span class="badge">CITE</span> 六大诊断维度，AI 搜索场景原生设计
         </div>
         <div class="proof-source-item">
-          融合 <span class="badge">姚金刚</span> Yao GEO Skills 方法论
+          融合 <span class="badge">21 篇</span> GEO 学术研究，实证驱动
         </div>
       </div>
       <div style="margin-left: auto;">
-        <a href="#" class="github-link">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" opacity="0.6"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-          GitHub · 开源框架
-        </a>
+        <h4>开源项目</h4>
+        <div class="proof-source-item" style="color:var(--text-muted);font-size:12px;">
+          四个开源仓库，全部 MIT 许可
+        </div>
       </div>
     </div>
+
+    <!-- 开源项目长卡片 -->
+    <div class="oss-cards">
+      <a href="https://github.com/fong-foo/geo-knowledge" class="oss-long-card reveal reveal-delay-1" target="_blank">
+        <div class="oss-long-icon">📐</div>
+        <div class="oss-long-body">
+          <h4>CITE GEO 诊断框架</h4>
+          <p>六大维度 · 14 条诊断规则 · 17 篇论文支撑。专为跨境出海品牌设计的 AI 搜索可见度诊断体系。开源可审计。</p>
+        </div>
+        <div class="oss-long-meta">
+          <span class="badge">方法论</span>
+          <span class="badge">GEO</span>
+          <span class="badge">MIT</span>
+          <span class="oss-long-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/fong-foo/ai-crawlers" class="oss-long-card reveal reveal-delay-2" target="_blank">
+        <div class="oss-long-icon">🤖</div>
+        <div class="oss-long-body">
+          <h4>AI Crawlers 爬虫清单</h4>
+          <p>14 个 AI 爬虫 User-Agent 完整列表 + robots.txt 一键模板 + 一行命令检查脚本。开发者开箱即用。</p>
+        </div>
+        <div class="oss-long-meta">
+          <span class="badge">工具</span>
+          <span class="badge">robots.txt</span>
+          <span class="badge">MIT</span>
+          <span class="oss-long-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/fong-foo/llms-txt" class="oss-long-card reveal reveal-delay-3" target="_blank">
+        <div class="oss-long-icon">📄</div>
+        <div class="oss-long-body">
+          <h4>llms.txt 标准中文指南</h4>
+          <p>为 AI 爬虫提供网站导航。模板 + 编写原则 + 验证脚本。让 AI 准确理解你的网站结构。</p>
+        </div>
+        <div class="oss-long-meta">
+          <span class="badge">标准</span>
+          <span class="badge">llms.txt</span>
+          <span class="badge">MIT</span>
+          <span class="oss-long-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/fong-foo/geo-knowledge" class="oss-long-card reveal reveal-delay-4" target="_blank">
+        <div class="oss-long-icon">🏗️</div>
+        <div class="oss-long-body">
+          <h4>CiteFlow 主项目</h4>
+          <p>GEO AaaS 平台。AI 品牌体检 → 诊断 → 处方，三步闭环。为中国跨境出海品牌而生。</p>
+        </div>
+        <div class="oss-long-meta">
+          <span class="badge">产品</span>
+          <span class="badge">SaaS</span>
+          <span class="badge">MIT</span>
+          <span class="oss-long-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- Section: 使命                                -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="mission" id="mission">
+  <div class="container">
+    <div class="mission-accent reveal"></div>
+    <h2 class="mission-quote reveal reveal-delay-1">让每一个中国出海品牌，都能被世界看到。</h2>
+    <p class="mission-body reveal reveal-delay-2">
+      我们相信 GEO 不该是巨头的特权。<br>
+      CiteFlow 用开源方法论和自动化诊断，把 AI 搜索可见度变得可衡量、可优化、人人可用。
+    </p>
   </div>
 </section>
 
 <!-- ═══════════════════════════════════════════ -->
 <!-- Section 6: Pricing                         -->
 <!-- ═══════════════════════════════════════════ -->
-<section class="pricing">
+<section class="pricing" id="pricing">
   <div class="container">
     <div class="section-label reveal">定价</div>
-    <h2 class="section-title reveal reveal-delay-1">从诊断到处方，一步到位</h2>
-    <p class="section-desc reveal reveal-delay-1">免费体检。付费深度分析。为企业团队定制。</p>
+    <h2 class="section-title reveal reveal-delay-1">简单透明，按需解锁</h2>
+    <p class="section-desc reveal reveal-delay-1">免费体验 Light 体检。¥100 解锁完整诊断 + 处方。</p>
 
     <div class="pricing-cards">
       <div class="pricing-card reveal reveal-delay-1">
@@ -1186,7 +2036,7 @@
         <div class="pricing-price">¥0</div>
         <div class="pricing-period">永久免费</div>
         <ul class="pricing-features">
-          <li>1 次 / 月 AI 体检</li>
+          <li>Light 初步体检</li>
           <li>基础引用率概览</li>
           <li>品牌健康卡片</li>
           <li>竞品对比图表</li>
@@ -1196,31 +2046,30 @@
 
       <div class="pricing-card featured reveal reveal-delay-2">
         <div class="pricing-tier">专业版</div>
-        <div class="pricing-price">¥299</div>
-        <div class="pricing-period">/ 月</div>
+        <div class="pricing-price">¥100</div>
+        <div class="pricing-period">/ 次</div>
         <ul class="pricing-features">
-          <li>无限次 AI 体检</li>
-          <li>完整诊断 + 处方报告</li>
-          <li>4 引擎对比分析</li>
+          <li>Probe 深度扫描</li>
+          <li>Analyst 14 条规则诊断</li>
+          <li>Doctor 优化处方</li>
           <li>AI 认知画像</li>
           <li>竞品差距量化</li>
-          <li>P0/P1/P2 处方清单</li>
+          <li>4 引擎交叉对比</li>
         </ul>
         <a href="/upgrade" class="pricing-btn primary">立即升级</a>
       </div>
 
-      <div class="pricing-card reveal reveal-delay-3">
-        <div class="pricing-tier">企业版</div>
-        <div class="pricing-price">定制</div>
-        <div class="pricing-period">按需报价</div>
+      <div class="pricing-card reveal reveal-delay-3" style="opacity:0.6;">
+        <div class="pricing-tier">即将推出</div>
+        <div class="pricing-price" style="color:var(--text-muted);">待定</div>
+        <div class="pricing-period">品牌资产平台</div>
         <ul class="pricing-features">
-          <li>API 接入</li>
-          <li>批量品牌监控</li>
-          <li>专属客户经理</li>
-          <li>自定义报告</li>
-          <li>SLA 保障</li>
+          <li>品牌档案库 · 扫码自动归档</li>
+          <li>处方历史版本链 v1→v2→...</li>
+          <li>闭环复查 · 量化优化效果</li>
+          <li>多品牌看板 · 团队协作</li>
         </ul>
-        <a href="mailto:hello@citeflow.com" class="pricing-btn">联系销售</a>
+        <span class="pricing-btn" style="cursor:default;opacity:0.4;">敬请期待</span>
       </div>
     </div>
   </div>
@@ -1232,13 +2081,13 @@
 <section class="cta-section">
   <div class="container">
     <h2 class="reveal">准备好了解你的品牌在 AI 眼中的样子？</h2>
-    <p class="reveal reveal-delay-1">3 分钟拿到报告。免费。无需注册。</p>
+    <p class="reveal reveal-delay-1">1 分钟注册，3 分钟拿到报告。</p>
     <div class="cta-row reveal reveal-delay-2">
       <input type="text" class="hero-input" placeholder="输入品牌域名，如 lilysilk.com" id="cta-domain">
-      <button class="hero-cta" onclick="startCheckup()">进入体检中心 →</button>
+      <button class="hero-cta" onclick="goToScan()">体检中心 →</button>
     </div>
     <div class="cta-benefits reveal reveal-delay-3">
-      3 分钟 · 免费 · 无需注册 · 4 大 AI 引擎覆盖
+      3 分钟 · 注册免费体验 · 4 大 AI 引擎覆盖
     </div>
   </div>
 </section>
@@ -1251,7 +2100,7 @@
       <a href="#">服务条款</a>
     </div>
     <div class="footer-right">
-      <a href="#">GitHub</a>
+      <a href="https://github.com/fong-foo/geo-knowledge" target="_blank">GitHub</a>
       <a href="#">X</a>
       <a href="mailto:hello@citeflow.com">联系方式</a>
     </div>
@@ -1269,6 +2118,11 @@
   }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  function goToScan() {
+    const token = localStorage.getItem('cf_token');
+    window.location.href = token ? '/scan' : '/login';
+  }
 
   function startCheckup() {
     const domain = document.getElementById('hero-domain').value || document.getElementById('cta-domain').value || '';

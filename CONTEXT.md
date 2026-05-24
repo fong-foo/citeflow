@@ -1,6 +1,6 @@
 # CiteFlow — 海老作战手册
 
-> 更新 · 2026-05-23（会话：上线前冲刺启动。后端全通，前端全验证，TASK_PRELAUNCH_FIX已执行。目标5/31上线）
+> 更新 · 2026-05-24 下午（Landing page +为什么选择我们+使命；ai-crawlers开源已发布。Next：llms-txt → geo-knowledge → 部署上线）
 
 ---
 
@@ -216,30 +216,24 @@ lib/storage.ts — Tier类型 + 辅助函数
 ### 当前任务
 ```
 ✅ Analyst 诊断报告4-Tab页面（scan-analyst-report.tsx）
-✅ Analyst idle 风险预警+左右分栏（scan-analyst-briefing.tsx）
-✅ Doctor 处方步骤清单（scan-prescription-steps.tsx，P0/P1/P2勾选+锁定态）
-✅ 三老角色定义+SOUL.md升级（yaolao/hailao/xuanlao）
-✅ GEO知识库目录搭建（knowledge/ 7个子目录，33个文件）
-✅ CiteFlow GEO Audit Framework v2.0（融入5阶段审计链+8维度内容评分+证据成熟度模型+处方路线图）
-✅ Doctor prompt 接入 CITE + 证据成熟度（A/B/C/D/E五级，Trust维度处方强制标注目标证据等级）
-✅ knowledge_loader CITE维度注入 + 证据成熟度上下文（Trust规则触发时自动注入）
-✅ Analyst prompt 接入 8 维度内容评分（语义密度/结构/可引用性/权威/可读性/鲁棒性/新颖性/跨域）
-✅ 方法论溯源：融合 Corey Haines SEO Audit（MIT）+ 姚金刚 yao-geo-skills 方法论
-✅ GitHub 开源仓库上线（github.com/fong-foo/citeflow-geo-audit）
-✅ 海老约束升级：CLAUDE.md 新增「架构禁区」4 条 + CHECKLIST.md 新增前端自检 6 项
-✅ TASK_VERIFY_METHODOLOGY.md 已写（全管线验证 CITE+证据成熟度+8维度评分）
-⏳ 方法论验证（TASK_VERIFY_METHODOLOGY.md → 海老待执行）
-✅ TASK_DOCTOR_INDEPENDENT.md 已写（新建 scan-doctor-workshop.tsx + page.tsx 接入，4h）
-⏳ Doctor 独立运行（TASK_DOCTOR_INDEPENDENT.md → 海老待执行）
-⏳ 飞书文档精读（24万字，游景峰圈章节 → 玄老提取 → 入库）
-⏳ 爬虫三级降级
-⏳ 轮询改造
+✅ Doctor 处方工作室（scan-doctor-workshop.tsx, briefing→generating→report）
+✅ 三老角色定义+SOUL.md升级
+✅ GEO知识库目录搭建（knowledge/ 7个子目录）
+✅ CiteFlow GEO Audit Framework v2.1（+AI爬虫完整UA列表+llms.txt标准+GEOFlow最佳实践）
+✅ 方法论溯源：Corey Haines（MIT）+ 姚金刚 + GEOFlow（Apache 2.0）
+✅ GitHub 开源仓库上线
+✅ 记忆层修复（page.tsx: doctorPhase恢复+localStorage同步）
+✅ 部署checklist（DEPLOYMENT_CHECKLIST.md）
+⏳ 部署P0代码改动（auth_db.py DB_PATH + auth.py SECRET_KEY + api.py CORS）
+⏳ 域名配置（citeflow.cn → Vercel + api.citeflow.cn → Railway）
+⏳ 交互QA（游景峰进行中）
+🚀 上线后 → v1.1 品牌档案库
 ```
 
 ### Doctor 处方工作室（最终形态）
 Doctor 是用户持续交互的核心界面（不是一次性报告）：
-- **方法论体系**：CiteFlow CITE 四维模型（Content/Identity/Trust/Engagement），21篇论文归类到4个维度
-  - 前端预留方法论标签（"基于 CiteFlow CITE 四维模型 · 融合 N 项研究"）
+- **方法论体系**：CiteFlow CITE 六大诊断维度（可发现性/结构化数据/内容力/身份力/信任力/社区力），21篇论文归类到6个维度
+  - 前端预留方法论标签（"基于 CiteFlow CITE 六大维度 · 融合 N 项研究"）
   - 后端改造待玄老完成知识库 CITE 分类 + Doctor prompt 更新
 - 顶部三卡片：A类引用率变化 / 已解决问题 / 处方版本历史（Phase 4）
 - CTA：\"重新体检\"+\"基于当前状态重新生成处方\"
@@ -268,6 +262,11 @@ Doctor 是用户持续交互的核心界面（不是一次性报告）：
 - 切换tier：localStorage cf_user.tier字段
 
 ## API 配置
+- **开发启动**: `uvicorn api:app --reload --port 8000`
+- **生产启动**: `gunicorn api:app -c gunicorn.conf.py`（4 workers, 600s timeout）
+- **并发控制**: 全局信号量 max 5 并发扫描，超限返回 503
+- **数据库**: SQLite WAL 模式 + busy_timeout=5000ms + 单连接复用
+- **任务清理**: 每 5 分钟自动清理超过 30 分钟的过期扫描任务
 - ChatGPT 中转站: api.ofox.ai/v1, Model: openai/gpt-4o
 - DeepSeek: api.deepseek.com/v1, Model: deepseek-chat
 - Gemini: api.ofox.ai/v1, Model: gemini-3.1-flash-lite-preview
@@ -279,3 +278,36 @@ Doctor 是用户持续交互的核心界面（不是一次性报告）：
 
 ## 大小限制
 硬上限 8KB。当前: ~8.5KB（略超，下次清理）。
+
+## 2026-05-24 凌晨状态
+
+### Landing Page（已全面改版，待commit）
+- Hero: H1 "AI不推荐你≠产品不好"，聊天气泡版poster，删tag/浮层/ugreen
+- 导航: 居中三段式，锚点链接(工作流/方法论/定价)，goToScan智能跳转
+- 工作流: "从扫描到优化，一次闭环"，三步文案重写
+- 方法论: 六大维度①-⑥，"开源可审计"标签
+- Social Proof: ChatGPT/Gemini/Claude·3引擎·6维度·可追溯
+- 定价: ¥0/¥100两档，删企业版
+- CTA: "注册免费体验"
+
+### 代码改动（已改，待commit）
+- page.tsx: 记忆层修复（doctorPhase恢复+localStorage同步）
+- auth_db.py: DB_PATH→os.environ.get
+- auth.py: SECRET_KEY→os.environ.get
+- api.py: CORS→os.environ.get("CORS_ORIGINS").split(",")
+- doctor_prompt.py: 四维→六维
+- knowledge_loader.py: 四维→六维
+- citeflow-geo-audit-framework.md: v2.1.0（六维+完整AI爬虫列表）
+- knowledge/geoflow-practices.md: GEOFlow最佳实践提取（新建）
+- knowledge/templates/llms-txt-template.md: llms.txt模板（新建）
+
+### 已发现但未修的Bug
+- Probe full模式A类查询词引用率0%：bc_query_strs在full模式只含B/C类，_stream_cite用B/C搜索结果检查A类
+- 修复方案：probe_node.py L222 bc_query_strs=expanded_query_strs（一行改）
+
+### 今天进展（2026-05-24）
+- ✅ Landing page 新增「为什么选择我们」+「使命」两个 section
+- ✅ ai-crawlers 开源 repo 发布（github.com/fong-foo/ai-crawlers）
+- ⏳ llms-txt repo 待发布
+- ⏳ geo-knowledge repo 待发布
+- ⏳ 部署上线（Railway+Vercel+citeflow.cn）

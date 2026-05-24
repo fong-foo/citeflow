@@ -259,7 +259,7 @@ PRESCRIPTION_KNOWLEDGE_MAP: dict[str, list[str]] = {
     ],
 }
 
-# ── CITE 四维模型映射 ──────────────────────────────────
+# ── CITE 六大维度映射 ──────────────────────────────────
 # 处方类型 → CITE 维度 + 诊断重点
 PRESCRIPTION_TYPE_TO_CITE: dict[str, dict] = {
     "技术优化": {
@@ -318,7 +318,7 @@ def get_prescription_knowledge(triggered_rules: list[dict], max_tokens: int = 80
     - get_knowledge_for_rules: 按诊断框架匹配（给 Analyst 用）
     - get_prescription_knowledge: 按处方类型匹配（给 Doctor 用）
 
-    新增（2026-05-22）：注入 CITE 四维模型维度上下文，
+    新增（2026-05-23）：注入 CITE 六大维度上下文，
     LLM 生成的每条处方 evidence 字段会带上 CITE·{维度} 前缀。
     """
     if not triggered_rules:
@@ -366,7 +366,7 @@ def get_prescription_knowledge(triggered_rules: list[dict], max_tokens: int = 80
         return ""
 
     # 6. 组装输出：CITE 维度上下文 + 知识内容
-    parts = ["\n=== CiteFlow CITE 四维诊断上下文 ==="]
+    parts = ["\n=== CiteFlow CITE 六大维度诊断上下文 ==="]
     parts.append("以下规则被触发，对应 CITE 模型维度：")
     parts.extend(cite_contexts)
     parts.append("")

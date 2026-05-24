@@ -11,9 +11,10 @@
 - **替代做法**: 自然使用品类词和长尾查询词，以帮用户理解为目的
 
 ### 2. 阻止AI爬虫
-- **来源**: 论文2(Section 3.3)
-- **表现**: robots.txt中禁止GPTBot/Google-Extended/anthropic-ai
+- **来源**: 论文2(Section 3.3) + GEOFlow最佳实践
+- **表现**: robots.txt中禁止GPTBot/Google-Extended/anthropic-ai 等AI爬虫
 - **后果**: 网站被AI引用可能性显著降低。你的内容再优秀AI也看不到
+- **补充**: 需要放行的AI爬虫远不止这三家——还包括 ClaudeBot, PerplexityBot, CCBot, meta-externalagent, cohere-ai, Bytespider 等（完整列表见 `templates/technical-schema-robots.md`）
 
 ### 3. 纯Q&A格式无上下文
 - **来源**: 论文3(Section 4.2)

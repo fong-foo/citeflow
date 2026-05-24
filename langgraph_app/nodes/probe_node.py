@@ -217,13 +217,9 @@ async def _probe_core(state: dict) -> dict:
         expanded_query_strs = [q["query"] for q in expanded_queries]
         bc_query_strs = expanded_query_strs  # light 模式 A 类直接跑搜索流
     else:
-        # 主搜索流：多引擎启用时只跑 B/C 类，A 类留给多引擎流（避免 GPT 重复调用）
-        if ENABLE_MULTI_ENGINE:
-            bc_query_strs = [q["query"] for q in expanded_queries if isinstance(q, dict) and q.get("category") != "industry"]
-            if not bc_query_strs:  # 兜底：无 B/C 类查询时跑全部
-                bc_query_strs = expanded_query_strs
-        else:
-            bc_query_strs = expanded_query_strs
+        # 主搜索流：始终跑全部查询词（A+B+C），确保引用率分析有完整数据。
+        # 多引擎流（下文的 multi_engine_task）仍单独跑 A 类，作为交叉验证补充数据。
+        bc_query_strs = expanded_query_strs
 
     search_task = None if _done("probe_search_p1") else asyncio.create_task(
         _stream_search_phase1(ui, bc_query_strs))
@@ -349,7 +345,7 @@ async def _probe_core(state: dict) -> dict:
 
     # 竞品提取（Haiku 从搜索提取竞品名，与 P2 并行跑，用于竞品流兜底）
     competitor_mentions_task = None
-    if not search_timed_out and mode == "full":
+    if not search_timed_out:
         competitor_mentions_task = asyncio.create_task(
             _extract_competitor_mentions(search_results, ui.get("brand_name", ""), ui.get("domain", ""),
                                          website_text=page_text))
@@ -375,6 +371,17 @@ async def _probe_core(state: dict) -> dict:
         mm_gap_error = None
         mm_gap_task = None
 
+        # 等待 Haiku 竞品提取完成，用于引用分析
+        light_cite_competitors = list(ui.get("competitors", []))
+        if competitor_mentions_task:
+            try:
+                _competitor_mentions = await competitor_mentions_task
+                _mentions_awaited = True
+                extra = [c["brand"] for c in _competitor_mentions if c.get("brand")]
+                light_cite_competitors = list(dict.fromkeys(light_cite_competitors + extra))[:5]
+            except Exception:
+                pass
+
         if search_timed_out:
             cite_details = []
             citation_metrics = CitationMetrics(rate=0.0, total_queries=0, mentioned_count=0, details=[],
@@ -387,7 +394,7 @@ async def _probe_core(state: dict) -> dict:
         else:
             cite_task = None if _done("probe_cite") else asyncio.create_task(
                 _stream_cite(queries, classified_queries, search_results, ui, mode="light",
-                             competitors=ui.get("competitors", [])))
+                             competitors=light_cite_competitors))
 
         # light 模式 cite wait（需在此处 await，不在 full 模式的 else 分支内）
         if cite_task:
@@ -711,26 +718,17 @@ async def _probe_core(state: dict) -> dict:
     else:
         engine_results = {}
 
-    # ── 合并 A 类引用数据（full 模式多引擎流产出）到 citation_metrics ──
+    # ── 合并多引擎引用明细到 citation_metrics（主搜索流已含 A 类，多引擎仅补充明细）──
     if mode == "full" and ENABLE_MULTI_ENGINE and engine_results:
         gpt_engine = engine_results.get("gpt")
         if gpt_engine:
-            a_count = sum(1 for cat in query_categories.values() if cat == "industry")
-            a_mentioned = round(a_count * gpt_engine.citation_rate / 100)
-            citation_metrics.industry_rate = gpt_engine.citation_rate
-            citation_metrics.industry_count = a_count
-            citation_metrics.industry_mentioned = a_mentioned
-            total_all = citation_metrics.total_queries + a_count
-            mentioned_all = citation_metrics.mentioned_count + a_mentioned
-            citation_metrics.rate = citation_metrics.industry_rate  # A类引用率
-            citation_metrics.total_queries = total_all
-            citation_metrics.mentioned_count = mentioned_all
-
-            # 合并 industry 引用明细到 details
             raw_data = gpt_engine.raw_data or {}
             engine_citations = raw_data.get("citations", [])
-            industry_details = []
             for c in engine_citations:
+                # 避免与主搜索流 A 类 detail 重复（同 query 只保留主搜索流的）
+                existing_queries = {d.query for d in citation_metrics.details}
+                if c.get("query", "") in existing_queries:
+                    continue
                 cd = CitationDetail(
                     query=c.get("query", ""),
                     mentioned=c.get("is_mentioned", False),
@@ -739,9 +737,7 @@ async def _probe_core(state: dict) -> dict:
                     reference_source=c.get("reference_source", ""),
                     query_category="industry",
                 )
-                industry_details.append(cd)
-            if industry_details:
-                citation_metrics.details = list(citation_metrics.details) + industry_details
+                citation_metrics.details.append(cd)
 
     # ── 竞品 per-dimension 指标聚合（在 A/B/C 三类数据齐全后）──
     citation_metrics.competitor_metrics = _aggregate_competitor_metrics(
@@ -1186,11 +1182,13 @@ def _aggregate_competitor_metrics(cite_details: list) -> dict[str, dict]:
         comp_industry_rate = (comp_cat_mentioned["industry"] / comp_cat_counts["industry"] * 100) if comp_cat_counts["industry"] > 0 else 0.0
         comp_recommendation_rate = (comp_cat_recommended["industry"] / comp_cat_counts["industry"] * 100) if comp_cat_counts["industry"] > 0 else 0.0
         comp_top_rate = (comp_top_count / comp_cat_counts["industry"] * 100) if comp_cat_counts["industry"] > 0 else 0.0
+        comp_scenario_rate = (comp_cat_mentioned["competitor"] / comp_cat_counts["competitor"] * 100) if comp_cat_counts["competitor"] > 0 else 0.0
 
         competitor_metrics[comp_name] = {
             "industry_rate": round(comp_industry_rate, 1),
             "recommendation_rate": round(comp_recommendation_rate, 1),
             "top_rate": round(comp_top_rate, 1),
+            "competitor_scenario_rate": round(comp_scenario_rate, 1),
             "mention_count": comp_total_mentioned,
         }
 

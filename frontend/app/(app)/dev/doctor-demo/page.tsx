@@ -238,7 +238,6 @@ export default function DoctorDemoPage() {
               summary={prescription?.summary || MOCK_PRESCRIPTION.summary}
               domain="flowerknows.com"
               showHeader={true}
-              onRegenerate={() => { setPrescription(null); setPhase("briefing"); }}
             />
           </div>
         )}
