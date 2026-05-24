@@ -70,6 +70,7 @@ Full版（tier=full）：
 | **药老** | `yaolao` | Hermes | 产品战略+架构决策+TASK文件+审查+管线管理 |
 | **海老** | `hailao` | Claude Code | 读TASK→写代码→自检→交付 |
 | **玄老** | `xuanlao` | Hermes(独立profile) | GEO知识策展→维护knowledge/目录→支撑Doctor处方 |
+| **风老** | `fenglao` | Hermes(独立profile) | 营销军师→内容策略+圈子渗透+开源推广+分销设计 |
 
 三老 SOUL.md/CLAUDE.md 已升级（2026-05-20）：
 - 药老：Product Manager 方法论 + Reality Checker 审查姿态
