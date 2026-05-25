@@ -85,7 +85,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!token) {
-      window.location.href = "/login";
+      window.location.href = "/login?redirect=/admin";
       return;
     }
     fetchStats();
