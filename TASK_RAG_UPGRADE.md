@@ -1,6 +1,6 @@
 # TASK_RAG_UPGRADE.md — 知识库从子串匹配升级到 RAG 向量检索
 
-> 药老出品 · 2026-05-25
+> 药老出品 · 2026-05-25 · 海老审后修订
 > 目标：Doctor/Analyst 知识注入从硬编码子串匹配改为 ChromaDB 向量检索
 > 预计工时：4h
 
@@ -120,35 +120,15 @@ import re
 import chromadb
 from chromadb.utils import embedding_functions
 import httpx
-import hashlib
 from typing import Optional
+from langgraph_app.tools.embedding import OfoxEmbeddingFunction
 
 KB_DIR = os.path.join(os.path.dirname(__file__), "knowledge")
 DB_DIR = os.path.join(os.path.dirname(__file__), "chroma_db")
 OFOX_API_KEY = os.environ.get("OFOX_API_KEY", "")
 
-# ── Embedding function ──────────────────────────────
-
-class OfoxEmbeddingFunction(embedding_functions.EmbeddingFunction):
-    """使用 ofox.io text-embedding-3-small 做向量化（1536维）。"""
-    
-    def __call__(self, input: list[str]) -> list[list[float]]:
-        # 批量 embed（最多 100 条一次）
-        all_embeddings = []
-        batch_size = 50
-        for i in range(0, len(input), batch_size):
-            batch = input[i:i + batch_size]
-            resp = httpx.post(
-                "https://api.ofox.io/v1/embeddings",
-                headers={"Authorization": f"Bearer {OFOX_API_KEY}"},
-                json={"model": "text-embedding-3-small", "input": batch},
-                timeout=30,
-            )
-            if resp.status_code != 200:
-                raise RuntimeError(f"Embedding API error: {resp.status_code} {resp.text}")
-            data = resp.json()
-            all_embeddings.extend([d["embedding"] for d in data["data"]])
-        return all_embeddings
+# ── OfoxEmbeddingFunction 定义在 langgraph_app/tools/embedding.py ──
+# 见注意事项第2条
 
 
 def chunk_paper(filepath: str) -> list[dict]:
@@ -166,7 +146,10 @@ def chunk_paper(filepath: str) -> list[dict]:
         text += f"策略: {s.get('what', '')}\n"
         text += f"原理: {s.get('why', '')}\n"
         text += f"方法: {s.get('how', '')}\n"
-        text += f"证据: {s.get('evidence', '')}\n"
+        text += f"预期效果: {s.get('expected_impact', '')}\n"
+        text += f"验证方式: {s.get('how_to_verify', '')}\n"
+        if s.get('template'):
+            text += f"执行模板: {s['template']}\n"
         if s.get('applicable_to'):
             text += f"适用场景: {', '.join(s['applicable_to'])}"
         
@@ -242,51 +225,57 @@ def build_index(rebuild: bool = False):
     
     # 扫描 papers/
     papers_dir = os.path.join(KB_DIR, "papers")
-    for fname in sorted(os.listdir(papers_dir)):
-        if fname.endswith(".json"):
-            chunks = chunk_paper(os.path.join(papers_dir, fname))
-            all_chunks.extend(chunks)
-            print(f"  papers/{fname}: {len(chunks)} chunks")
+    if os.path.exists(papers_dir):
+        for fname in sorted(os.listdir(papers_dir)):
+            if fname.endswith(".json"):
+                chunks = chunk_paper(os.path.join(papers_dir, fname))
+                all_chunks.extend(chunks)
+                print(f"  papers/{fname}: {len(chunks)} chunks")
     
     # 扫描 industries/
     industries_dir = os.path.join(KB_DIR, "industries")
-    for fname in sorted(os.listdir(industries_dir)):
-        if fname.endswith(".md"):
-            chunks = chunk_markdown(os.path.join(industries_dir, fname), "industry")
-            all_chunks.extend(chunks)
-            print(f"  industries/{fname}: {len(chunks)} chunks")
+    if os.path.exists(industries_dir):
+        for fname in sorted(os.listdir(industries_dir)):
+            if fname.endswith(".md"):
+                chunks = chunk_markdown(os.path.join(industries_dir, fname), "industry")
+                all_chunks.extend(chunks)
+                print(f"  industries/{fname}: {len(chunks)} chunks")
     
     # 扫描 platforms/
     platforms_dir = os.path.join(KB_DIR, "platforms")
-    for fname in sorted(os.listdir(platforms_dir)):
-        if fname.endswith(".md"):
-            chunks = chunk_markdown(os.path.join(platforms_dir, fname), "platform")
-            all_chunks.extend(chunks)
-            print(f"  platforms/{fname}: {len(chunks)} chunks")
+    if os.path.exists(platforms_dir):
+        for fname in sorted(os.listdir(platforms_dir)):
+            if fname.endswith(".md"):
+                chunks = chunk_markdown(os.path.join(platforms_dir, fname), "platform")
+                all_chunks.extend(chunks)
+                print(f"  platforms/{fname}: {len(chunks)} chunks")
     
     # 扫描 regions/
     regions_dir = os.path.join(KB_DIR, "regions")
-    for fname in sorted(os.listdir(regions_dir)):
-        if fname.endswith(".md"):
-            chunks = chunk_markdown(os.path.join(regions_dir, fname), "region")
-            all_chunks.extend(chunks)
-            print(f"  regions/{fname}: {len(chunks)} chunks")
+    if os.path.exists(regions_dir):
+        for fname in sorted(os.listdir(regions_dir)):
+            if fname.endswith(".md"):
+                chunks = chunk_markdown(os.path.join(regions_dir, fname), "region")
+                all_chunks.extend(chunks)
+                print(f"  regions/{fname}: {len(chunks)} chunks")
     
     # 扫描 templates/
     templates_dir = os.path.join(KB_DIR, "templates")
-    for fname in sorted(os.listdir(templates_dir)):
-        if fname.endswith(".md"):
-            chunks = chunk_markdown(os.path.join(templates_dir, fname), "template")
-            all_chunks.extend(chunks)
-            print(f"  templates/{fname}: {len(chunks)} chunks")
+    if os.path.exists(templates_dir):
+        for fname in sorted(os.listdir(templates_dir)):
+            if fname.endswith(".md"):
+                chunks = chunk_markdown(os.path.join(templates_dir, fname), "template")
+                all_chunks.extend(chunks)
+                print(f"  templates/{fname}: {len(chunks)} chunks")
     
     # 扫描 anti-patterns/
     ap_dir = os.path.join(KB_DIR, "anti-patterns")
-    for fname in sorted(os.listdir(ap_dir)):
-        if fname.endswith(".md"):
-            chunks = chunk_markdown(os.path.join(ap_dir, fname), "anti-pattern")
-            all_chunks.extend(chunks)
-            print(f"  anti-patterns/{fname}: {len(chunks)} chunks")
+    if os.path.exists(ap_dir):
+        for fname in sorted(os.listdir(ap_dir)):
+            if fname.endswith(".md"):
+                chunks = chunk_markdown(os.path.join(ap_dir, fname), "anti-pattern")
+                all_chunks.extend(chunks)
+                print(f"  anti-patterns/{fname}: {len(chunks)} chunks")
     
     # 策略总览
     for fname in ["STRATEGY_OVERVIEW.md", "geoflow-practices.md", "citeflow-geo-audit-framework.md"]:
@@ -399,7 +388,7 @@ def _get_collection():
     db_dir = os.path.join(_PROJECT_ROOT, "chroma_db")
     client = chromadb.PersistentClient(path=db_dir)
     # 必须传 embedding function，否则 ChromaDB 用默认的（向量维度不兼容）
-    from build_index import OfoxEmbeddingFunction
+    from langgraph_app.tools.embedding import OfoxEmbeddingFunction
     ef = OfoxEmbeddingFunction()
     return client.get_collection("citeflow_knowledge", embedding_function=ef)
 
@@ -409,29 +398,17 @@ def _build_query_text(triggered_rules: list[dict]) -> str:
     if not triggered_rules:
         return ""
     
+    # 复用现有常量，避免重复定义
+    from langgraph_app.tools.knowledge_loader import RULE_TO_CITE_DIMENSION
+    
     # 收集规则描述 + CITE 维度
     parts = []
     for r in triggered_rules:
         rule_id = r.get("rule_id", 0)
         rule_name = r.get("rule_name", "")
-        severity = r.get("severity", "")
         detail = r.get("detail", "")
         
-        # 旧的知识映射（保留，用于构建语义查询）
-        import re
-        dim_map = {
-            1: "品牌定位偏差 AI描述与品牌自述不一致",
-            2: "品牌隐形 行业引用率严重偏低 内容优化",
-            3: "引用源质量差 缺乏高权威第三方引用 权威建设",
-            4: "引用源单一 缺乏多元化背书 社区运营",
-            6: "竞品维度劣势 在关键维度被竞品压制 内容优化",
-            10: "行业影响力弱 品牌名被搜索但内容不被引用",
-            12: "引擎差异异常 不同AI引擎对品牌认知不一致",
-            13: "AI认知偏差 AI对品牌的理解有差距",
-            14: "竞品胜负矩阵 对比查询中输给竞品",
-        }
-        
-        dim_text = dim_map.get(rule_id, f"规则{rule_id} {rule_name}")
+        dim_text = RULE_TO_CITE_DIMENSION.get(rule_id, f"规则{rule_id} {rule_name}")
         parts.append(dim_text)
         if detail:
             parts.append(detail[:200])  # 截断，防过长
@@ -639,9 +616,13 @@ curl -X POST http://localhost:8000/api/doctor \
 ---
 
 ## 注意事项
-1. **ChromaDB 数据目录** `chroma_db/` 加到 `.gitignore`
-2. **首次部署必须运行** `python3 build_index.py`（Railway 启动命令里加）
-3. **OFOX_API_KEY 必须在环境中** — embedding 依赖这个 key
-4. **向后兼容** — 不要改 `doctor_node.py` 和 `analyst_briefing.py` 的调用方式
-5. **build_index 幂等** — 重复运行安全（upsert 不是 insert）
-6. **玄老以后加新论文**：写完 JSON → 跑 `python3 build_index.py` 即可增量入库
+
+1. **`.gitignore` 加 `chroma_db/`** — 索引数据不提交到 Git，每个环境独立构建
+2. **`OfoxEmbeddingFunction` 放独立文件** — 新建 `langgraph_app/tools/embedding.py`，`build_index.py` 和 `knowledge_loader.py` 都从它 import，避免循环依赖
+3. **旧 `GEO_ENGINE_KNOWLEDGE_BASE.md`** — 保留不删，但 `knowledge_loader.py` 不再读取它。旧文件仅作文档参考，fallback 路径用到它时输出 warning
+4. **首次部署必须运行** `python3 build_index.py`（Railway 启动命令里加，或手动跑一次）
+5. **`OFOX_API_KEY` 必须在环境中** — embedding 依赖这个 key
+6. **向后兼容** — 不要改 `doctor_node.py` 和 `analyst_briefing.py` 的调用方式
+7. **build_index 幂等** — 重复运行安全（upsert 不是 insert）
+8. **玄老以后加新论文**：写完 JSON → 跑 `python3 build_index.py` 即可增量入库
+9. **paper_004 JSON 已修复** — 之前有两处未转义双引号（"Data Moat" / "Algorithmic Omnipresence"），已修复为 `\"...\"`
