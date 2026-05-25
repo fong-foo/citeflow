@@ -110,7 +110,20 @@
       "Bash(md5 ~/Desktop/CiteFlow/frontend/components/scan-result.tsx)",
       "Bash(gh repo *)",
       "WebFetch(domain:jina.ai)",
-      "Bash(open *)"
+      "Bash(open *)",
+      "Bash(railway --version)",
+      "Bash(vercel --version)",
+      "Bash(brew install *)",
+      "Bash(RAILWAY_API_TOKEN=\"85ebd266-5ff7-4313-8ddb-6b886c9443be\" railway variables --help)",
+      "Bash(env)",
+      "Bash(RAILWAY_API_TOKEN=\"85ebd266-5ff7-4313-8ddb-6b886c9443be\" railway variable set OPENAI_API_KEY=\"sk-of-OVfNmVYNgxPuJSZtdyGjCqvMwCJfhNjJNMzZfUknFJQEogbcJdIYMuTyTPJGarSq\" --skip-deploys)",
+      "Bash(RAILWAY_API_TOKEN=\"85ebd266-5ff7-4313-8ddb-6b886c9443be\" railway up ./frontend --path-as-root --detach --json)",
+      "Bash(RAILWAY_API_TOKEN=\"85ebd266-5ff7-4313-8ddb-6b886c9443be\" railway unlink --help)",
+      "Bash(RAILWAY_API_TOKEN=85ebd266-5ff7-4313-8ddb-6b886c9443be railway up --service=citeflow-frontend)",
+      "Bash(RAILWAY_API_TOKEN=85ebd266-5ff7-4313-8ddb-6b886c9443be railway status --service=citeflow-frontend)",
+      "Bash(RAILWAY_API_TOKEN=85ebd266-5ff7-4313-8ddb-6b886c9443be railway deployment list --service=citeflow-frontend)",
+      "Bash(railway up *)",
+      "Bash(railway variable *)"
     ]
   },
   "enabledPlugins": {
