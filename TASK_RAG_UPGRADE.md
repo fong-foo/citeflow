@@ -313,7 +313,8 @@ def build_index(rebuild: bool = False):
 def query_knowledge(query_text: str, top_k: int = 5, category_filter: Optional[str] = None) -> list[dict]:
     """向量检索知识库。可选的 category 过滤（如只查 paper）。"""
     client = chromadb.PersistentClient(path=DB_DIR)
-    collection = client.get_collection("citeflow_knowledge")
+    ef = OfoxEmbeddingFunction()
+    collection = client.get_collection("citeflow_knowledge", embedding_function=ef)
     
     where_filter = None
     if category_filter:
@@ -397,7 +398,10 @@ def _get_collection():
     import chromadb
     db_dir = os.path.join(_PROJECT_ROOT, "chroma_db")
     client = chromadb.PersistentClient(path=db_dir)
-    return client.get_collection("citeflow_knowledge")
+    # 必须传 embedding function，否则 ChromaDB 用默认的（向量维度不兼容）
+    from build_index import OfoxEmbeddingFunction
+    ef = OfoxEmbeddingFunction()
+    return client.get_collection("citeflow_knowledge", embedding_function=ef)
 
 
 def _build_query_text(triggered_rules: list[dict]) -> str:
