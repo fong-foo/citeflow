@@ -39,6 +39,16 @@ def _init_conn():
             _conn.execute("ALTER TABLE users ADD COLUMN has_light_scan INTEGER NOT NULL DEFAULT 0")
         except sqlite3.OperationalError:
             pass
+        # Migrate: add scan_credits column
+        try:
+            _conn.execute("ALTER TABLE users ADD COLUMN scan_credits INTEGER NOT NULL DEFAULT 0")
+        except sqlite3.OperationalError:
+            pass
+        # Migrate: add probe_credits column
+        try:
+            _conn.execute("ALTER TABLE users ADD COLUMN probe_credits INTEGER NOT NULL DEFAULT 0")
+        except sqlite3.OperationalError:
+            pass
         _conn.commit()
 
 
@@ -98,3 +108,96 @@ def set_has_light_scan(email: str) -> bool:
         conn.execute("UPDATE users SET has_light_scan = 1 WHERE email = ?", (email,))
         conn.commit()
         return conn.total_changes > 0
+
+
+def get_credits(email: str) -> dict:
+    """返回用户 credits 信息。"""
+    conn = get_db()
+    with _conn_lock:
+        row = conn.execute(
+            "SELECT scan_credits, probe_credits, has_light_scan FROM users WHERE email = ?",
+            (email,)
+        ).fetchone()
+        if row:
+            return {
+                "scan_credits": row["scan_credits"],
+                "probe_credits": row["probe_credits"],
+                "has_light_scan": bool(row["has_light_scan"]),
+            }
+        return {"scan_credits": 0, "probe_credits": 0, "has_light_scan": False}
+
+
+def add_scan_credits(email: str, count: int) -> bool:
+    """增加完整体检次数。"""
+    conn = get_db()
+    with _conn_lock:
+        conn.execute(
+            "UPDATE users SET scan_credits = scan_credits + ? WHERE email = ?",
+            (count, email)
+        )
+        conn.commit()
+        return conn.total_changes > 0
+
+
+def add_probe_credits(email: str, count: int) -> bool:
+    """增加单次 Probe 次数。"""
+    conn = get_db()
+    with _conn_lock:
+        conn.execute(
+            "UPDATE users SET probe_credits = probe_credits + ? WHERE email = ?",
+            (count, email)
+        )
+        conn.commit()
+        return conn.total_changes > 0
+
+
+def use_scan_credit(email: str) -> tuple[bool, int]:
+    """消耗 1 次完整体检。返回 (是否成功, 剩余次数)。"""
+    conn = get_db()
+    with _conn_lock:
+        cursor = conn.execute(
+            "UPDATE users SET scan_credits = scan_credits - 1 WHERE email = ? AND scan_credits > 0",
+            (email,)
+        )
+        conn.commit()
+        ok = cursor.rowcount > 0
+        row = conn.execute("SELECT scan_credits FROM users WHERE email = ?", (email,)).fetchone()
+        remaining = row["scan_credits"] if row else 0
+        return (ok, remaining)
+
+
+def use_probe_credit(email: str) -> tuple[bool, int]:
+    """消耗 1 次单次 Probe。返回 (是否成功, 剩余次数)。"""
+    conn = get_db()
+    with _conn_lock:
+        cursor = conn.execute(
+            "UPDATE users SET probe_credits = probe_credits - 1 WHERE email = ? AND probe_credits > 0",
+            (email,)
+        )
+        conn.commit()
+        ok = cursor.rowcount > 0
+        row = conn.execute("SELECT probe_credits FROM users WHERE email = ?", (email,)).fetchone()
+        remaining = row["probe_credits"] if row else 0
+        return (ok, remaining)
+
+
+def get_user_full(email: str) -> dict | None:
+    """获取完整用户信息（含 credits）。"""
+    conn = get_db()
+    with _conn_lock:
+        row = conn.execute(
+            "SELECT id, email, password_hash, tier, scan_credits, probe_credits, has_light_scan, created_at FROM users WHERE email = ?",
+            (email,)
+        ).fetchone()
+        if row:
+            return {
+                "id": row["id"],
+                "email": row["email"],
+                "password_hash": row["password_hash"],
+                "tier": row["tier"],
+                "scan_credits": row["scan_credits"],
+                "probe_credits": row["probe_credits"],
+                "has_light_scan": bool(row["has_light_scan"]),
+                "created_at": row["created_at"],
+            }
+        return None

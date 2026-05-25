@@ -12,9 +12,12 @@ interface Props {
   onUpgrade?: () => void;
   onViewDashboard?: () => void;
   onUpgradeToFull?: () => void;
+  scanCredits?: number;
+  probeCredits?: number;
+  onUpgradeClick?: (product: "full" | "probe") => void;
 }
 
-export function ScanResult({ data, mode, brandName = "", onUpgrade, onViewDashboard, onUpgradeToFull }: Props) {
+export function ScanResult({ data, mode, brandName = "", onUpgrade, onViewDashboard, onUpgradeToFull, scanCredits = 0, probeCredits = 0, onUpgradeClick }: Props) {
   const [tab, setTab] = useState<Tab>("probe");
   const isLight = mode === "light";
 
@@ -131,11 +134,48 @@ export function ScanResult({ data, mode, brandName = "", onUpgrade, onViewDashbo
         </>
       )}
 
-      {/* P1-8: Light 模式升级完整扫描 CTA */}
-      {isLight && onUpgradeToFull && (
+      {/* Light 模式付费引导：credits 用完后显示双选项 */}
+      {isLight && scanCredits === 0 && probeCredits === 0 && onUpgradeClick && (
+        <div style={{
+          marginTop: 40, padding: 24, borderRadius: 12,
+          background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", textAlign: "center",
+        }}>
+          <h3 style={{ color: "#EDEDF5", fontSize: 18, marginBottom: 8 }}>
+            想深入了解品牌在 AI 眼中的表现？
+          </h3>
+          <p style={{ color: "#9A9AB0", fontSize: 14, marginBottom: 20 }}>
+            免费体检只展示基础数据。升级解锁完整诊断 + 处方。
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <button
+              onClick={() => onUpgradeClick("full")}
+              style={{
+                padding: "10px 24px", background: "rgba(56,189,248,0.14)",
+                border: "1px solid rgba(56,189,248,0.25)", borderRadius: 8,
+                color: "#7DD3FC", fontSize: 14, fontWeight: 600, cursor: "pointer",
+              }}
+            >
+              ¥368 完整体检两次 →
+            </button>
+            <button
+              onClick={() => onUpgradeClick("probe")}
+              style={{
+                padding: "10px 24px", background: "transparent",
+                border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8,
+                color: "#9A9AB0", fontSize: 14, cursor: "pointer",
+              }}
+            >
+              ¥68 单次侦察兵
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* P1-8: Light 模式升级完整扫描 CTA (有 credits 时显示) */}
+      {isLight && (scanCredits > 0 || probeCredits > 0) && onUpgradeToFull && (
         <div className="text-center py-6 mt-4">
           <p className="text-xs mb-3" style={{ color: "#5E5E78" }}>
-            当前为快速体检（15条行业查询词）。完整侦察包括30条查询词 + 品牌画像 + 竞品对比 + 多引擎验证
+            当前为快速体检。升级解锁完整侦察 + 诊断 + 处方。
           </p>
           <button
             onClick={onUpgradeToFull}

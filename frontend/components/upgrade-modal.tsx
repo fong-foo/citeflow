@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Check, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 
 interface Props {
   feature: "probe" | "analyst" | "doctor";
@@ -10,137 +10,138 @@ interface Props {
   onUpgrade?: () => void;
 }
 
-function getUpgradeType(tier: string, _feature: string): "full" {
-  return "full";
-}
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
 
-const UPGRADE_CONFIGS = {
-  "free-full": {
-    title: "解锁专业版",
-    subtitle: "完整 AI 品牌体检 · 一次性付费",
-    unlocks: [
-      "Probe 侦察兵（完整扫描，4引擎交叉对比）",
-      "Analyst 诊断师（14条规则根因诊断）",
-      "Doctor 处方（P0/P1/P2可执行任务清单）",
-      "AI 认知画像 + 竞品差距量化",
-      "每条结论可追溯 AI 原文来源",
-      "3-5 分钟出完整报告",
-    ],
-    price: "¥100/次",
-    priceDetail: "一次性付费，解锁全部功能",
-  },
-};
+export function UpgradeModal({ feature, tier: _tier, onClose, onUpgrade: _onUpgrade }: Props) {
+  const [loading, setLoading] = useState(false);
 
-export function UpgradeModal({ feature, tier, onClose, onUpgrade }: Props) {
-  const configKey = `${tier}-full`;
-  const info = UPGRADE_CONFIGS[configKey as keyof typeof UPGRADE_CONFIGS] || UPGRADE_CONFIGS["free-full"];
+  const isFull = feature === "analyst" || feature === "doctor";
+  const title = isFull ? "解锁完整诊断" : "升级侦察兵";
+  const subtitle = isFull
+    ? "包含 Analyst 诊断 + Doctor 处方"
+    : "4 大 AI 引擎深度侦察";
+
+  async function handleCheckout(product: "full" | "probe") {
+    setLoading(true);
+    const token = localStorage.getItem("cf_token");
+    if (!token) {
+      alert("请先登录");
+      setLoading(false);
+      return;
+    }
+    try {
+      const res = await fetch(`${API_BASE}/api/pay/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ product }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("支付暂不可用");
+      }
+    } catch {
+      alert("网络错误");
+    }
+    setLoading(false);
+  }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: "rgba(2,2,8,0.85)", backdropFilter: "blur(4px)" }}
-      onClick={onClose}
-    >
+    <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: 12 }}
-        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-        onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-[420px] overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         style={{
-          background: "linear-gradient(180deg, #0D0D15 0%, #0A0A12 100%)",
-          border: "1px solid rgba(255,255,255,0.08)",
+          position: "fixed", inset: 0, zIndex: 100,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
         }}
+        onClick={onClose}
       >
-        {/* Top accent bar */}
-        <div
-          className="h-px"
+        <motion.div
+          initial={{ opacity: 0, y: 20, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.97 }}
           style={{
-            background: "linear-gradient(90deg, transparent, rgba(56,189,248,0.4), transparent)",
+            background: "#131318", border: "1px solid #222228",
+            borderRadius: 16, padding: 32, maxWidth: 480, width: "90%",
           }}
-        />
-
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 transition-colors duration-200"
-          style={{ color: "rgba(255,255,255,0.2)" }}
-          onMouseEnter={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.2)"; }}
+          onClick={(e) => e.stopPropagation()}
         >
-          <X className="w-4 h-4" />
-        </button>
+          <h2 style={{ color: "#EDEDF5", fontSize: 22, fontWeight: 600, marginBottom: 8 }}>
+            {title}
+          </h2>
+          <p style={{ color: "#9A9AB0", fontSize: 14, marginBottom: 24 }}>
+            {subtitle}
+          </p>
 
-        <div className="p-8 pt-10 text-center">
-          {/* Lock icon */}
-          <div
-            className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
-            style={{
-              background: "rgba(56,189,248,0.06)",
-              border: "1px solid rgba(56,189,248,0.12)",
-            }}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.5)" strokeWidth="1.5" strokeLinecap="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {/* ¥368 完整体检 */}
+            <button
+              onClick={() => handleCheckout("full")}
+              disabled={loading}
+              style={{
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+                padding: "16px 20px", background: "#1A1A22", border: "1px solid #222228",
+                borderRadius: 12, cursor: "pointer", textAlign: "left",
+                opacity: loading ? 0.5 : 1,
+              }}
+            >
+              <div>
+                <div style={{ color: "#EDEDF5", fontSize: 16, fontWeight: 600 }}>
+                  完整体检套餐
+                </div>
+                <div style={{ color: "#9A9AB0", fontSize: 13, marginTop: 4 }}>
+                  Probe → Analyst → Doctor · 2 次
+                </div>
+              </div>
+              <div style={{ color: "#3B82F6", fontSize: 20, fontWeight: 700 }}>
+                ¥368
+              </div>
+            </button>
+
+            {/* ¥68 单次 Probe */}
+            <button
+              onClick={() => handleCheckout("probe")}
+              disabled={loading}
+              style={{
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+                padding: "16px 20px", background: "transparent",
+                border: "1px solid #222228", borderRadius: 12, cursor: "pointer",
+                textAlign: "left", opacity: loading ? 0.5 : 1,
+              }}
+            >
+              <div>
+                <div style={{ color: "#EDEDF5", fontSize: 16, fontWeight: 600 }}>
+                  单次侦察兵
+                </div>
+                <div style={{ color: "#9A9AB0", fontSize: 13, marginTop: 4 }}>
+                  仅 Probe 侦察 · 不含诊断处方
+                </div>
+              </div>
+              <div style={{ color: "#9A9AB0", fontSize: 20, fontWeight: 700 }}>
+                ¥68
+              </div>
+            </button>
           </div>
 
-          <h2 className="text-lg font-semibold tracking-tight mb-1" style={{ color: "#EDEDF5" }}>
-            {info.title}
-          </h2>
-          <p className="text-sm mb-8" style={{ color: "#5E5E78" }}>
-            {info.subtitle}
-          </p>
-
-          {/* Feature list */}
-          <ul className="space-y-3 mb-8 text-left">
-            {info.unlocks.map((f, i) => (
-              <motion.li
-                key={f}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 + i * 0.05, duration: 0.3 }}
-                className="flex items-start gap-3"
-              >
-                <Check className="w-4 h-4 shrink-0 mt-px" style={{ color: "rgba(56,189,248,0.5)" }} />
-                <span className="text-sm" style={{ color: "#9A9AB0" }}>{f}</span>
-              </motion.li>
-            ))}
-          </ul>
-
-          {/* CTA */}
           <button
-            className="w-full py-3 text-sm font-semibold tracking-wide transition-all duration-500"
+            onClick={onClose}
             style={{
-              background: "rgba(56,189,248,0.14)",
-              border: "1px solid rgba(56,189,248,0.25)",
-              color: "#7DD3FC",
+              marginTop: 20, width: "100%", padding: "10px",
+              background: "transparent", border: "none",
+              color: "#5E5E78", fontSize: 13, cursor: "pointer",
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(56,189,248,0.22)";
-              e.currentTarget.style.borderColor = "rgba(56,189,248,0.40)";
-              e.currentTarget.style.boxShadow = "0 0 32px rgba(56,189,248,0.08)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(56,189,248,0.14)";
-              e.currentTarget.style.borderColor = "rgba(56,189,248,0.25)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-            onClick={() => onUpgrade ? onUpgrade() : alert("付费功能开发中，敬请期待")}
           >
-            升级解锁 · {info.price}
+            以后再说
           </button>
-
-          <p className="text-[10px] mt-4" style={{ color: "rgba(255,255,255,0.12)" }}>
-            {info.priceDetail}
-          </p>
-        </div>
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </AnimatePresence>
   );
 }

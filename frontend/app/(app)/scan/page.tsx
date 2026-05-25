@@ -73,6 +73,8 @@ export default function ScanPage() {
   const lastScanRef = useRef<{ input: any; mode: ScanMode; product: "input" | "probe" } | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const scanIdRef = useRef<string | null>(null);
+  const scanCreditsRef = useRef(0);
+  const probeCreditsRef = useRef(0);
 
   // ─── Product-internal phases ───
   const [inputPhase, setInputPhase] = useState<InputPhase>("form");
@@ -84,6 +86,11 @@ export default function ScanPage() {
   // ─── Upgrade modal ───
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<"probe" | "analyst" | "doctor">("analyst");
+  const [scanCredits, setScanCredits] = useState(0);
+  const [probeCredits, setProbeCredits] = useState(0);
+  const [hasLightScan, setHasLightScan] = useState(false);
+  useEffect(() => { scanCreditsRef.current = scanCredits; }, [scanCredits]);
+  useEffect(() => { probeCreditsRef.current = probeCredits; }, [probeCredits]);
   const [briefingData, setBriefingData] = useState<ProbeFullInput | null>(null);
   const [briefingDefaults, setBriefingDefaults] = useState<{
     domain: string; brandName: string; industry: string; targetMarket: string; coreProduct: string;
@@ -98,6 +105,26 @@ export default function ScanPage() {
   const [scanTabIndex, setScanTabIndex] = useState(0);
 
   // ─── Helpers ───
+  async function deductCredit(product: "full" | "probe") {
+    const token = localStorage.getItem("cf_token");
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/api/user/deduct`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ product }),
+      });
+      const d = await res.json();
+      if (d.ok) {
+        if (product === "full") setScanCredits(d.remaining);
+        else setProbeCredits(d.remaining);
+      }
+    } catch {}
+  }
+
   function getCachedProfile(domain: string) {
     try {
       const raw = localStorage.getItem(userKey("cf_brand_profile"));
@@ -148,6 +175,9 @@ export default function ScanPage() {
           setTier(d.tier);
           setUserTier(d.tier);
         }
+        if (typeof d.scan_credits === "number") setScanCredits(d.scan_credits);
+        if (typeof d.probe_credits === "number") setProbeCredits(d.probe_credits);
+        if (typeof d.has_light_scan === "boolean") setHasLightScan(d.has_light_scan);
       })
       .catch(() => {});
 
@@ -380,13 +410,20 @@ export default function ScanPage() {
   // STATE TRANSITIONS
   // ═══════════════════════════════════════════
 
-  /** 输入完成 → free 用户跑 light 扫描，paid 用户进 briefing */
+  /** 输入完成 → credits 驱动：free+无credits→Light，有credits→briefing，都用完→付费 */
   function handleInputComplete(input: { domain: string; brandName: string; industry: string; targetMarket: string; seed_queries?: string[]; core_product?: string }) {
     if (!tierLoaded) return;
+
+    if (hasLightScan && scanCredits === 0 && probeCredits === 0) {
+      setUpgradeFeature("probe");
+      setShowUpgrade(true);
+      return;
+    }
+
     setScanDomain(input.domain);
     setScanBrandName(input.brandName || input.domain);
 
-    if (tier === "free") {
+    if (!hasLightScan && scanCredits === 0 && probeCredits === 0) {
       startScan(input, "light", "input");
     } else {
       setBriefingDefaults({
@@ -550,12 +587,24 @@ export default function ScanPage() {
 
     if (product === "probe" || result.mode === "full") {
       setProbePhase("report");
-      setScanTabIndex(2); // Tab 2: 侦察报告
+      setScanTabIndex(2);
       setStep("probe");
+      // 单次 Probe（非完整流程，无 scanCredits）→ 扣 probe_credits
+      if (product === "probe" && scanCreditsRef.current === 0) {
+        deductCredit("probe");
+      }
     } else {
-      setInputReportData(result);  // preserve light scan data independently
+      setInputReportData(result);
       setInputPhase("report");
       setStep("input");
+      // Light 扫描完成 → 标记 has_light_scan
+      const token = localStorage.getItem("cf_token");
+      if (token) {
+        fetch(`${API_BASE}/api/auth/light-scan-done`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }).catch(() => {});
+      }
     }
 
     const report = {
@@ -1066,6 +1115,7 @@ export default function ScanPage() {
                 // 模拟生成动画后跳到 report（4 张卡片 × 600ms + 600ms buffer）
                 setTimeout(() => {
                   setDoctorPhase("report");
+                  deductCredit("full");
                 }, 3000);
               }}
             />
@@ -1181,6 +1231,9 @@ export default function ScanPage() {
                 onUpgrade={() => { setUpgradeFeature("analyst"); setShowUpgrade(true); }}
                 onViewDashboard={() => setStep("dashboard")}
                 onUpgradeToFull={handleUpgradeToFull}
+                scanCredits={scanCredits}
+                probeCredits={probeCredits}
+                onUpgradeClick={(product) => { setUpgradeFeature(product === "full" ? "analyst" : "probe"); setShowUpgrade(true); }}
               />
             )}
           </>
@@ -1244,7 +1297,6 @@ export default function ScanPage() {
           feature={upgradeFeature}
           tier={tier}
           onClose={() => setShowUpgrade(false)}
-          onUpgrade={handleUpgradeConfirm}
         />
       )}
     </div>

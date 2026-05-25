@@ -2,7 +2,7 @@
 # 开发: cd ~/Desktop/CiteFlow && source .venv/bin/activate && uvicorn api:app --reload --port 8000
 # 生产: cd ~/Desktop/CiteFlow && source .venv/bin/activate && gunicorn api:app -c gunicorn.conf.py
 
-from fastapi import FastAPI, HTTPException, Depends, Security
+from fastapi import FastAPI, HTTPException, Depends, Security, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
@@ -19,7 +19,7 @@ from typing import Optional
 
 from auth import hash_password, verify_password, create_access_token, get_current_user
 from auth import decode_access_token  # 用于可选鉴权
-from auth_db import create_user, get_user_by_email, has_light_scan, set_has_light_scan, update_user_tier, get_db, DB_PATH
+from auth_db import create_user, get_user_by_email, has_light_scan, set_has_light_scan, update_user_tier, get_db, DB_PATH, get_credits
 
 logger = logging.getLogger(__name__)
 
@@ -199,7 +199,7 @@ async def register(req: RegisterRequest):
     user = create_user(email, password_hash)
     user_tier = user.get("tier", "free")
     token = create_access_token(user["id"], user["email"], user_tier)
-    return {"status": "success", "token": token, "user": {"id": user["id"], "email": user["email"], "tier": user_tier}}
+    return {"status": "success", "token": token, "user": {"id": user["id"], "email": user["email"], "tier": user_tier, "scan_credits": 0, "probe_credits": 0, "has_light_scan": False}}
 
 
 @app.post("/api/auth/login")
@@ -211,13 +211,38 @@ async def login(req: LoginRequest):
     user_tier = user.get("tier", "free")
     token = create_access_token(user["id"], user["email"], user_tier)
     is_admin = user["email"] == ADMIN_EMAIL
-    return {"status": "success", "token": token, "user": {"id": user["id"], "email": user["email"], "tier": user_tier, "is_admin": is_admin}}
+    credits = get_credits(req.email.lower().strip())
+    return {
+        "status": "success",
+        "token": token,
+        "user": {
+            "id": user["id"],
+            "email": user["email"],
+            "tier": user_tier,
+            "is_admin": is_admin,
+            "scan_credits": credits["scan_credits"],
+            "probe_credits": credits["probe_credits"],
+            "has_light_scan": credits["has_light_scan"],
+        },
+    }
 
 
 @app.get("/api/auth/me")
 async def me(current_user: dict = Security(get_current_user)):
     """获取当前登录用户信息。"""
-    return {"user_id": current_user["user_id"], "email": current_user["email"], "tier": current_user.get("tier", "free")}
+    from auth_db import get_user_full
+    full = get_user_full(current_user["email"])
+    if not full:
+        raise HTTPException(status_code=404, detail="用户不存在")
+    return {
+        "id": full["id"],
+        "email": full["email"],
+        "tier": full["tier"],
+        "scan_credits": full["scan_credits"],
+        "probe_credits": full["probe_credits"],
+        "has_light_scan": full["has_light_scan"],
+        "created_at": full["created_at"],
+    }
 
 
 class UpgradeRequest(BaseModel):
@@ -235,6 +260,140 @@ async def upgrade_tier(req: UpgradeRequest, current_user: dict = Security(get_cu
         raise HTTPException(status_code=400, detail="升级失败")
     new_token = create_access_token(current_user["user_id"], email, req.tier)
     return {"status": "success", "token": new_token, "tier": req.tier}
+
+
+# ─── Payment — Lemon Squeezy ────────────────────────────
+
+class CheckoutRequest(BaseModel):
+    product: str  # "full" | "probe"
+
+
+class DeductRequest(BaseModel):
+    product: str  # "full" | "probe"
+
+
+@app.post("/api/pay/checkout")
+async def create_checkout(body: CheckoutRequest, user: dict = Depends(get_current_user)):
+    """创建 Lemon Squeezy checkout。product: 'full'（¥368）或 'probe'（¥68）。"""
+    if body.product == "full":
+        variant_id = os.environ.get("LEMON_SQUEEZY_VARIANT_ID_FULL", "")
+    elif body.product == "probe":
+        variant_id = os.environ.get("LEMON_SQUEEZY_VARIANT_ID_PROBE", "")
+    else:
+        raise HTTPException(status_code=400, detail="无效产品类型")
+
+    api_key = os.environ.get("LEMON_SQUEEZY_API_KEY", "")
+    store_id = os.environ.get("LEMON_SQUEEZY_STORE_ID", "")
+
+    if not variant_id or not api_key or not store_id:
+        raise HTTPException(status_code=500, detail="支付暂未配置")
+
+    success_url = os.environ.get("FRONTEND_URL", "https://www.citeflow.cn") + "/scan"
+
+    import httpx
+    async with httpx.AsyncClient() as client:
+        resp = await client.post(
+            "https://api.lemonsqueezy.com/v1/checkouts",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Accept": "application/json",
+                "Content-Type": "application/vnd.api+json",
+            },
+            json={
+                "data": {
+                    "type": "checkouts",
+                    "attributes": {
+                        "checkout_data": {
+                            "custom": {
+                                "user_id": str(user["user_id"]),
+                                "email": user["email"],
+                                "product": body.product,
+                            }
+                        },
+                        "product_options": {
+                            "redirect_url": success_url,
+                        },
+                    },
+                    "relationships": {
+                        "store": {"data": {"type": "stores", "id": store_id}},
+                        "variant": {"data": {"type": "variants", "id": variant_id}},
+                    },
+                }
+            },
+            timeout=15,
+        )
+        if resp.status_code not in (200, 201):
+            logger.error(f"Lemon Squeezy checkout failed: {resp.status_code} {resp.text}")
+            raise HTTPException(status_code=502, detail="支付暂不可用")
+        data = resp.json()
+        return {"url": data["data"]["attributes"]["url"]}
+
+
+@app.post("/api/webhook/lemon-squeezy")
+async def lemon_squeezy_webhook(request: Request):
+    """支付成功 → 按产品类型加 credits。"""
+    secret = os.environ.get("LEMON_SQUEEZY_WEBHOOK_SECRET", "")
+    raw_body = await request.body()
+    signature = request.headers.get("X-Signature", "")
+
+    if secret:
+        import hmac, hashlib
+        expected = hmac.new(secret.encode(), raw_body, hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(expected, signature):
+            raise HTTPException(status_code=403, detail="签名验证失败")
+
+    try:
+        payload = json.loads(raw_body)
+    except Exception:
+        raise HTTPException(status_code=400, detail="无效的请求体")
+
+    event_name = payload.get("meta", {}).get("event_name", "")
+    if event_name != "order_created":
+        return {"status": "ignored", "event": event_name}
+
+    custom = (
+        payload.get("data", {})
+        .get("attributes", {})
+        .get("checkout_data", {})
+        .get("custom", {})
+    )
+    email = custom.get("email", "")
+    product = custom.get("product", "")
+
+    if not email:
+        return {"status": "no_email"}
+
+    from auth_db import add_scan_credits, add_probe_credits
+
+    if product == "full":
+        add_scan_credits(email, 2)
+        logger.info(f"Added 2 scan_credits to {email}")
+    elif product == "probe":
+        add_probe_credits(email, 1)
+        logger.info(f"Added 1 probe_credit to {email}")
+    else:
+        logger.warning(f"Unknown product in webhook: {product}")
+
+    return {"status": "ok", "product": product}
+
+
+@app.post("/api/user/deduct")
+async def deduct_credit(body: DeductRequest, user: dict = Depends(get_current_user)):
+    """扫描完成后扣减 credits。product: 'full' 或 'probe'。"""
+    from auth_db import use_scan_credit, use_probe_credit
+
+    email = user["email"]
+    if body.product == "full":
+        ok, remaining = use_scan_credit(email)
+    elif body.product == "probe":
+        ok, remaining = use_probe_credit(email)
+    else:
+        raise HTTPException(status_code=400, detail="无效产品类型")
+
+    if not ok:
+        raise HTTPException(status_code=400, detail="次数不足")
+
+    return {"ok": True, "remaining": remaining, "product": body.product}
 
 
 # ─── Profile — 轻量品牌画像 ──────────────────────────────
