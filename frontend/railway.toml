@@ -1,9 +1,2 @@
-[build]
-builder = "nixpacks"
-buildCommand = "npm run build && cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/static"
-
-[deploy]
-startCommand = "node .next/standalone/server.js"
-
 [service]
 name = "citeflow-frontend"
