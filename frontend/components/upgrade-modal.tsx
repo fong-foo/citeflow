@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 
 interface Props {
-  feature: "analyst" | "doctor";
+  feature: "probe" | "analyst" | "doctor";
   tier: "free" | "full";
   onClose: () => void;
   onUpgrade?: () => void;

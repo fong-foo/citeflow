@@ -1,7 +1,8 @@
 # gunicorn.conf.py — CiteFlow 生产服务器配置
 # 启动: cd ~/Desktop/CiteFlow && source .venv/bin/activate && gunicorn api:app -c gunicorn.conf.py
 
-bind = "0.0.0.0:8000"
+import os
+bind = f"0.0.0.0:{os.environ.get('PORT', '8000')}"
 workers = 4
 worker_class = "uvicorn.workers.UvicornWorker"
 

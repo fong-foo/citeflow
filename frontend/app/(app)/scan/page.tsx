@@ -83,7 +83,7 @@ export default function ScanPage() {
 
   // ─── Upgrade modal ───
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const [upgradeFeature, setUpgradeFeature] = useState<"analyst" | "doctor">("analyst");
+  const [upgradeFeature, setUpgradeFeature] = useState<"probe" | "analyst" | "doctor">("analyst");
   const [briefingData, setBriefingData] = useState<ProbeFullInput | null>(null);
   const [briefingDefaults, setBriefingDefaults] = useState<{
     domain: string; brandName: string; industry: string; targetMarket: string; coreProduct: string;

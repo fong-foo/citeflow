@@ -19,7 +19,7 @@ interface Props {
   brandName: string;
   lastScanTime: string;
   onViewReport: () => void;
-  onUpgrade: (feature?: "analyst" | "doctor") => void;
+  onUpgrade: (feature?: "probe" | "analyst" | "doctor") => void;
   onNavigateToStep?: (step: "analyst" | "doctor") => void;
 }
 
