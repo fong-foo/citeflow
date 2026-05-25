@@ -24,7 +24,10 @@ interface UserRow {
 
 type Tab = "dashboard" | "users";
 
+export const dynamic = "force-dynamic";
+
 function getToken(): string | null {
+  if (typeof window === "undefined") return null;
   return localStorage.getItem("cf_token");
 }
 
