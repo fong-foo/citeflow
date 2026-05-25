@@ -16,6 +16,9 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "CiteFlow — AI引用率体检",
   description: "诊断你的品牌在AI眼中的样子，告诉你怎么修",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
