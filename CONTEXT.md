@@ -1,6 +1,6 @@
 # CiteFlow — 海老作战手册
 
-> 更新 · 2026-05-24 下午（Landing page +为什么选择我们+使命；ai-crawlers开源已发布。Next：llms-txt → geo-knowledge → 部署上线）
+> 更新 · 2026-05-25（部署上线+Credits付费系统+¥368/¥68定价+管理后台+知识库RAG升级待执行。Next：Lemon Squeezy支付接入）
 
 ---
 
@@ -45,22 +45,26 @@
 - 阶梯购买：必须先买诊断才能买处方
 - 策略：免费给"结论"，付费给"原因+处方"
 
-### 付费等级（2026-05-16 确定）
+### 付费模型（2026-05-25 Credits 系统）
 ```
-Tier类型：free / probe / full（对齐后端JWT）
+用户注册 → tier="free", scan_credits=0, probe_credits=0
 
 免费版（tier=free）：
-  - Light扫描（4字段，30秒，基础数据）
+  - Light 扫描（has_light_scan限1次，永远免费）
   - 仪表盘显示：品牌健康卡、竞品对比图
-  - 锁定：AI认知画像、引擎对比、认知差距、诊断摘要、处方
+  - 付费引导：Light报告底部显示 ¥368/¥68
 
-Probe版（tier=probe）：
-  - Full扫描（8字段，3-5分钟，完整数据）
-  - 仪表盘解锁：AI认知画像、引擎对比、认知差距
-  - 仍锁定：诊断摘要、处方
+¥368 完整体检套餐（webhook 加 scan_credits=2）：
+  - 2 次 Probe → Analyst → Doctor 全套
+  - Doctor 完成后扣 1 次 scan_credit
+  - 次数用完 → 显示付费引导
 
-Full版（tier=full）：
-  - 全部解锁（未来开发）
+¥68 单次 Probe（webhook 加 probe_credits=1）：
+  - 1 次 Probe 侦察兵（不含 Analyst/Doctor）
+  - Probe 完成后扣 1 次 probe_credit
+
+定价显示：Landing page ¥368/¥68，升级弹窗双选项
+前端 gating：全部改为 credits 判断（scanCredits/probeCredits），零 tier===free 残留
 ```
 
 ## 团队角色（2026-05-20 升级）
@@ -216,19 +220,30 @@ lib/storage.ts — Tier类型 + 辅助函数
 
 ### 当前任务
 ```
-✅ Analyst 诊断报告4-Tab页面（scan-analyst-report.tsx）
-✅ Doctor 处方工作室（scan-doctor-workshop.tsx, briefing→generating→report）
-✅ 三老角色定义+SOUL.md升级
-✅ GEO知识库目录搭建（knowledge/ 7个子目录）
-✅ CiteFlow GEO Audit Framework v2.1（+AI爬虫完整UA列表+llms.txt标准+GEOFlow最佳实践）
-✅ 方法论溯源：Corey Haines（MIT）+ 姚金刚 + GEOFlow（Apache 2.0）
-✅ GitHub 开源仓库上线
-✅ 记忆层修复（page.tsx: doctorPhase恢复+localStorage同步）
-✅ 部署checklist（DEPLOYMENT_CHECKLIST.md）
-⏳ 部署P0代码改动（auth_db.py DB_PATH + auth.py SECRET_KEY + api.py CORS）
-⏳ 域名配置（citeflow.cn → Vercel + api.citeflow.cn → Railway）
-⏳ 交互QA（游景峰进行中）
-🚀 上线后 → v1.1 品牌档案库
+✅ Landing page 价格更新（¥100→¥368/¥68）
+✅ Credits 付费系统（DB + API + 前端 gating）
+✅ 所有 tier===free 替换为 credits 判断（4处修复）
+✅ 管理后台 /admin（用户管理 + 数据看板）
+✅ 部署上线（Railway: citeflow-frontend + citeflow-backend）
+✅ 域名 citeflow.cn DNS 配置
+⏳ 知识库 RAG 升级（TASK_RAG_UPGRADE.md 已写，待海老执行）
+⏳ Lemon Squeezy 支付接入（Variant ID 待获取）
+🚀 v1.1 品牌档案库
+```
+
+### 部署信息
+```
+前端：Railway citeflow-frontend（Next.js, npm start）
+后端：Railway citeflow-backend（Python, gunicorn）
+域名：www.citeflow.cn → Railway edge → citeflow-frontend
+API域名：api.citeflow.cn → Railway edge → citeflow-backend
+数据库：Railway 上的 SQLite（/data/citeflow.db）
+环境变量：OFOX_API_KEY, DEEPSEEK_API_KEY, SERPER_API_KEY, SECRET_KEY, 
+          CORS_ORIGINS, DB_PATH, ADMIN_EMAIL, 
+          LEMON_SQUEEZY_API_KEY, LEMON_SQUEEZY_STORE_ID,
+          LEMON_SQUEEZY_VARIANT_ID_FULL, LEMON_SQUEEZY_VARIANT_ID_PROBE,
+          LEMON_SQUEEZY_WEBHOOK_SECRET
+构建触发：git push → Railway 自动部署
 ```
 
 ### Doctor 处方工作室（最终形态）
