@@ -1,9 +1,9 @@
 [build]
-builder = "railpack"
+builder = "nixpacks"
 buildCommand = "npm run build"
 
 [deploy]
-startCommand = "npm start"
+startCommand = "npx next start -H 0.0.0.0 -p ${PORT:-3000}"
 
 [service]
 name = "citeflow-frontend"
