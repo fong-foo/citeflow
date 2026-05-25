@@ -210,7 +210,8 @@ async def login(req: LoginRequest):
         raise HTTPException(status_code=401, detail="邮箱或密码错误")
     user_tier = user.get("tier", "free")
     token = create_access_token(user["id"], user["email"], user_tier)
-    return {"status": "success", "token": token, "user": {"id": user["id"], "email": user["email"], "tier": user_tier}}
+    is_admin = user["email"] == ADMIN_EMAIL
+    return {"status": "success", "token": token, "user": {"id": user["id"], "email": user["email"], "tier": user_tier, "is_admin": is_admin}}
 
 
 @app.get("/api/auth/me")

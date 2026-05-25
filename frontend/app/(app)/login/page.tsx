@@ -72,7 +72,7 @@ export default function LoginPage() {
       localStorage.setItem("cf_token", data.token);
       localStorage.setItem("cf_user", JSON.stringify(data.user));
       const params = new URLSearchParams(window.location.search);
-      const redirect = params.get("redirect") || "/scan";
+      const redirect = params.get("redirect") || (data.user?.is_admin ? "/admin" : "/scan");
       window.location.href = redirect;
     } catch {
       setApiError("网络错误，请检查后端是否启动");
