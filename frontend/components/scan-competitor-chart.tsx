@@ -255,7 +255,7 @@ export function ScanCompetitorChart({ xLabels, lines, locked }: Props) {
           }}
           onClick={() => alert("付费功能开发中，敬请期待")}
         >
-          升级解锁 · ¥299/月
+          ¥368 完整体检两次
         </motion.button>
       </div>
     </motion.div>

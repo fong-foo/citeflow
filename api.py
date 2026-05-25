@@ -262,6 +262,14 @@ async def upgrade_tier(req: UpgradeRequest, current_user: dict = Security(get_cu
     return {"status": "success", "token": new_token, "tier": req.tier}
 
 
+@app.post("/api/auth/light-scan-done")
+async def mark_light_scan_done(user: dict = Depends(get_current_user)):
+    """标记用户已完成 Light 扫描。"""
+    email = user["email"]
+    set_has_light_scan(email)
+    return {"ok": True}
+
+
 # ─── Payment — Lemon Squeezy ────────────────────────────
 
 class CheckoutRequest(BaseModel):

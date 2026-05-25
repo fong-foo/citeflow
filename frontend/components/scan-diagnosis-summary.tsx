@@ -253,7 +253,7 @@ export function ScanDiagnosisSummary({
           }}
           onClick={() => alert("付费功能开发中，敬请期待")}
         >
-          {lockPrice || "升级解锁 · ¥299/月"}
+          {lockPrice || "¥368 完整体检两次"}
         </motion.button>
       </div>
     </motion.div>

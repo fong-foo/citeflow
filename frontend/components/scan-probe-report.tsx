@@ -6,7 +6,7 @@ import { LockedSection } from "@/components/locked-section";
 import type { Tier, ScanMode } from "@/lib/storage";
 
 // ─── 常量 ───────────────────────────────────────────────
-const UPGRADE_PRICE = "¥299/月";
+const UPGRADE_PRICE = "¥368 完整体检两次";
 const ENGINE_DISPLAY: Record<string, string> = {
   gpt: "ChatGPT",
   gemini: "Gemini",

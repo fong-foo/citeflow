@@ -660,7 +660,7 @@ function LockTab({ title, description }: { title: string; description: string })
         }}
         onClick={() => alert("付费功能开发中，敬请期待")}
       >
-        升级解锁 · ¥299/月
+        ¥368 完整体检两次
       </button>
 
       <p className="text-[11px] mt-4" style={{ color: "rgba(255,255,255,0.18)" }}>

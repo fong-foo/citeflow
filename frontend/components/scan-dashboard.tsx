@@ -784,7 +784,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
             tone: "专业、环保、创新、年轻",
           },
         },
-        price: "¥50/次",
+        price: "¥68 单次侦察兵 / ¥368 完整体检两次",
         priceDetail: "包含：AI认知画像 + 引擎对比 + 认知差距",
       },
       engine_comparison: {
@@ -812,7 +812,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
             insight: "ChatGPT 引用率最高，但推荐率偏低；Gemini 偏好评测平台；Claude 来源最均衡。",
           },
         },
-        price: "¥50/次",
+        price: "¥68 单次侦察兵 / ¥368 完整体检两次",
         priceDetail: "包含：AI认知画像 + 引擎对比 + 认知差距",
       },
       gap_report: {
@@ -835,7 +835,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
             summary: "品牌自述与 AI 认知存在较大差距，主要在品牌定位和产品优势两个维度。",
           },
         },
-        price: "¥50/次",
+        price: "¥68 单次侦察兵 / ¥368 完整体检两次",
         priceDetail: "包含：AI认知画像 + 引擎对比 + 认知差距",
       },
       competitor_dimension: {
@@ -852,7 +852,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           label: "提及最多的竞品",
           value: `${topComp.brand || "—"}（提及 ${topComp.mention_count || 0} 次）`,
         } : undefined,
-        price: "¥50/次",
+        price: "¥68 单次侦察兵 / ¥368 完整体检两次",
         priceDetail: "包含：AI认知画像 + 引擎对比 + 认知差距",
       },
       brand_diagnosis: {
@@ -869,7 +869,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           label: "推断行业",
           value: bp.inferred_industry,
         } : undefined,
-        price: "¥50/次",
+        price: "¥68 单次侦察兵 / ¥368 完整体检两次",
         priceDetail: "包含：AI认知画像 + 引擎对比 + 认知差距",
       },
       source_authority: {
@@ -886,7 +886,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           label: "扫描覆盖",
           value: `${citation.total_queries} 个查询 · ${citation.engines_queried?.length || 1} 个引擎`,
         } : undefined,
-        price: "¥50/次",
+        price: "¥68 单次侦察兵 / ¥368 完整体检两次",
         priceDetail: "包含：AI认知画像 + 引擎对比 + 认知差距",
       },
       diagnosis: {
@@ -917,7 +917,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
             ],
           },
         },
-        price: "¥299/月",
+        price: "¥368 完整体检两次",
         priceDetail: "包含：诊断报告 + 处方执行步骤",
       },
       prescription: {
@@ -971,7 +971,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
             ],
           },
         },
-        price: "¥299/月",
+        price: "¥368 完整体检两次",
         priceDetail: "包含：诊断报告 + 处方执行步骤",
       },
     };
@@ -1675,7 +1675,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
         <LockedSection
           title="AI认知画像"
           description="AI怎么描述你的品牌、理想描述、关键词"
-          lockPrice="¥50/次"
+          lockPrice="¥68 单次侦察兵 / ¥368 完整体检两次"
           onUpgrade={() => onUpgrade("probe")}
           onClick={() => handleLockedModuleClick("ai_perception")}
         >
@@ -1782,7 +1782,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
         <LockedSection
           title="引擎对比"
           description="ChatGPT/Gemini/Claude三引擎交叉验证"
-          lockPrice="¥50/次"
+          lockPrice="¥68 单次侦察兵 / ¥368 完整体检两次"
           onUpgrade={() => onUpgrade("probe")}
           onClick={() => handleLockedModuleClick("engine_comparison")}
         >
@@ -1889,7 +1889,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
         <LockedSection
           title="认知差距"
           description="品牌自述 vs AI认知的差距分析"
-          lockPrice="¥50/次"
+          lockPrice="¥68 单次侦察兵 / ¥368 完整体检两次"
           onUpgrade={() => onUpgrade("probe")}
           onClick={() => handleLockedModuleClick("gap_report")}
         >
@@ -2063,7 +2063,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           <LockedSection
             title={isPaid ? "升级解锁 Analyst 诊断报告" : "升级解锁完整诊断"}
             description="14条自研规则逐条诊断，定位根因，对比竞品差距"
-            lockPrice="¥100/次"
+            lockPrice="¥368 完整体检两次"
             onUpgrade={() => onUpgrade("analyst")}
             onClick={() => handleLockedModuleClick("diagnosis")}
           >
@@ -2108,7 +2108,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
           <LockedSection
             title={isPaid ? "升级解锁 Doctor 处方" : "升级解锁完整处方"}
             description="获取 P0/P1/P2 任务清单，精确到页面和操作步骤，逐个执行提升 AI 引用率"
-            lockPrice="¥100/次"
+            lockPrice="¥368 完整体检两次"
             onUpgrade={() => onUpgrade("doctor")}
             onClick={() => handleLockedModuleClick("prescription")}
           >
@@ -2262,7 +2262,7 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
             whileTap={{ scale: 0.99 }}
             onClick={() => onUpgrade("analyst")}
           >
-            {isFree ? "升级解锁专业版 · ¥100/次" : "升级解锁全套诊断 · ¥100/次"}
+            ¥368 完整体检两次
           </motion.button>
         </motion.section>
       )}

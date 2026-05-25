@@ -712,7 +712,7 @@ export default function ScanPage() {
 
   function handleSidebarAnalystClick() {
     if (!data) { alert("请先完成一次品牌体检"); return; }
-    if (tier === "free") {
+    if (scanCredits === 0) {
       setUpgradeFeature("analyst");
       setShowUpgrade(true);
       return;
@@ -723,7 +723,7 @@ export default function ScanPage() {
 
   function handleSidebarDoctorClick() {
     if (!data) { alert("请先完成一次品牌体检"); return; }
-    if (tier === "free") {
+    if (scanCredits === 0) {
       setUpgradeFeature("doctor");
       setShowUpgrade(true);
       return;
@@ -802,7 +802,7 @@ export default function ScanPage() {
 
   /** Light 扫描完成后升级到完整扫描 */
   function handleUpgradeToFull() {
-    if (tier === "free") {
+    if (scanCredits === 0 && probeCredits === 0) {
       setUpgradeFeature("probe");
       setShowUpgrade(true);
       return;
@@ -1045,7 +1045,7 @@ export default function ScanPage() {
                 onUpgrade={() => { setUpgradeFeature("analyst"); setShowUpgrade(true); }}
                 onBack={() => setStep("dashboard")}
                 onViewAnalyst={() => {
-                  if (tier === "free") {
+                  if (scanCredits === 0) {
                     setUpgradeFeature("analyst");
                     setShowUpgrade(true);
                     return;
@@ -1166,6 +1166,8 @@ export default function ScanPage() {
         hasData={!!data}
         hasAnalystData={hasAnalystData}
         hasDoctorData={hasDoctorData}
+        scanCredits={scanCredits}
+        probeCredits={probeCredits}
         domain={scanDomain}
         brandName={scanBrandName}
         onInputClick={handleSidebarInputClick}

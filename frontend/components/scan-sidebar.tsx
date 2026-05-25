@@ -105,6 +105,8 @@ interface ScanSidebarProps {
   hasData: boolean;
   hasAnalystData: boolean;
   hasDoctorData: boolean;
+  scanCredits: number;
+  probeCredits: number;
   domain?: string;
   brandName?: string;
   onInputClick: () => void;
@@ -125,6 +127,8 @@ export function ScanSidebar({
   hasData,
   hasAnalystData,
   hasDoctorData,
+  scanCredits,
+  probeCredits,
   domain = "",
   brandName = "",
   onInputClick,
@@ -193,22 +197,24 @@ export function ScanSidebar({
       return currentStep === "input" ? "current" : "completed";
     }
 
+    const hasFullAccess = scanCredits > 0 || probeCredits > 0 || tier !== "free";
+
     if (stepId === "probe") {
-      if (tier === "free") return "locked";
+      if (!hasFullAccess) return "locked";
       if (currentStep === "probe") return "current";
       if (hasData && scanMode === "full") return "completed";
       return "available";
     }
 
     if (stepId === "analyst") {
-      if (tier === "free") return "locked";
+      if (scanCredits === 0) return "locked";
       if (currentStep === "analyst") return "current";
       if (hasAnalystData) return "completed";
       return "available";
     }
 
     if (stepId === "doctor") {
-      if (tier === "free") return "locked";
+      if (scanCredits === 0) return "locked";
       if (currentStep === "doctor") return "current";
       if (hasDoctorData) return "completed";
       return "available";
@@ -233,15 +239,15 @@ export function ScanSidebar({
     }
 
     if (stepId === "probe") {
-      if (tier === "free") { onUpgradeClick("analyst"); return; }
+      if (scanCredits === 0 && probeCredits === 0) { onUpgradeClick("probe"); return; }
       onProbeClick(); return;
     }
     if (stepId === "analyst") {
-      if (tier !== "full") { onUpgradeClick("analyst"); return; }
+      if (scanCredits === 0) { onUpgradeClick("analyst"); return; }
       onAnalystClick(); return;
     }
     if (stepId === "doctor") {
-      if (tier !== "full") { onUpgradeClick("doctor"); return; }
+      if (scanCredits === 0) { onUpgradeClick("doctor"); return; }
       onDoctorClick(); return;
     }
   }
