@@ -47,6 +47,9 @@ venv/
 env/
 .venv/
 
+# ChromaDB vector index
+chroma_db/
+
 # Supabase
 supabase/.temp/
 

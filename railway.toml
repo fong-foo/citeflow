@@ -2,7 +2,7 @@
 builder = "railpack"
 
 [deploy]
-startCommand = "gunicorn api:app -c gunicorn.conf.py"
+startCommand = "python3 build_index.py && gunicorn api:app -c gunicorn.conf.py"
 
 [service]
 name = "citeflow-backend"
