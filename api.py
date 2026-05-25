@@ -14,6 +14,7 @@ import uuid
 import time
 import asyncio
 import threading
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from auth import hash_password, verify_password, create_access_token, get_current_user
@@ -108,6 +109,18 @@ scan_tasks = ScanTaskStore()
 # ─── Concurrency control ─────────────────────────────────
 _MAX_CONCURRENT_SCANS = 5
 _scan_semaphore = asyncio.Semaphore(_MAX_CONCURRENT_SCANS)
+
+
+# ─── Admin Auth ─────────────────────────────────────────────
+
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL", "")
+
+
+def require_admin(user: dict = Depends(get_current_user)) -> dict:
+    """检查当前用户是否为管理员。非管理员 → 403。"""
+    if user["email"] != ADMIN_EMAIL:
+        raise HTTPException(status_code=403, detail="无权访问")
+    return user
 
 
 # ─── Database Init ────────────────────────────────────────
@@ -737,6 +750,96 @@ async def run_doctor(req: DoctorRequest):
         return result.get("doctor_output", {})
     except Exception as e:
         return {"status": "error", "error": str(e)}
+
+
+# ─── Admin ─────────────────────────────────────────────────
+
+class AdminUpdateTierRequest(BaseModel):
+    tier: str  # "free" | "probe" | "full"
+
+
+@app.get("/api/admin/stats")
+async def admin_stats(user: dict = Depends(require_admin)):
+    """数据看板统计。"""
+    conn = get_db()
+
+    total = conn.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+    free_count = conn.execute("SELECT COUNT(*) FROM users WHERE tier='free'").fetchone()[0]
+    probe_count = conn.execute("SELECT COUNT(*) FROM users WHERE tier='probe'").fetchone()[0]
+    full_count = conn.execute("SELECT COUNT(*) FROM users WHERE tier='full'").fetchone()[0]
+
+    scanned = conn.execute("SELECT COUNT(*) FROM users WHERE has_light_scan=1").fetchone()[0]
+    not_scanned = total - scanned
+
+    seven_days_ago = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
+    recent = conn.execute(
+        "SELECT COUNT(*) FROM users WHERE created_at >= ?", (seven_days_ago,)
+    ).fetchone()[0]
+
+    daily_stats = []
+    for i in range(13, -1, -1):
+        day = (datetime.now(timezone.utc) - timedelta(days=i)).strftime("%Y-%m-%d")
+        count = conn.execute(
+            "SELECT COUNT(*) FROM users WHERE date(created_at) = ?", (day,)
+        ).fetchone()[0]
+        daily_stats.append({"date": day, "count": count})
+
+    return {
+        "total_users": total,
+        "tier_distribution": {"free": free_count, "probe": probe_count, "full": full_count},
+        "scan_stats": {"scanned": scanned, "not_scanned": not_scanned},
+        "recent_7d": recent,
+        "daily_registrations": daily_stats,
+    }
+
+
+@app.get("/api/admin/users")
+async def admin_users(
+    search: str = "",
+    user: dict = Depends(require_admin),
+):
+    """用户列表（支持邮箱搜索）。"""
+    conn = get_db()
+
+    if search:
+        rows = conn.execute(
+            "SELECT id, email, tier, has_light_scan, created_at FROM users WHERE email LIKE ? ORDER BY created_at DESC LIMIT 100",
+            (f"%{search}%",)
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT id, email, tier, has_light_scan, created_at FROM users ORDER BY created_at DESC LIMIT 100"
+        ).fetchall()
+
+    users = []
+    for row in rows:
+        users.append({
+            "id": row["id"],
+            "email": row["email"],
+            "tier": row["tier"],
+            "has_light_scan": bool(row["has_light_scan"]),
+            "created_at": row["created_at"],
+        })
+
+    return {"users": users, "total": len(users)}
+
+
+@app.patch("/api/admin/users/{email}/tier")
+async def admin_update_tier(
+    email: str,
+    body: AdminUpdateTierRequest,
+    user: dict = Depends(require_admin),
+):
+    """修改用户 tier。"""
+    valid_tiers = ["free", "probe", "full"]
+    if body.tier not in valid_tiers:
+        raise HTTPException(status_code=400, detail=f"无效tier，可选: {valid_tiers}")
+
+    ok = update_user_tier(email, body.tier)
+    if not ok:
+        raise HTTPException(status_code=404, detail="用户不存在")
+
+    return {"ok": True, "email": email, "tier": body.tier}
 
 
 # ─── Health ──────────────────────────────────────────────
