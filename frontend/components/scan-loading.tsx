@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 interface Props {
   elapsed: number;
@@ -267,6 +268,25 @@ export function ScanLoading({ elapsed, domain, brandName, mode = "light", progre
           {mode === "full" ? "4引擎并发扫描" : "AI 联网搜索"}
         </span>
       </div>
+
+      {/* ═══════ Guide nudge — 等待期间引导用户看体检指南 ═══════ */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 8, duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+        className="mt-6 text-center"
+      >
+        <p className="text-[12px] leading-relaxed" style={{ color: "#5E5E78" }}>
+          等待期间，不妨看看{" "}
+          <Link
+            href="/guide"
+            className="font-medium underline-offset-2 hover:underline transition-all"
+            style={{ color: "#7DD3FC" }}
+          >
+            体检指南 →
+          </Link>
+        </p>
+      </motion.div>
 
       {/* ═══════ Cancel button ═══════ */}
       {onCancel && (

@@ -44,7 +44,12 @@ interface PendingScan {
   targetMarket: string;
   startTime: number;
   mode: ScanMode;
+  scanId?: string;
+  product?: "input" | "probe";
 }
+
+// Module-level coordination: prevents duplicate polling loops across mount/unmount cycles
+let activeScanCleanup: (() => void) | null = null;
 
 function formatTime(ts: number): string {
   const d = new Date(ts);
@@ -193,22 +198,46 @@ export default function ScanPage() {
       }
     });
 
+    let pendingAutoResume: (PendingScan & { scanId: string; product: "input" | "probe" }) | null = null;
     const pendingRaw = localStorage.getItem(userKey("cf_pending_scan"));
     if (pendingRaw) {
       try {
         const pending: PendingScan = JSON.parse(pendingRaw);
         const age = Date.now() - pending.startTime;
         if (age < 10 * 60 * 1000) {
-          setPendingScan(pending);
-          setScanDomain(pending.domain);
-          setScanBrandName(pending.brandName || pending.domain);
-          setScanMode(pending.mode || "light");
+          if (pending.scanId && pending.product) {
+            // New format with scanId: auto-resume polling instead of showing resume prompt
+            pendingAutoResume = pending as any;
+            setScanDomain(pending.domain);
+            setScanBrandName(pending.brandName || pending.domain);
+            setScanMode(pending.mode || "light");
+          } else {
+            // Old format: show resume prompt (existing behavior)
+            setPendingScan(pending);
+            setScanDomain(pending.domain);
+            setScanBrandName(pending.brandName || pending.domain);
+            setScanMode(pending.mode || "light");
+          }
         } else {
           localStorage.removeItem(userKey("cf_pending_scan"));
         }
       } catch {
         localStorage.removeItem(userKey("cf_pending_scan"));
       }
+    }
+
+    // Auto-resume polling if we have a running scan from a previous mount
+    if (pendingAutoResume) {
+      resumePolling(
+        pendingAutoResume.scanId,
+        pendingAutoResume.mode || "light",
+        pendingAutoResume.product,
+        pendingAutoResume.domain,
+        pendingAutoResume.brandName || pendingAutoResume.domain,
+        pendingAutoResume.startTime,
+      );
+      setInitialized(true);
+      return;
     }
 
     // P0-1: Try loading from server first, fall back to localStorage
@@ -486,6 +515,13 @@ export default function ScanPage() {
     abortRef.current = globalController;
     const globalTimeoutId = setTimeout(() => globalController.abort(), 540_000); // 9分钟总超时
 
+    // Register module-level cleanup to prevent duplicate polling across mount cycles
+    activeScanCleanup?.();
+    activeScanCleanup = () => {
+      globalController.abort();
+      clearTimeout(globalTimeoutId);
+    };
+
     // Helper: fetch with per-request timeout + global abort signal
     function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
       const reqController = new AbortController();
@@ -541,6 +577,16 @@ export default function ScanPage() {
 
         scanId = postJson.scan_id;
         scanIdRef.current = scanId;
+        // Persist scanId to pending scan so we can resume polling after navigation
+        try {
+          const pendingRaw = localStorage.getItem(userKey("cf_pending_scan"));
+          if (pendingRaw) {
+            const p = JSON.parse(pendingRaw);
+            p.scanId = scanId;
+            p.product = product;
+            localStorage.setItem(userKey("cf_pending_scan"), JSON.stringify(p));
+          }
+        } catch {}
         break;
       } catch (e: any) {
         if (e?.name === "AbortError" && globalController.signal.aborted) break;
@@ -566,7 +612,28 @@ export default function ScanPage() {
       return;
     }
 
-    // Step 2: 轮询状态（带重试+指数退避，防止网络抖动导致静默中断）
+    startPollingLoop(scanId, product, globalController, globalTimeoutId);
+  }
+
+  /** Shared polling loop — used by both startScan and resumePolling */
+  function startPollingLoop(
+    scanId: string,
+    product: "input" | "probe",
+    globalController: AbortController,
+    globalTimeoutId: ReturnType<typeof setTimeout>,
+  ) {
+    function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+      const reqController = new AbortController();
+      const reqTimeoutId = setTimeout(() => reqController.abort(), timeoutMs);
+      const onGlobalAbort = () => reqController.abort();
+      globalController.signal.addEventListener("abort", onGlobalAbort, { once: true });
+      if (globalController.signal.aborted) reqController.abort();
+      return fetch(url, { ...options, signal: reqController.signal }).finally(() => {
+        clearTimeout(reqTimeoutId);
+        globalController.signal.removeEventListener("abort", onGlobalAbort);
+      });
+    }
+
     let pollFailCount = 0;
     const MAX_POLL_FAIL = 10;
 
@@ -576,7 +643,7 @@ export default function ScanPage() {
         const pollRes = await fetchWithTimeout(
           `${API_BASE}/api/scan/${scanId}`,
           {},
-          15000, // 15s per-request timeout
+          15000,
         );
 
         if (!pollRes.ok) {
@@ -591,7 +658,6 @@ export default function ScanPage() {
         }
 
         pollFailCount = 0;
-
         const pollJson = await pollRes.json();
 
         if (pollJson.progress) setProgressMsg(pollJson.progress);
@@ -613,7 +679,7 @@ export default function ScanPage() {
 
         setTimeout(poll, 5000);
       } catch (e: any) {
-        if (e?.name === "AbortError") return; // 被取消，静默停止
+        if (e?.name === "AbortError") return;
         console.error(`[CiteFlow] Poll attempt failed (consecutive: ${pollFailCount + 1}):`, e.message || e);
         pollFailCount++;
         if (pollFailCount >= MAX_POLL_FAIL) {
@@ -628,8 +694,53 @@ export default function ScanPage() {
     setTimeout(poll, 1000);
   }
 
+  /** Resume polling for an existing scan (after navigating back to /scan) */
+  function resumePolling(
+    scanId: string,
+    mode: ScanMode,
+    product: "input" | "probe",
+    domain: string,
+    brandName: string,
+    startTime: number,
+  ) {
+    activeScanCleanup?.();
+
+    setScanDomain(domain);
+    setScanBrandName(brandName);
+    setScanMode(mode);
+    setErrorMsg("");
+    setProgressMsg("");
+    setProgressLog([]);
+
+    if (product === "input") {
+      setStep("input");
+      setInputPhase("scanning");
+    } else {
+      setStep("probe");
+      setProbePhase("scanning");
+      setScanTabIndex(1);
+    }
+
+    // Resume timer from saved startTime
+    timerRef.current = setInterval(() => {
+      setElapsed((Date.now() - startTime) / 1000);
+    }, 100);
+
+    const globalController = new AbortController();
+    abortRef.current = globalController;
+    const globalTimeoutId = setTimeout(() => globalController.abort(), 540_000);
+
+    activeScanCleanup = () => {
+      globalController.abort();
+      clearTimeout(globalTimeoutId);
+    };
+
+    startPollingLoop(scanId, product, globalController, globalTimeoutId);
+  }
+
   /** Scan 完成 → 进入对应产品的 report 阶段 */
   function handleScanFinish(result: any, product: "input" | "probe") {
+    activeScanCleanup = null;
     localStorage.removeItem(userKey("cf_pending_scan"));
     setPendingScan(null);
     setData(result);
@@ -671,6 +782,7 @@ export default function ScanPage() {
 
   /** Error → 全局 error state */
   function handleError(msg: string, _product?: "input" | "probe") {
+    activeScanCleanup = null;
     localStorage.removeItem(userKey("cf_pending_scan"));
     stopTimer();
     setErrorMsg(msg);
