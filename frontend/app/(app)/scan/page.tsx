@@ -128,7 +128,7 @@ export default function ScanPage() {
   const probeCreditsRef = useRef(0);
 
   // ─── Product-internal phases ───
-  const [inputPhase, setInputPhase] = useState<InputPhase>("guide");
+  const [inputPhase, setInputPhase] = useState<InputPhase>("form");
   const [probePhase, setProbePhase] = useState<ProbePhase>("briefing");
   const [analystPhase, setAnalystPhase] = useState<AnalystPhase>("briefing");
   const [analystScanning, setAnalystScanning] = useState(false);
@@ -1119,7 +1119,20 @@ export default function ScanPage() {
   // RENDER
   // ═══════════════════════════════════════════
 
-  if (!initialized) return null;
+  if (!initialized) {
+    return (
+      <div style={{
+        minHeight: "100vh", background: "#08080D", display: "flex",
+        alignItems: "center", justifyContent: "center"
+      }}>
+        <div style={{
+          width: 20, height: 20, border: "2px solid rgba(56,189,248,0.15)",
+          borderTopColor: "#38BDF8", borderRadius: "50%",
+          animation: "spin 0.8s linear infinite"
+        }} />
+      </div>
+    );
+  }
 
   /** Probe 产品的 3-tab 视图（scanning 和 report 阶段共用） */
   function renderProbeTabs(phase: "briefing" | "scanning" | "report") {
