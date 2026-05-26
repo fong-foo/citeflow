@@ -230,6 +230,38 @@
   }
   .nav-cta:hover { background: var(--accent-hover); transform: scale(1.02); }
 
+  /* 已登录用户显示 */
+  .nav-user-email {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'JetBrains Mono', monospace;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .nav-admin-btn {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(56,189,248,0.15);
+    background: rgba(56,189,248,0.06);
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .nav-admin-btn:hover { background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.25); }
+  .nav-logout {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .nav-logout:hover { color: #EF4444; }
+
   /* ── Announcement Bar ── */
   .announce {
     margin: 68px auto 0;
@@ -1711,7 +1743,7 @@
       <span class="nav-sep"></span>
       <a href="/guide" class="nav-link nav-link-guide">📖 体检指南</a>
     </div>
-    <div class="nav-right">
+    <div class="nav-right" id="nav-auth">
       <a href="/login" class="nav-link">登录</a>
       <button class="nav-cta" onclick="goToScan()">体检中心</button>
     </div>
@@ -2478,6 +2510,41 @@
   function scrollToHero() {
     document.getElementById('hero-section').scrollIntoView({ behavior: 'smooth' });
   }
+
+  // ── 导航栏登录状态 ──
+  (function renderNavAuth() {
+    const container = document.getElementById('nav-auth');
+    if (!container) return;
+
+    const token = localStorage.getItem('cf_token');
+    let user = null;
+    try {
+      const raw = localStorage.getItem('cf_user');
+      if (raw) user = JSON.parse(raw);
+    } catch {}
+
+    if (!token || !user) {
+      // 未登录 — 保持默认（服务端渲染的登录+体检中心）
+      return;
+    }
+
+    const email = user.email || '';
+    const isAdmin = !!user.is_admin;
+
+    // 截断过长的邮箱
+    const displayEmail = email.length > 22 ? email.slice(0, 20) + '...' : email;
+
+    let html = '<span class="nav-user-email" title="' + email + '">' + displayEmail + '</span>';
+
+    if (isAdmin) {
+      html += ' <a href="/admin" class="nav-admin-btn">管理后台</a>';
+    }
+
+    html += ' <button class="nav-cta" onclick="goToScan()">体检中心</button>';
+    html += ' <a class="nav-logout" onclick="(function(){localStorage.removeItem(\"cf_token\");localStorage.removeItem(\"cf_user\");window.location.reload();})()" title="退出登录">退出</a>';
+
+    container.innerHTML = html;
+  })();
 </script>
 
 </body>
