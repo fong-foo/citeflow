@@ -2497,6 +2497,12 @@
     window.location.href = token ? '/scan' : '/login';
   }
 
+  function handleLogout() {
+    localStorage.removeItem('cf_token');
+    localStorage.removeItem('cf_user');
+    window.location.reload();
+  }
+
   function startCheckup() {
     const domain = document.getElementById('hero-domain').value || document.getElementById('cta-domain').value || '';
     if (domain) {
@@ -2540,7 +2546,7 @@
     }
 
     html += ' <button class="nav-cta" onclick="goToScan()">体检中心</button>';
-    html += ' <a class="nav-logout" onclick="(function(){localStorage.removeItem(\"cf_token\");localStorage.removeItem(\"cf_user\");window.location.reload();})()" title="退出登录">退出</a>';
+    html += ' <a class="nav-logout" onclick="handleLogout()" title="退出登录">退出</a>';
 
     container.innerHTML = html;
   })();
