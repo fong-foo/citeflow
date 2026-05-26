@@ -2,7 +2,7 @@
 builder = "railpack"
 
 [deploy]
-startCommand = "node .next/standalone/server.js"
+startCommand = "npx next start --port ${PORT:-3000}"
 
 [service]
 name = "citeflow-frontend"
