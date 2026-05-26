@@ -482,126 +482,150 @@ export default function ScanPage() {
     };
     try { localStorage.setItem(userKey("cf_pending_scan"), JSON.stringify(pending)); } catch {}
 
-    try {
-      // Step 1: POST → 获取 scan_id
-      const body: any = {
-        domain: input.domain,
-        brand_name: input.brandName || input.brand_name || "",
-        industry: input.industry || "",
-        target_market: input.targetMarket || input.target_market || "",
-        core_product: input.core_product || "",
-        target_positioning: input.target_positioning || "",
-        seed_queries: input.seed_queries || [],
-        competitors: input.competitors || [],
-        mode,
-      };
+    const globalController = new AbortController();
+    abortRef.current = globalController;
+    const globalTimeoutId = setTimeout(() => globalController.abort(), 540_000); // 9分钟总超时
 
-      const controller = new AbortController();
-      abortRef.current = controller;
-      const timeoutId = setTimeout(() => controller.abort(), 540_000); // 9分钟总超时
+    // Helper: fetch with per-request timeout + global abort signal
+    function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+      const reqController = new AbortController();
+      const reqTimeoutId = setTimeout(() => reqController.abort(), timeoutMs);
+      const onGlobalAbort = () => reqController.abort();
+      globalController.signal.addEventListener("abort", onGlobalAbort, { once: true });
+      if (globalController.signal.aborted) reqController.abort();
 
-      const postRes = await fetch(`${API_BASE}/api/scan`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-        signal: controller.signal,
+      return fetch(url, { ...options, signal: reqController.signal }).finally(() => {
+        clearTimeout(reqTimeoutId);
+        globalController.signal.removeEventListener("abort", onGlobalAbort);
       });
+    }
 
-      const postJson = await postRes.json();
+    // Step 1: POST → 获取 scan_id（含重试，线上网络比 localhost 不可靠得多）
+    let scanId: string | null = null;
+    const body: any = {
+      domain: input.domain,
+      brand_name: input.brandName || input.brand_name || "",
+      industry: input.industry || "",
+      target_market: input.targetMarket || input.target_market || "",
+      core_product: input.core_product || "",
+      target_positioning: input.target_positioning || "",
+      seed_queries: input.seed_queries || [],
+      competitors: input.competitors || [],
+      mode,
+    };
 
-      if (!postRes.ok) {
-        clearTimeout(timeoutId);
-        const detail = Array.isArray(postJson.detail) ? postJson.detail.map((d: any) => d.msg).join("; ") : (postJson.detail || `HTTP ${postRes.status}`);
-        handleError(detail, product);
-        return;
-      }
+    for (let postAttempt = 0; postAttempt < 3; postAttempt++) {
+      if (globalController.signal.aborted) break;
+      try {
+        const postRes = await fetchWithTimeout(
+          `${API_BASE}/api/scan`,
+          { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) },
+          30000, // 30s per-request timeout
+        );
+        const postJson = await postRes.json();
 
-      if (postJson.status === "error") {
-        clearTimeout(timeoutId);
-        handleError(postJson.error || "扫描失败，请重试", product);
-        return;
-      }
-
-      const scanId = postJson.scan_id;
-      scanIdRef.current = scanId;
-
-      // Step 2: 每5秒轮询状态（带重试，防止网络抖动导致静默中断）
-      let pollFailCount = 0;
-      const MAX_POLL_FAIL = 5;
-
-      const poll = async () => {
-        try {
-          const pollRes = await fetch(`${API_BASE}/api/scan/${scanId}`, {
-            signal: controller.signal,
-          });
-
-          if (!pollRes.ok) {
-            pollFailCount++;
-            if (pollFailCount >= MAX_POLL_FAIL) {
-              clearTimeout(timeoutId);
-              handleError("查询扫描状态失败，请检查网络后重试", product);
-              return;
-            }
-            // 5xx/网络错误 → 等待后重试
-            setTimeout(poll, 3000);
-            return;
+        if (!postRes.ok) {
+          const detail = Array.isArray(postJson.detail) ? postJson.detail.map((d: any) => d.msg).join("; ") : (postJson.detail || `HTTP ${postRes.status}`);
+          if (postRes.status >= 500 && postAttempt < 2) {
+            await new Promise(r => setTimeout(r, 2000 * (postAttempt + 1)));
+            continue;
           }
-
-          pollFailCount = 0; // 成功则重置计数
-
-          const pollJson = await pollRes.json();
-
-          // 更新进度文案
-          if (pollJson.progress) {
-            setProgressMsg(pollJson.progress);
-          }
-          // 更新实时日志（SIGINT FEED）
-          if (pollJson.progress_log && pollJson.progress_log.length > 0) {
-            setProgressLog(pollJson.progress_log);
-          }
-
-          if (pollJson.status === "done") {
-            clearTimeout(timeoutId);
-            stopTimer();
-            handleScanFinish(pollJson.result, product);
-            return;
-          }
-
-          if (pollJson.status === "error") {
-            clearTimeout(timeoutId);
-            handleError(pollJson.error || "扫描失败，请重试", product);
-            return;
-          }
-
-          // 继续轮询
-          setTimeout(poll, 5000);
-        } catch (e: any) {
-          if (e?.name === "AbortError") {
-            // 被外部取消，不处理
-            return;
-          }
-          pollFailCount++;
-          if (pollFailCount >= MAX_POLL_FAIL) {
-            clearTimeout(timeoutId);
-            handleError("网络连接不稳定，扫描状态查询中断", product);
-            return;
-          }
-          // 网络错误 → 延迟重试
-          setTimeout(poll, 3000);
+          handleError(detail, product);
+          return;
         }
-      };
 
-      // 首次轮询延迟1秒（给后端一点启动时间）
-      setTimeout(poll, 1000);
+        if (postJson.status === "error") {
+          handleError(postJson.error || "扫描失败，请重试", product);
+          return;
+        }
 
-    } catch (e: any) {
-      stopTimer();
-      if (e?.name === "AbortError") {
-        handleError("扫描超时（超过9分钟），请重试或使用更快域名", product);
-      } else {
-        handleError("网络错误，请检查后端是否启动", product);
+        scanId = postJson.scan_id;
+        scanIdRef.current = scanId;
+        break;
+      } catch (e: any) {
+        if (e?.name === "AbortError" && globalController.signal.aborted) break;
+        console.error(`[CiteFlow] POST /api/scan attempt ${postAttempt + 1}/3 failed:`, e.message || e);
+        if (postAttempt >= 2) {
+          stopTimer();
+          handleError("创建扫描失败，请检查网络后重试", product);
+          return;
+        }
+        await new Promise(r => setTimeout(r, 2000 * (postAttempt + 1)));
       }
     }
+
+    if (!scanId) {
+      stopTimer();
+      handleError("创建扫描失败，请重试", product);
+      return;
+    }
+
+    if (globalController.signal.aborted) {
+      stopTimer();
+      handleError("扫描已取消", product);
+      return;
+    }
+
+    // Step 2: 轮询状态（带重试+指数退避，防止网络抖动导致静默中断）
+    let pollFailCount = 0;
+    const MAX_POLL_FAIL = 10;
+
+    const poll = async () => {
+      if (globalController.signal.aborted) return;
+      try {
+        const pollRes = await fetchWithTimeout(
+          `${API_BASE}/api/scan/${scanId}`,
+          {},
+          15000, // 15s per-request timeout
+        );
+
+        if (!pollRes.ok) {
+          pollFailCount++;
+          if (pollFailCount >= MAX_POLL_FAIL) {
+            clearTimeout(globalTimeoutId);
+            handleError(`查询扫描状态失败 (HTTP ${pollRes.status})，请检查网络后重试`, product);
+            return;
+          }
+          setTimeout(poll, Math.min(2000 * pollFailCount, 15000));
+          return;
+        }
+
+        pollFailCount = 0;
+
+        const pollJson = await pollRes.json();
+
+        if (pollJson.progress) setProgressMsg(pollJson.progress);
+        if (pollJson.progress_log?.length > 0) setProgressLog(pollJson.progress_log);
+
+        if (pollJson.status === "done") {
+          clearTimeout(globalTimeoutId);
+          stopTimer();
+          handleScanFinish(pollJson.result, product);
+          return;
+        }
+
+        if (pollJson.status === "error") {
+          clearTimeout(globalTimeoutId);
+          console.error("[CiteFlow] Backend returned scan error:", pollJson.error);
+          handleError(pollJson.error || "扫描失败，请重试", product);
+          return;
+        }
+
+        setTimeout(poll, 5000);
+      } catch (e: any) {
+        if (e?.name === "AbortError") return; // 被取消，静默停止
+        console.error(`[CiteFlow] Poll attempt failed (consecutive: ${pollFailCount + 1}):`, e.message || e);
+        pollFailCount++;
+        if (pollFailCount >= MAX_POLL_FAIL) {
+          clearTimeout(globalTimeoutId);
+          handleError("网络连接不稳定，扫描状态查询中断，请重试", product);
+          return;
+        }
+        setTimeout(poll, Math.min(2000 * pollFailCount, 15000));
+      }
+    };
+
+    setTimeout(poll, 1000);
   }
 
   /** Scan 完成 → 进入对应产品的 report 阶段 */
