@@ -156,6 +156,9 @@ export default function ScanPage() {
   // ─── 3-tab index (Probe 产品的 scanning/report 阶段共用) ───
   const [scanTabIndex, setScanTabIndex] = useState(0);
 
+  // ─── DIAGNOSTIC: interactive test state ───
+  const [diagCount, setDiagCount] = useState(0);
+
   // ─── Helpers ───
   async function deductCredit(product: "full" | "probe") {
     const token = localStorage.getItem("cf_token");
@@ -1468,198 +1471,22 @@ export default function ScanPage() {
     );
   }
 
+  // ─── DIAGNOSTIC v2: Minimal render, all hooks run, no child components ───
+  // Green "DIAGNOSTIC PASS" → bug is in a child component (ScanSidebar/ScanChat/etc)
+  // Still "页面崩溃" → bug is in ScanPage's own hooks
   return (
-    <ScanPageErrorBoundary>
-    <div className="flex min-h-screen">
-      {/* Grid background */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0"
-        style={{
-          opacity: 0.07,
-          backgroundImage: `
-            linear-gradient(rgba(56,189,248,0.5) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(56,189,248,0.25) 1px, transparent 1px)
-          `,
-          backgroundSize: "48px 48px",
-        }}
-      />
-
-      <ScanSidebar
-        currentStep={step}
-        inputPhase={inputPhase}
-        analystPhase={analystPhase}
-        isScanning={(step === "input" && inputPhase === "scanning") || (step === "probe" && probePhase === "scanning") || (step === "analyst" && analystScanning)}
-        tier={tier}
-        scanMode={scanMode}
-        hasData={!!data}
-        hasAnalystData={hasAnalystData}
-        hasDoctorData={hasDoctorData}
-        scanCredits={scanCredits}
-        probeCredits={probeCredits}
-        domain={scanDomain}
-        brandName={scanBrandName}
-        onInputClick={handleSidebarInputClick}
-        onHomeClick={handleSidebarHomeClick}
-        onProbeClick={handleSidebarProbeClick}
-        onAnalystClick={handleSidebarAnalystClick}
-        onDoctorClick={handleSidebarDoctorClick}
-        onUpgradeClick={handleSidebarUpgradeClick}
-      />
-
-      <main className="flex-1 ml-[160px] flex flex-col px-6 pt-4 pb-8 overflow-y-auto">
-        {/* ═══ step = "input" (初步体检: form → scanning → report) ═══ */}
-        {step === "input" && (
-          <>
-            {/* guide 阶段：新手引导卡片 */}
-            {inputPhase === "guide" && (
-              <ScanOnboardingGuide
-                onStart={() => setInputPhase("form")}
-              />
-            )}
-
-            {inputPhase === "form" && (
-              pendingScan ? (
-                <div className="flex flex-col items-center justify-center flex-1 gap-6">
-                  <div className="px-8 py-8 rounded-sm max-w-md w-full text-center"
-                    style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
-                    <div className="mb-4 flex justify-center">
-                      <span className="inline-block w-3 h-3 rounded-full"
-                        style={{ background: "#F59E0B", boxShadow: "0 0 12px rgba(245,158,11,0.5), 0 0 4px rgba(245,158,11,0.8)" }} />
-                    </div>
-                    <p className="text-sm font-medium mb-2" style={{ color: "#EDEDF5" }}>检测到中断的扫描</p>
-                    <p className="text-xs mb-1" style={{ color: "#9A9AB0" }}>
-                      域名 <span className="font-mono" style={{ color: "#7DD3FC" }}>{scanDomain || "—"}</span>
-                    </p>
-                    {scanBrandName && scanBrandName !== scanDomain && (
-                      <p className="text-xs mb-4" style={{ color: "#5E5E78" }}>品牌 {scanBrandName}</p>
-                    )}
-                    {!scanBrandName && <div className="mb-4" />}
-                    <p className="text-[10px] mb-6" style={{ color: "rgba(255,255,255,0.12)" }}>上次扫描意外中断，点击下方按钮可从断点续扫</p>
-                    <div className="flex gap-3 justify-center">
-                      <button onClick={handleResumeScan}
-                        className="px-6 py-2.5 text-sm font-medium rounded-sm transition-all duration-300"
-                        style={{ background: "rgba(56,189,248,0.12)", border: "1px solid rgba(56,189,248,0.22)", color: "#7DD3FC" }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.20)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.35)"; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.12)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.22)"; }}
-                      >继续扫描</button>
-                      <button onClick={handleAbortResume}
-                        className="px-5 py-2.5 text-xs font-medium rounded-sm transition-all duration-300"
-                        style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.25)" }}
-                        onMouseEnter={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.45)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.25)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
-                      >放弃，重新开始</button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <ScanChat onComplete={handleInputComplete} />
-              )
-            )}
-
-            {inputPhase === "scanning" && (
-              <ScanLoading elapsed={elapsed} domain={scanDomain} brandName={scanBrandName} progressMsg={progressMsg} onCancel={handleCancelScan} />
-            )}
-
-            {inputPhase === "report" && (inputReportData || data) && (
-              <ScanResult
-                data={inputReportData || data}
-                mode="light"
-                brandName={scanBrandName}
-                onUpgrade={() => { setUpgradeFeature("analyst"); setShowUpgrade(true); }}
-                onViewDashboard={() => setStep("dashboard")}
-                onUpgradeToFull={handleUpgradeToFull}
-                scanCredits={scanCredits}
-                probeCredits={probeCredits}
-                onUpgradeClick={(product) => { setUpgradeFeature(product === "full" ? "analyst" : "probe"); setShowUpgrade(true); }}
-              />
-            )}
-          </>
-        )}
-
-        {/* ═══ step = "probe" (Probe侦察兵: briefing → scanning → report) ═══ */}
-        {step === "probe" && renderProbeTabs(probePhase)}
-
-        {/* ═══ step = "analyst" (Analyst 诊断师: briefing → report) ═══ */}
-        {step === "analyst" && renderAnalystContent(analystPhase)}
-
-        {/* ═══ step = "doctor" (Doctor 处方: briefing → generating → report) ═══ */}
-        {step === "doctor" && renderDoctorContent(doctorPhase)}
-
-        {/* ═══ step = "dashboard" (仪表盘总览) ═══ */}
-        {step === "dashboard" && (
-          <ScanDashboard
-            data={data}
-            tier={tier}
-            mode={scanMode}
-            domain={scanDomain}
-            brandName={scanBrandName}
-            lastScanTime={lastScanTime}
-            scanCredits={scanCredits}
-            probeCredits={probeCredits}
-            onViewReport={handleViewReport}
-            onUpgrade={(feature) => { setUpgradeFeature(feature || "probe"); setShowUpgrade(true); }}
-            onNavigateToStep={(step) => {
-              if (step === "analyst") { setAnalystPhase((analystCompleted && hasAnalystData) ? "report" : "briefing"); setStep("analyst"); }
-              else if (step === "doctor") { setDoctorPhase((doctorCompleted && hasDoctorData) ? "report" : "briefing"); setStep("doctor"); }
-            }}
-            onNewScan={() => { setInputPhase("form"); setInputReportData(null); setStep("input"); }}
-            onNewProbe={() => {
-              const probe = data?.probe || {};
-              const profile = getCachedProfile(scanDomain);
-              setBriefingDefaults({
-                domain: scanDomain, brandName: scanBrandName,
-                industry: probe.brand_profile?.inferred_industry || profile?.inferred_industry || "",
-                targetMarket: probe.brand_profile?.inferred_target_market || profile?.inferred_target_market || "",
-                coreProduct: probe.brand_profile?.inferred_core_product || profile?.inferred_core_product || "",
-                competitorMentions: probe.competitor_mentions || [],
-              });
-              setProbePhase("briefing"); setStep("probe");
-            }}
-          />
-        )}
-
-        {/* ═══ step = "error" ═══ */}
-        {step === "error" && (
-          <div className="flex flex-col items-center gap-6 mt-20">
-            <div className="px-6 py-4 rounded-sm max-w-md text-center"
-              style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.18)" }}>
-              <p className="text-sm font-medium text-[#EF4444] mb-1">扫描中断</p>
-              <p className="text-xs text-cf-muted">{errorMsg}</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button onClick={handleReScan}
-                className="px-6 py-2.5 text-sm font-medium rounded-sm transition-all duration-300"
-                style={{ background: "#7DD3FC", border: "1px solid #7DD3FC", color: "#0A0A0F" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#38BDF8"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "#7DD3FC"; }}
-              >重新扫描</button>
-              <button onClick={handleRetry}
-                className="px-6 py-2.5 text-sm font-medium rounded-sm transition-all duration-300"
-                style={{ background: "rgba(56,189,248,0.10)", border: "1px solid rgba(56,189,248,0.18)", color: "#7DD3FC" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.18)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.30)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.10)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.18)"; }}
-              >返回修改</button>
-            </div>
-          </div>
-        )}
-      </main>
-
-      {showUpgrade && (
-        <UpgradeModal
-          feature={upgradeFeature}
-          tier={tier}
-          onClose={() => setShowUpgrade(false)}
-        />
-      )}
-
-      {creditNotification && (
-        <CreditUnlockModal
-          product={creditNotification.product}
-          count={creditNotification.count}
-          onClose={() => setCreditNotification(null)}
-        />
-      )}
+    <div style={{ minHeight: "100vh", background: "#08080D", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ padding: 32, background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 4, textAlign: "center" }}>
+        <p style={{ fontSize: 18, fontWeight: 700, color: "#22C55E", margin: 0 }}>DIAGNOSTIC PASS v2</p>
+        <p style={{ fontSize: 12, color: "#9A9AB0", margin: "8px 0 0", fontFamily: "monospace" }}>
+          initialized=true, step={step}, hooks OK
+        </p>
+        <button onClick={() => setDiagCount(c => c + 1)} style={{ marginTop: 16, padding: "8px 20px", fontSize: 12, background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.3)", color: "#22C55E", borderRadius: 4, cursor: "pointer" }}>
+          Click ({diagCount})
+        </button>
+      </div>
     </div>
-    </ScanPageErrorBoundary>
   );
+
+  /* ─── ORIGINAL RENDER DISABLED FOR DIAGNOSTICS (see git history) ─── */
 }
