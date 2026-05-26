@@ -1531,6 +1531,145 @@
     margin-top: 2px;
   }
 
+  /* ── 对比区（why-us 底部）── */
+
+  .why-us-compare {
+    margin-top: 56px;
+    max-width: 720px;
+  }
+
+  .why-us-compare-hook {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .why-us-compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .why-us-compare-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-visible);
+    border-radius: 14px;
+    padding: 24px 20px 22px;
+  }
+
+  .compare-other {
+    border-color: rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.015);
+  }
+
+  .compare-us {
+    border-color: rgba(56,189,248,0.15);
+    box-shadow: 0 0 28px rgba(56,189,248,0.04);
+  }
+
+  .compare-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  .compare-label.us {
+    color: var(--accent);
+  }
+
+  .why-us-compare-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .why-us-compare-card ul li {
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding: 5px 0;
+    display: flex;
+    align-items: center;
+    line-height: 1.4;
+  }
+
+  .cmp-gap {
+    height: 10px;
+  }
+
+  .cmp-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .cmp-mark.red {
+    background: rgba(239,68,68,0.10);
+    color: #F87171;
+  }
+
+  .cmp-mark.blue {
+    background: rgba(56,189,248,0.12);
+    color: var(--accent);
+  }
+
+  .cmp-from {
+    color: #F87171;
+    font-weight: 700;
+  }
+
+  .cmp-to {
+    color: #4ADE80;
+    font-weight: 700;
+  }
+
+  .cmp-arrow {
+    color: var(--text-muted);
+    margin: 0 5px;
+  }
+
+  .cmp-bottom {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    margin-top: 8px;
+  }
+
+  .us-bottom {
+    color: var(--accent-hover);
+  }
+
+  .why-us-compare-closer {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-top: 20px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 768px) {
+    .why-us-compare-hook {
+      font-size: 17px;
+    }
+
+    .why-us-compare-closer {
+      font-size: 14px;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -1942,6 +2081,60 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- 对比区：他们 vs 我们 -->
+      <div class="why-us-compare reveal reveal-delay-3">
+        <p class="why-us-compare-hook">
+          他们说你的品牌健康分是 72 分。然后呢？
+        </p>
+
+        <div class="why-us-compare-grid">
+          <!-- 左：别人的工具 -->
+          <div class="why-us-compare-card compare-other">
+            <span class="compare-label">别人的 GEO 工具</span>
+            <ul>
+              <li><span class="cmp-mark red">✕</span> 买一份 PDF 报告</li>
+              <li><span class="cmp-mark red">✕</span> 得到一个分数</li>
+              <li><span class="cmp-mark red">✕</span> 看完不知道怎么办</li>
+              <li class="cmp-gap"></li>
+              <li><span class="cmp-mark red">✕</span> 有用吗？</li>
+              <li><span class="cmp-mark red">✕</span> 下次再看？同份报告</li>
+              <li class="cmp-gap"></li>
+              <li class="cmp-bottom">花了钱，<br>什么都没变。</li>
+            </ul>
+          </div>
+
+          <!-- 右：CiteFlow -->
+          <div class="why-us-compare-card compare-us">
+            <span class="compare-label us">CiteFlow</span>
+            <ul>
+              <li><span class="cmp-mark blue">✓</span> 做一次体检</li>
+              <li><span class="cmp-mark blue">✓</span> 拿一份处方</li>
+              <li><span class="cmp-mark blue">✓</span> 照着改，改完回来复查</li>
+              <li class="cmp-gap"></li>
+              <li>
+                <span class="cmp-mark blue">✓</span>
+                引用率 <strong class="cmp-from">20%</strong>
+                <span class="cmp-arrow">→</span>
+                <strong class="cmp-to">60%</strong>
+              </li>
+              <li>
+                <span class="cmp-mark blue">✓</span>
+                竞品胜率
+                <strong class="cmp-from">1/6</strong>
+                <span class="cmp-arrow">→</span>
+                <strong class="cmp-to">4/6</strong>
+              </li>
+              <li class="cmp-gap"></li>
+              <li class="cmp-bottom us-bottom">花了钱，<br>看到了改变。</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="why-us-compare-closer">
+          他们卖报告。我们卖可验证的结果。
+        </p>
       </div>
     </div>
   </div>
