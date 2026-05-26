@@ -296,7 +296,7 @@ async def create_checkout(body: CheckoutRequest, user: dict = Depends(get_curren
     if not variant_id or not api_key or not store_id:
         raise HTTPException(status_code=500, detail="支付暂未配置")
 
-    success_url = os.environ.get("FRONTEND_URL", "https://www.citeflow.cn") + "/scan"
+    success_url = os.environ.get("FRONTEND_URL", "https://www.citeflow.cn") + f"/pay/success?product={body.product}"
 
     import httpx
     async with httpx.AsyncClient() as client:

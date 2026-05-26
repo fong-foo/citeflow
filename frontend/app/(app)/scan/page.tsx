@@ -17,6 +17,7 @@ import { ScanPrescriptionSteps } from "@/components/scan-prescription-steps";
 import { ScanDoctorBriefing } from "@/components/scan-doctor-briefing";
 import { ScanDoctorGenerating } from "@/components/scan-doctor-generating";
 import { ScanDoctorWorkshop } from "@/components/scan-doctor-workshop";
+import { ScanOnboardingGuide } from "@/components/scan-onboarding-guide";
 import { userKey, getUserTier, setUserTier, type Tier, type ScanMode } from "@/lib/storage";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -31,7 +32,7 @@ function scanResultKey(mode: string): string {
 type Step = "input" | "probe" | "analyst" | "doctor" | "dashboard" | "error";
 
 // ─── 产品内部阶段 ───
-type InputPhase = "form" | "scanning" | "report";
+type InputPhase = "guide" | "form" | "scanning" | "report";
 type ProbePhase = "briefing" | "scanning" | "report";
 type AnalystPhase = "briefing" | "report";
 type DoctorPhase = "briefing" | "generating" | "report";
@@ -77,7 +78,7 @@ export default function ScanPage() {
   const probeCreditsRef = useRef(0);
 
   // ─── Product-internal phases ───
-  const [inputPhase, setInputPhase] = useState<InputPhase>("form");
+  const [inputPhase, setInputPhase] = useState<InputPhase>("guide");
   const [probePhase, setProbePhase] = useState<ProbePhase>("briefing");
   const [analystPhase, setAnalystPhase] = useState<AnalystPhase>("briefing");
   const [analystScanning, setAnalystScanning] = useState(false);
@@ -1182,6 +1183,13 @@ export default function ScanPage() {
         {/* ═══ step = "input" (初步体检: form → scanning → report) ═══ */}
         {step === "input" && (
           <>
+            {/* guide 阶段：新手引导卡片 */}
+            {inputPhase === "guide" && (
+              <ScanOnboardingGuide
+                onStart={() => setInputPhase("form")}
+              />
+            )}
+
             {inputPhase === "form" && (
               pendingScan ? (
                 <div className="flex flex-col items-center justify-center flex-1 gap-6">
