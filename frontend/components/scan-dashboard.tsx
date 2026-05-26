@@ -18,6 +18,8 @@ interface Props {
   domain: string;
   brandName: string;
   lastScanTime: string;
+  scanCredits: number;
+  probeCredits: number;
   onViewReport: () => void;
   onUpgrade: (feature?: "probe" | "analyst" | "doctor") => void;
   onNavigateToStep?: (step: "analyst" | "doctor") => void;
@@ -745,8 +747,9 @@ function SourceAuthoritySection({
   );
 }
 
-export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTime, onViewReport, onUpgrade, onNavigateToStep }: Props) {
+export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTime, scanCredits, probeCredits, onViewReport, onUpgrade, onNavigateToStep }: Props) {
   const isFree = tier === "free";
+  const hasCredits = scanCredits > 0 || probeCredits > 0;
   const isPaid = tier === "full";
   const probe = data?.probe || data || {};
 
@@ -1350,34 +1353,34 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
       <div ref={dashContentRef} className="flex-1 flex flex-col gap-8 py-6" style={{ overflowY: "auto", overflowX: "hidden", minWidth: 0, overflowWrap: "break-word", wordBreak: "break-word", paddingLeft: 140 }}>
 
       {/* ── Probe 未使用提醒 ── */}
-      {!isFree && !hasFullData && (
+      {(!isFree || hasCredits) && !hasFullData && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           className="flex items-center justify-between px-5 py-4"
           style={{
-            background: "linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(245,158,11,0.02) 100%)",
-            border: "1px solid rgba(245,158,11,0.18)",
+            background: "linear-gradient(135deg, rgba(56,189,248,0.08) 0%, rgba(56,189,248,0.02) 100%)",
+            border: "1px solid rgba(56,189,248,0.15)",
           }}
         >
           <div className="flex items-center gap-3">
             <span className="text-lg">🔬</span>
             <div>
               <p className="text-sm font-medium" style={{ color: "#EDEDF5" }}>
-                Probe 侦察兵已就绪
+                你还有 {probeCredits > 0 ? `${probeCredits} 次 Probe 侦察兵` : `${scanCredits} 次完整体检`} 可用
               </p>
               <p className="text-xs mt-0.5" style={{ color: "#9A9AB0" }}>
-                你已解锁完整版体检，点击左侧「Probe 侦察兵」开始深度扫描
+                点击左侧「Probe 侦察兵」开始深度扫描你的品牌
               </p>
             </div>
           </div>
           <span
             className="px-2 py-1 text-[10px] font-mono"
             style={{
-              background: "rgba(245,158,11,0.12)",
-              border: "1px solid rgba(245,158,11,0.22)",
-              color: "#FBBF24",
+              background: "rgba(56,189,248,0.12)",
+              border: "1px solid rgba(56,189,248,0.22)",
+              color: "#7DD3FC",
             }}
           >
             待使用

@@ -259,12 +259,12 @@ def update_booking_status(booking_id: int, status: str, admin_note: str = "", ad
         if add_credits and booking["credits_added"] == 0:
             if booking["product"] == "full":
                 conn.execute(
-                    "UPDATE users SET scan_credits = scan_credits + ? WHERE email = ?",
+                    "UPDATE users SET scan_credits = scan_credits + ?, tier = 'full' WHERE email = ?",
                     (2, booking["email"]),
                 )
             elif booking["product"] == "probe":
                 conn.execute(
-                    "UPDATE users SET probe_credits = probe_credits + ? WHERE email = ?",
+                    "UPDATE users SET probe_credits = probe_credits + ?, tier = CASE WHEN tier = 'full' THEN 'full' ELSE 'probe' END WHERE email = ?",
                     (1, booking["email"]),
                 )
             conn.execute("UPDATE bookings SET credits_added = 1 WHERE id = ?", (booking_id,))

@@ -11,6 +11,7 @@ import { ScanReport } from "@/components/scan-probe-report";
 import { ScanSidebar } from "@/components/scan-sidebar";
 import { ProbeBriefing, type ProbeFullInput } from "@/components/probe-briefing";
 import { UpgradeModal } from "@/components/upgrade-modal";
+import { CreditUnlockModal } from "@/components/credit-unlock-modal";
 import { ScanAnalystBriefing } from "@/components/scan-analyst-briefing";
 import { ScanAnalystReport } from "@/components/scan-analyst-report";
 import { ScanPrescriptionSteps } from "@/components/scan-prescription-steps";
@@ -73,6 +74,12 @@ export default function ScanPage() {
   const [elapsed, setElapsed] = useState(0);
   const [initialized, setInitialized] = useState(false);
   const [lastScanTime, setLastScanTime] = useState("");
+  const [analystCompleted, setAnalystCompleted] = useState(() => {
+    try { return localStorage.getItem(userKey("cf_analyst_done")) === "1"; } catch { return false; }
+  });
+  const [doctorCompleted, setDoctorCompleted] = useState(() => {
+    try { return localStorage.getItem(userKey("cf_doctor_done")) === "1"; } catch { return false; }
+  });
   const hasAnalystData = !!(data?.diagnosis || data?.one_line_verdict);
   const hasDoctorData = !!(data?.prescription && data.prescription.length > 0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -94,6 +101,7 @@ export default function ScanPage() {
   const [upgradeFeature, setUpgradeFeature] = useState<"probe" | "analyst" | "doctor">("analyst");
   const [scanCredits, setScanCredits] = useState(0);
   const [probeCredits, setProbeCredits] = useState(0);
+  const [creditNotification, setCreditNotification] = useState<{ product: "full" | "probe"; count: number } | null>(null);
   const [hasLightScan, setHasLightScan] = useState(false);
   useEffect(() => { scanCreditsRef.current = scanCredits; }, [scanCredits]);
   useEffect(() => { probeCreditsRef.current = probeCredits; }, [probeCredits]);
@@ -141,6 +149,18 @@ export default function ScanPage() {
     return null;
   }
 
+  function getStoredCredits(): { scan: number; probe: number; initialized: boolean } {
+    try {
+      const raw = localStorage.getItem(userKey("cf_known_credits"));
+      if (raw) return { ...JSON.parse(raw), initialized: true };
+    } catch {}
+    return { scan: 0, probe: 0, initialized: false };
+  }
+
+  function storeCredits(scan: number, probe: number) {
+    try { localStorage.setItem(userKey("cf_known_credits"), JSON.stringify({ scan, probe })); } catch {}
+  }
+
   // ─── Timer ───
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -181,9 +201,23 @@ export default function ScanPage() {
           setTier(d.tier);
           setUserTier(d.tier);
         }
+        const newScan = typeof d.scan_credits === "number" ? d.scan_credits : 0;
+        const newProbe = typeof d.probe_credits === "number" ? d.probe_credits : 0;
+        const { scan: prevScan, probe: prevProbe, initialized } = getStoredCredits() as { scan: number; probe: number; initialized: boolean };
+
         if (typeof d.scan_credits === "number") setScanCredits(d.scan_credits);
         if (typeof d.probe_credits === "number") setProbeCredits(d.probe_credits);
         if (typeof d.has_light_scan === "boolean") setHasLightScan(d.has_light_scan);
+
+        // 只在已有初始记录且次数确实增加时才弹恭喜通知
+        if (initialized) {
+          if (newScan > prevScan) {
+            setCreditNotification({ product: "full", count: newScan - prevScan });
+          } else if (newProbe > prevProbe) {
+            setCreditNotification({ product: "probe", count: newProbe - prevProbe });
+          }
+        }
+        storeCredits(newScan, newProbe);
       })
       .catch(() => {});
 
@@ -480,6 +514,12 @@ export default function ScanPage() {
 
   /** 统一 scan launcher：POST 获取 scan_id → 每5秒轮询状态 */
   async function startScan(input: any, mode: ScanMode, product: "input" | "probe") {
+    // 新扫描重置 analyst/doctor 完成标记，确保用户走 briefing 流程
+    setAnalystCompleted(false);
+    setDoctorCompleted(false);
+    try { localStorage.removeItem(userKey("cf_analyst_done")); } catch {}
+    try { localStorage.removeItem(userKey("cf_doctor_done")); } catch {}
+
     if (product === "input") {
       setStep("input");
       setInputPhase("scanning");
@@ -880,7 +920,8 @@ export default function ScanPage() {
       setShowUpgrade(true);
       return;
     }
-    setAnalystPhase(hasAnalystData ? "report" : "briefing");
+    // 只有用户明确完成过 analyst 流程才直接进报告
+    setAnalystPhase(analystCompleted && hasAnalystData ? "report" : "briefing");
     setStep("analyst");
   }
 
@@ -891,7 +932,8 @@ export default function ScanPage() {
       setShowUpgrade(true);
       return;
     }
-    setDoctorPhase(hasDoctorData ? "report" : "briefing");
+    // 只有用户明确完成过 doctor 流程才直接进报告
+    setDoctorPhase(doctorCompleted && hasDoctorData ? "report" : "briefing");
     setStep("doctor");
   }
 
@@ -1233,6 +1275,20 @@ export default function ScanPage() {
     );
   }
 
+  // 当 analyst/doctor 报告被渲染时，标记已完成
+  useEffect(() => {
+    if (step === "analyst" && analystPhase === "report" && !analystCompleted) {
+      setAnalystCompleted(true);
+      try { localStorage.setItem(userKey("cf_analyst_done"), "1"); } catch {}
+    }
+  }, [step, analystPhase, analystCompleted]);
+  useEffect(() => {
+    if (step === "doctor" && doctorPhase === "report" && !doctorCompleted) {
+      setDoctorCompleted(true);
+      try { localStorage.setItem(userKey("cf_doctor_done"), "1"); } catch {}
+    }
+  }, [step, doctorPhase, doctorCompleted]);
+
   function renderAnalystContent(phase: "briefing" | "report") {
     return (
       <div className="flex-1 flex flex-col pb-8">
@@ -1429,11 +1485,13 @@ export default function ScanPage() {
             domain={scanDomain}
             brandName={scanBrandName}
             lastScanTime={lastScanTime}
+            scanCredits={scanCredits}
+            probeCredits={probeCredits}
             onViewReport={handleViewReport}
             onUpgrade={(feature) => { setUpgradeFeature(feature || "probe"); setShowUpgrade(true); }}
             onNavigateToStep={(step) => {
-              if (step === "analyst") { setAnalystPhase(hasAnalystData ? "report" : "briefing"); setStep("analyst"); }
-              else if (step === "doctor") { setDoctorPhase(hasDoctorData ? "report" : "briefing"); setStep("doctor"); }
+              if (step === "analyst") { setAnalystPhase((analystCompleted && hasAnalystData) ? "report" : "briefing"); setStep("analyst"); }
+              else if (step === "doctor") { setDoctorPhase((doctorCompleted && hasDoctorData) ? "report" : "briefing"); setStep("doctor"); }
             }}
           />
         )}
@@ -1469,6 +1527,14 @@ export default function ScanPage() {
           feature={upgradeFeature}
           tier={tier}
           onClose={() => setShowUpgrade(false)}
+        />
+      )}
+
+      {creditNotification && (
+        <CreditUnlockModal
+          product={creditNotification.product}
+          count={creditNotification.count}
+          onClose={() => setCreditNotification(null)}
         />
       )}
     </div>
