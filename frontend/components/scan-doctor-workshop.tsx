@@ -12,6 +12,9 @@ interface ScanDoctorWorkshopProps {
   paperCount: number;
   domain: string;
   brandName?: string;
+  scanCredits: number;
+  onNewScan: () => void;
+  onUpgrade: () => void;
 }
 
 interface PrescriptionItem {
@@ -405,6 +408,9 @@ export function ScanDoctorWorkshop({
   paperCount,
   domain,
   brandName,
+  scanCredits,
+  onNewScan,
+  onUpgrade,
 }: ScanDoctorWorkshopProps) {
   const [done, setDone] = useState<Set<number>>(new Set());
   const [initialized, setInitialized] = useState(false);
@@ -603,6 +609,35 @@ export function ScanDoctorWorkshop({
           defaultExpanded={allP1Done}
         />
       )}
+
+      {/* ── 底部操作区 ── */}
+      <div style={{ marginTop: 40, padding: "16px 20px", borderRadius: 12,
+        background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)",
+        textAlign: "center" }}>
+        {scanCredits > 0 ? (
+          <>
+            <p style={{ color: "#9A9AB0", fontSize: 13, marginBottom: 12 }}>
+              完整体检还剩 {scanCredits} 次。需要给另一个品牌做体检？
+            </p>
+            <button onClick={onNewScan} style={{
+              padding: "8px 24px", borderRadius: 8, border: "1px solid rgba(56,189,248,0.25)",
+              background: "rgba(56,189,248,0.10)", color: "#7DD3FC", fontSize: 14, fontWeight: 500,
+              cursor: "pointer",
+            }}>开始新体检</button>
+          </>
+        ) : (
+          <>
+            <p style={{ color: "#9A9AB0", fontSize: 13, marginBottom: 12 }}>
+              完整体检次数已用完
+            </p>
+            <button onClick={onUpgrade} style={{
+              padding: "8px 24px", borderRadius: 8, border: "none",
+              background: "linear-gradient(135deg, #3B82F6, #2563EB)", color: "#fff",
+              fontSize: 14, fontWeight: 600, cursor: "pointer",
+            }}>预约开通</button>
+          </>
+        )}
+      </div>
     </motion.div>
   );
 }

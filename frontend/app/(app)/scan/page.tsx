@@ -875,13 +875,34 @@ export default function ScanPage() {
   // ═══════════════════════════════════════════
 
   function handleSidebarInputClick() {
-    if (inputReportData || data) {
-      setInputPhase("report");
-      setStep("input");
-    } else {
+    // 没有旧数据 → 直接进表单
+    if (!inputReportData && !data) {
       setInputPhase("form");
       setStep("input");
+      return;
     }
+
+    // 有旧数据 + 还有 scan_credits → 弹选择
+    if (scanCredits > 0) {
+      const choice = confirm(
+        "你还有 " + scanCredits + " 次完整体检可用。\n\n" +
+        "点「确定」开始一次新的体检\n" +
+        "点「取消」查看上次报告"
+      );
+      if (choice) {
+        setInputPhase("form");
+        setInputReportData(null);
+        setStep("input");
+      } else {
+        setInputPhase("report");
+        setStep("input");
+      }
+      return;
+    }
+
+    // 有旧数据但没有 scan_credits → 只能看报告
+    setInputPhase("report");
+    setStep("input");
   }
 
   function handleSidebarHomeClick() {
@@ -891,14 +912,44 @@ export default function ScanPage() {
 
   function handleSidebarProbeClick() {
     if (!data) { alert("请先完成一次品牌体检"); return; }
+
+    const probe = data?.probe || {};
+    const hasProbeData = !!(probe.company_score || probe.citation_metrics);
+
+    // 已有 Probe 数据 + 还有 probe_credits → 弹选择
+    if (hasProbeData && probeCredits > 0) {
+      const choice = confirm(
+        "你还有 " + probeCredits + " 次侦察兵可用。\n\n" +
+        "点「确定」开始一次新的侦察\n" +
+        "点「取消」查看上次侦察报告"
+      );
+      if (choice) {
+        const profile = getCachedProfile(scanDomain);
+        setBriefingDefaults({
+          domain: scanDomain,
+          brandName: scanBrandName,
+          industry: probe.brand_profile?.inferred_industry || profile?.inferred_industry || "",
+          targetMarket: probe.brand_profile?.inferred_target_market || profile?.inferred_target_market || "",
+          coreProduct: probe.brand_profile?.inferred_core_product || profile?.inferred_core_product || "",
+          competitorMentions: probe.competitor_mentions || [],
+        });
+        setProbePhase("briefing");
+        setStep("probe");
+        return;
+      }
+      setProbePhase("report");
+      setScanTabIndex(2);
+      setStep("probe");
+      return;
+    }
+
+    // 没有 Probe 数据 → 进 briefing
     if (scanMode === "light") {
-      // 还没跑过 full scan → 进入 briefing 阶段
       const profile = getCachedProfile(scanDomain);
-      const probe = data?.probe || {};
       setBriefingDefaults({
         domain: scanDomain,
         brandName: scanBrandName,
-        industry: probe.brand_profile?.inferred_industry || profile?.inferred_industry || data?.probe?.company_evaluation?.industry || "",
+        industry: probe.brand_profile?.inferred_industry || profile?.inferred_industry || "",
         targetMarket: probe.brand_profile?.inferred_target_market || profile?.inferred_target_market || "",
         coreProduct: probe.brand_profile?.inferred_core_product || profile?.inferred_core_product || "",
         competitorMentions: probe.competitor_mentions || [],
@@ -907,6 +958,7 @@ export default function ScanPage() {
       setStep("probe");
       return;
     }
+
     // 已跑过 full scan → 直接看报告
     setProbePhase("report");
     setScanTabIndex(2);
@@ -1247,6 +1299,7 @@ export default function ScanPage() {
                 mode={scanMode}
                 domain={scanDomain}
                 brandName={scanBrandName}
+                probeCredits={probeCredits}
                 onUpgrade={() => { setUpgradeFeature("analyst"); setShowUpgrade(true); }}
                 onBack={() => setStep("dashboard")}
                 onViewAnalyst={() => {
@@ -1258,6 +1311,7 @@ export default function ScanPage() {
                   setAnalystPhase("briefing");
                   setStep("analyst");
                 }}
+                onBuyMore={() => { setUpgradeFeature("probe"); setShowUpgrade(true); }}
               />
             ) : (
               <div className="flex-1 flex items-center justify-center">
@@ -1351,6 +1405,9 @@ export default function ScanPage() {
                   paperCount={data?.knowledge_sources?.length || 0}
                   domain={scanDomain}
                   brandName={scanBrandName || scanDomain}
+                  scanCredits={scanCredits}
+                  onNewScan={() => { setInputPhase("form"); setInputReportData(null); setStep("input"); }}
+                  onUpgrade={() => { setUpgradeFeature("analyst"); setShowUpgrade(true); }}
                 />
               </div>
             </div>
@@ -1492,6 +1549,19 @@ export default function ScanPage() {
             onNavigateToStep={(step) => {
               if (step === "analyst") { setAnalystPhase((analystCompleted && hasAnalystData) ? "report" : "briefing"); setStep("analyst"); }
               else if (step === "doctor") { setDoctorPhase((doctorCompleted && hasDoctorData) ? "report" : "briefing"); setStep("doctor"); }
+            }}
+            onNewScan={() => { setInputPhase("form"); setInputReportData(null); setStep("input"); }}
+            onNewProbe={() => {
+              const probe = data?.probe || {};
+              const profile = getCachedProfile(scanDomain);
+              setBriefingDefaults({
+                domain: scanDomain, brandName: scanBrandName,
+                industry: probe.brand_profile?.inferred_industry || profile?.inferred_industry || "",
+                targetMarket: probe.brand_profile?.inferred_target_market || profile?.inferred_target_market || "",
+                coreProduct: probe.brand_profile?.inferred_core_product || profile?.inferred_core_product || "",
+                competitorMentions: probe.competitor_mentions || [],
+              });
+              setProbePhase("briefing"); setStep("probe");
             }}
           />
         )}

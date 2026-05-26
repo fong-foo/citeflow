@@ -142,8 +142,10 @@ export default function ReportViewPage() {
             mode="full"
             domain={report.domain || ""}
             brandName={report.brandName || ""}
+            probeCredits={0}
             onUpgrade={noop}
             onBack={() => window.location.href = "/reports"}
+            onBuyMore={noop}
           />
         )}
 
@@ -166,6 +168,9 @@ export default function ReportViewPage() {
               paperCount={report.data?.knowledge_sources?.length || 0}
               domain={report.domain || ""}
               brandName={report.brandName || ""}
+              scanCredits={0}
+              onNewScan={noop}
+              onUpgrade={noop}
             />
           </div>
         )}

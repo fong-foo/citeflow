@@ -56,9 +56,11 @@ interface Props {
   mode: ScanMode;
   domain: string;
   brandName: string;
+  probeCredits: number;
   onUpgrade: () => void;
   onBack: () => void;
   onViewAnalyst?: () => void;
+  onBuyMore: () => void;
 }
 
 // ─── 子组件 ─────────────────────────────────────────────
@@ -1070,7 +1072,7 @@ const NAV_ITEMS = [
 
 // ─── 主组件 ─────────────────────────────────────────────
 
-export function ScanReport({ data, tier, mode, domain, brandName, onUpgrade, onBack, onViewAnalyst }: Props) {
+export function ScanReport({ data, tier, mode, domain, brandName, probeCredits, onUpgrade, onBack, onViewAnalyst, onBuyMore }: Props) {
   const probe = data?.probe || {};
   const diagnosis = data?.diagnosis;
   const prescription = data?.actions;
@@ -1229,6 +1231,24 @@ export function ScanReport({ data, tier, mode, domain, brandName, onUpgrade, onB
               >
                 查看诊断报告 → Analyst
               </button>
+            </div>
+          )}
+
+          {/* 再买一次入口 */}
+          {probeCredits === 0 && (
+            <div style={{
+              marginTop: 40, padding: "16px 20px", borderRadius: 12,
+              background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)",
+              textAlign: "center",
+            }}>
+              <p style={{ color: "#9A9AB0", fontSize: 13, marginBottom: 12 }}>
+                侦察次数已用完。需要重新侦察或侦察另一个品牌？
+              </p>
+              <button onClick={onBuyMore} style={{
+                padding: "8px 24px", borderRadius: 8, border: "none",
+                background: "linear-gradient(135deg, #3B82F6, #2563EB)", color: "#fff",
+                fontSize: 14, fontWeight: 600, cursor: "pointer",
+              }}>再买一次（¥68）</button>
             </div>
           )}
 

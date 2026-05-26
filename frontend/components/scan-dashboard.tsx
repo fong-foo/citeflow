@@ -23,6 +23,8 @@ interface Props {
   onViewReport: () => void;
   onUpgrade: (feature?: "probe" | "analyst" | "doctor") => void;
   onNavigateToStep?: (step: "analyst" | "doctor") => void;
+  onNewScan: () => void;
+  onNewProbe: () => void;
 }
 
 const STEPS = [
@@ -747,7 +749,7 @@ function SourceAuthoritySection({
   );
 }
 
-export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTime, scanCredits, probeCredits, onViewReport, onUpgrade, onNavigateToStep }: Props) {
+export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTime, scanCredits, probeCredits, onViewReport, onUpgrade, onNavigateToStep, onNewScan, onNewProbe }: Props) {
   const isFree = tier === "free";
   const hasCredits = scanCredits > 0 || probeCredits > 0;
   const isPaid = tier === "full";
@@ -1386,6 +1388,51 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
             待使用
           </span>
         </motion.div>
+      )}
+
+      {/* ── Credits 状态栏 ── */}
+      {scanCredits > 0 || probeCredits > 0 ? (
+        <div style={{
+          display: "flex", alignItems: "center", gap: 16,
+          padding: "14px 20px", borderRadius: 12,
+          background: "rgba(56,189,248,0.05)", border: "1px solid rgba(56,189,248,0.12)",
+          marginBottom: 24,
+        }}>
+          <span style={{ color: "#7DD3FC", fontSize: 13, fontWeight: 500 }}>
+            {scanCredits > 0 ? `完整体检 剩余 ${scanCredits} 次` : ""}
+            {scanCredits > 0 && probeCredits > 0 ? " · " : ""}
+            {probeCredits > 0 ? `侦察兵 剩余 ${probeCredits} 次` : ""}
+          </span>
+          <div style={{ flex: 1 }} />
+          {scanCredits > 0 && (
+            <button onClick={onNewScan} style={{
+              padding: "6px 16px", borderRadius: 8, border: "1px solid rgba(56,189,248,0.25)",
+              background: "rgba(56,189,248,0.10)", color: "#7DD3FC", fontSize: 13, fontWeight: 500,
+              cursor: "pointer",
+            }}>开始新体检</button>
+          )}
+          {probeCredits > 0 && (
+            <button onClick={onNewProbe} style={{
+              padding: "6px 16px", borderRadius: 8, border: "1px solid rgba(56,189,248,0.15)",
+              background: "transparent", color: "#9A9AB0", fontSize: 13, fontWeight: 500,
+              cursor: "pointer",
+            }}>开始新侦察</button>
+          )}
+        </div>
+      ) : (
+        <div style={{
+          padding: "14px 20px", borderRadius: 12,
+          background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)",
+          marginBottom: 24,
+          display: "flex", alignItems: "center", gap: 12,
+        }}>
+          <span style={{ color: "#9A9AB0", fontSize: 13 }}>次数已用完</span>
+          <button onClick={() => onUpgrade("analyst")} style={{
+            padding: "6px 16px", borderRadius: 8, border: "none",
+            background: "linear-gradient(135deg, #3B82F6, #2563EB)", color: "#fff",
+            fontSize: 13, fontWeight: 600, cursor: "pointer",
+          }}>预约开通</button>
+        </div>
       )}
 
       {/* ═══════════════════════════════════════════
