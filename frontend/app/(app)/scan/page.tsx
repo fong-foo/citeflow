@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ScanChat } from "@/components/scan-chat";
 import { ScanDashboard } from "@/components/scan-dashboard";
@@ -56,6 +56,44 @@ function formatTime(ts: number): string {
   const d = new Date(ts);
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function FallbackUI({ error }: { error: unknown }) {
+  const msg = error instanceof Error ? error.message : String(error);
+  return (
+    <div style={{
+      minHeight: "100vh", background: "#08080D", display: "flex",
+      flexDirection: "column", alignItems: "center", justifyContent: "center",
+      padding: 24, fontFamily: "system-ui, sans-serif"
+    }}>
+      <div style={{
+        maxWidth: 480, padding: 32, background: "rgba(239,68,68,0.06)",
+        border: "1px solid rgba(239,68,68,0.20)", borderRadius: 4, textAlign: "center"
+      }}>
+        <p style={{ fontSize: 14, fontWeight: 600, color: "#EF4444", margin: "0 0 8px" }}>
+          ScanPage 渲染错误
+        </p>
+        <p style={{
+          fontSize: 12, color: "#9A9AB0", margin: 0,
+          wordBreak: "break-word", lineHeight: 1.6, fontFamily: "monospace"
+        }}>
+          {msg || "未知错误"}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+class ScanPageErrorBoundary extends React.Component<{children: React.ReactNode}, {error: Error | null}> {
+  constructor(props: {children: React.ReactNode}) { super(props); this.state = {error: null}; }
+  static getDerivedStateFromError(error: Error) { return {error}; }
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error("[CiteFlow] ScanPage error boundary caught:", error, info);
+  }
+  render() {
+    if (this.state.error) return <FallbackUI error={this.state.error} />;
+    return this.props.children;
+  }
 }
 
 export default function ScanPage() {
@@ -1418,6 +1456,7 @@ export default function ScanPage() {
   }
 
   return (
+    <ScanPageErrorBoundary>
     <div className="flex min-h-screen">
       {/* Grid background */}
       <div
@@ -1608,5 +1647,6 @@ export default function ScanPage() {
         />
       )}
     </div>
+    </ScanPageErrorBoundary>
   );
 }
