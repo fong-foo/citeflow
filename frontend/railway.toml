@@ -1,5 +1,2 @@
-[deploy]
-startCommand = "npx next start --port ${PORT:-3000}"
-
 [service]
 name = "citeflow-frontend"
