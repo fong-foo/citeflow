@@ -201,6 +201,20 @@
     transition: color 0.2s;
   }
   .nav-link:hover { color: var(--text-primary); }
+  .nav-sep {
+    display: inline-block;
+    width: 1px;
+    height: 16px;
+    background: rgba(255,255,255,0.08);
+    margin: 0 4px;
+    align-self: center;
+  }
+  .nav-link-guide {
+    color: var(--accent) !important;
+  }
+  .nav-link-guide:hover {
+    color: var(--accent-hover) !important;
+  }
   .nav-cta {
     background: var(--accent);
     color: #0A0A0F;
@@ -1475,6 +1489,8 @@
       <a href="#opensource" class="nav-link">开源</a>
       <a href="#mission" class="nav-link">使命</a>
       <a href="#pricing" class="nav-link">定价</a>
+      <span class="nav-sep"></span>
+      <a href="/guide" class="nav-link nav-link-guide">📖 体检指南</a>
     </div>
     <div class="nav-right">
       <a href="/login" class="nav-link">登录</a>

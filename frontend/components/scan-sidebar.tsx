@@ -88,6 +88,14 @@ function StepIcon({ stepId, color }: { stepId: string; color: string }) {
           <polyline points="9.2,20.5 6.5,23.2 3.8,20.5" stroke={color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.55" />
         </svg>
       );
+    case "guide":
+      return (
+        <svg viewBox="0 0 24 24" width={size} height={size} fill="none">
+          <path d="M4 4h6l2 2h8v12H4V4z" stroke={color} strokeWidth="1.6" opacity="0.65" />
+          <line x1="6" y1="9" x2="18" y2="9" stroke={color} strokeWidth="1.3" strokeLinecap="round" opacity="0.35" />
+          <line x1="6" y1="12" x2="16" y2="12" stroke={color} strokeWidth="1.3" strokeLinecap="round" opacity="0.25" />
+        </svg>
+      );
     default:
       return null;
   }
@@ -721,6 +729,31 @@ export function ScanSidebar({
           );
         })}
       </nav>
+
+      {/* ═══════ Guide Link ═══════ */}
+      <div>
+        <div className="hairline-accent" />
+        <div className="px-2 py-2">
+          <Link
+            href="/guide"
+            className="flex items-center gap-1.5 px-1 py-1 rounded-sm transition-colors duration-200 group"
+            style={{ background: "rgba(56,189,248,0)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0)"; }}
+          >
+            <span className="shrink-0" style={{ width: 13, height: 13, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg viewBox="0 0 24 24" width={13} height={13} fill="none">
+                <path d="M4 4h6l2 2h8v12H4V4z" stroke="#5E5E78" strokeWidth="1.6" opacity="0.65" />
+                <line x1="6" y1="9" x2="18" y2="9" stroke="#5E5E78" strokeWidth="1.3" strokeLinecap="round" opacity="0.35" />
+                <line x1="6" y1="12" x2="16" y2="12" stroke="#5E5E78" strokeWidth="1.3" strokeLinecap="round" opacity="0.25" />
+              </svg>
+            </span>
+            <span className="text-[10px] font-medium tracking-[0.04em] text-[#5E5E78] group-hover:text-[#7DD3FC] transition-colors duration-300">
+              体检指南
+            </span>
+          </Link>
+        </div>
+      </div>
 
       {/* ═══════ Report History Link ═══════ */}
       <div>
