@@ -172,16 +172,14 @@
   .nav .container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 32px;
     height: 56px;
   }
   .nav-center {
     display: flex;
     align-items: center;
     gap: 24px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
   }
   .nav-logo {
     display: flex;
@@ -192,6 +190,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    margin-left: auto;
   }
   .nav-link {
     color: var(--text-secondary);
