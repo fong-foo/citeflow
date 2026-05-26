@@ -1284,6 +1284,77 @@
   }
   .pricing-btn.primary:hover { background: var(--accent-hover); }
 
+  /* ── Section: Roadmap ── */
+  #roadmap {
+    padding: 120px 0 100px;
+  }
+  .roadmap-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .roadmap-card {
+    background: var(--bg-surface);
+    border: 1px dashed rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 32px 28px 28px;
+    text-align: center;
+    transition: border-color 0.3s;
+  }
+  .roadmap-card:hover {
+    border-color: rgba(255,255,255,0.15);
+  }
+  .roadmap-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+  .roadmap-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+  .roadmap-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    background: rgba(56,189,248,0.12);
+    color: var(--accent-hover);
+  }
+  .roadmap-badge.outline {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+  }
+  .roadmap-card ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+  }
+  .roadmap-card ul li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 4px 0 4px 18px;
+    position: relative;
+  }
+  .roadmap-card ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+  }
+  .roadmap-footer {
+    text-align: center;
+    margin-top: 48px;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
   /* ── Section 7: CTA + Footer ── */
   .cta-section {
     padding: 120px 0 80px;
@@ -1354,6 +1425,14 @@
   .footer-right a:hover { color: var(--text-secondary); }
 
   /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .roadmap-cards {
+      grid-template-columns: 1fr;
+      max-width: 400px;
+      margin: 48px auto 0;
+    }
+  }
+
   @media (max-width: 1024px) {
     .hero .container { grid-template-columns: 1fr; gap: 48px; text-align: center; }
     .hero h1 { font-size: 40px; letter-spacing: -0.8px; }
@@ -1489,6 +1568,7 @@
       <a href="#opensource" class="nav-link">开源</a>
       <a href="#mission" class="nav-link">使命</a>
       <a href="#pricing" class="nav-link">定价</a>
+      <a href="#roadmap" class="nav-link">产品预告</a>
       <span class="nav-sep"></span>
       <a href="/guide" class="nav-link nav-link-guide">📖 体检指南</a>
     </div>
@@ -2088,6 +2168,59 @@
         <a href="/scan" class="pricing-btn">开始侦察 →</a>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- Section: 不只是体检                           -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="roadmap">
+  <div class="container">
+    <div class="section-label reveal">不只是体检</div>
+    <h2 class="section-title reveal reveal-delay-1">品牌 AI 可见度指挥中心</h2>
+    <p class="section-desc reveal reveal-delay-1">持续建设中</p>
+
+    <div class="roadmap-cards">
+      <!-- 品牌作战室 -->
+      <div class="roadmap-card reveal reveal-delay-2">
+        <div class="roadmap-icon">🪖</div>
+        <h3>品牌作战室</h3>
+        <span class="roadmap-badge">即将推出</span>
+        <ul>
+          <li>持续性监测，不是一次性报告</li>
+          <li>引用率变化趋势图</li>
+          <li>异常掉分自动告警</li>
+        </ul>
+      </div>
+
+      <!-- 竞品雷达 -->
+      <div class="roadmap-card reveal reveal-delay-3">
+        <div class="roadmap-icon">📡</div>
+        <h3>竞品雷达</h3>
+        <span class="roadmap-badge">即将推出</span>
+        <ul>
+          <li>竞品改动实时追踪</li>
+          <li>对手做了什么让 AI 推荐它</li>
+          <li>结构化数据、内容、外链——改了什么一目了然</li>
+        </ul>
+      </div>
+
+      <!-- 行业基准 -->
+      <div class="roadmap-card reveal reveal-delay-4">
+        <div class="roadmap-icon">📊</div>
+        <h3>行业基准</h3>
+        <span class="roadmap-badge">即将推出</span>
+        <ul>
+          <li>你的引用率在同行排第几</li>
+          <li>行业 P25/P50/P75 百分位</li>
+          <li>"20% 到底算好还是差"——有答案了</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="roadmap-footer reveal reveal-delay-5">
+      现在做第一次体检。等这些功能上线时，你的历史数据已经在等你了。
+    </p>
   </div>
 </section>
 

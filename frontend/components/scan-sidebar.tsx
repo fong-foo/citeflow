@@ -31,11 +31,14 @@ const STEPS = [
     ],
   },
   { id: "doctor", label: "Doctor 处方", sub: "生成执行清单", step: 4 },
+  { id: "warroom", label: "品牌作战室", sub: "持续监测", step: 5, coming: true },
+  { id: "radar", label: "竞品雷达", sub: "对手追踪", step: 6, coming: true },
+  { id: "benchmark", label: "行业基准", sub: "同行对比", step: 7, coming: true },
 ];
 
 /* ─── Module icons — precision line-art, 24x24 viewBox ─── */
 function StepIcon({ stepId, color }: { stepId: string; color: string }) {
-  const size = 13;
+  const size = 14;
   switch (stepId) {
     case "input":
       // Magnifying glass — search / inspection
@@ -94,6 +97,32 @@ function StepIcon({ stepId, color }: { stepId: string; color: string }) {
           <path d="M4 4h6l2 2h8v12H4V4z" stroke={color} strokeWidth="1.6" opacity="0.65" />
           <line x1="6" y1="9" x2="18" y2="9" stroke={color} strokeWidth="1.3" strokeLinecap="round" opacity="0.35" />
           <line x1="6" y1="12" x2="16" y2="12" stroke={color} strokeWidth="1.3" strokeLinecap="round" opacity="0.25" />
+        </svg>
+      );
+    case "warroom":
+      return (
+        <svg viewBox="0 0 24 24" width={size} height={size} fill="none">
+          <rect x="3" y="3" width="7" height="7" rx="1.5" stroke={color} strokeWidth="1.5" opacity="0.5" />
+          <rect x="14" y="3" width="7" height="7" rx="1.5" stroke={color} strokeWidth="1.5" opacity="0.5" />
+          <rect x="3" y="14" width="7" height="7" rx="1.5" stroke={color} strokeWidth="1.5" opacity="0.5" />
+          <rect x="14" y="14" width="7" height="7" rx="1.5" stroke={color} strokeWidth="1.5" opacity="0.35" />
+        </svg>
+      );
+    case "radar":
+      return (
+        <svg viewBox="0 0 24 24" width={size} height={size} fill="none">
+          <path d="M12 3a9 9 0 1 0 0 18" stroke={color} strokeWidth="1.5" opacity="0.5" />
+          <path d="M12 3a9 9 0 0 1 0 18" stroke={color} strokeWidth="1.5" opacity="0.25" />
+          <line x1="12" y1="12" x2="12" y2="3" stroke={color} strokeWidth="1.2" opacity="0.4" />
+          <circle cx="12" cy="12" r="2" stroke={color} strokeWidth="1.2" opacity="0.4" />
+        </svg>
+      );
+    case "benchmark":
+      return (
+        <svg viewBox="0 0 24 24" width={size} height={size} fill="none">
+          <line x1="4" y1="20" x2="8" y2="20" stroke={color} strokeWidth="1.8" strokeLinecap="round" opacity="0.5" />
+          <line x1="10" y1="20" x2="14" y2="12" stroke={color} strokeWidth="1.8" strokeLinecap="round" opacity="0.65" />
+          <line x1="16" y1="20" x2="20" y2="8" stroke={color} strokeWidth="1.8" strokeLinecap="round" opacity="0.85" />
         </svg>
       );
     default:
@@ -265,13 +294,13 @@ export function ScanSidebar({
       className="fixed left-0 top-0 bottom-0 z-40 flex flex-col overflow-hidden select-none"
       style={{
         width: 160,
-        background: "#06060C",
-        borderRight: "1px solid rgba(255,255,255,0.04)",
+        background: "#11111F",
+        borderRight: "1px solid rgba(255,255,255,0.10)",
       }}
     >
       {/* ─── Measurement grid background ─── */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.025]"
+        className="absolute inset-0 pointer-events-none opacity-[0.06]"
         style={{
           backgroundImage: `
             linear-gradient(rgba(56,189,248,0.3) 1px, transparent 1px),
@@ -309,11 +338,11 @@ export function ScanSidebar({
           </div>
 
           <div className="flex flex-col gap-px">
-            <span className="text-[13px] font-semibold tracking-tight text-[#D4D4E0] group-hover:text-white transition-colors duration-300">
+            <span className="text-[14px] font-semibold tracking-tight text-[#D4D4E0] group-hover:text-white transition-colors duration-300">
               CiteFlow
             </span>
             <div className="flex items-center gap-1">
-              <span className="text-[9px] tracking-[0.06em] text-[#6A6A88] font-medium">
+              <span className="text-[11px] tracking-[0.06em] text-[#6A6A88] font-medium">
                 体检中心
               </span>
               <span
@@ -354,7 +383,7 @@ export function ScanSidebar({
                 {/* ── 上层分隔 + 标签 ── */}
                 <div className="flex items-center gap-2 mb-1.5">
                   <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.10)" }} />
-                  <span className="text-[8px] font-mono tracking-[0.12em] uppercase" style={{ color: "#5E5E78" }}>主面板</span>
+                  <span className="text-[9px] font-mono tracking-[0.12em] uppercase" style={{ color: "#5E5E78" }}>主面板</span>
                   <div className="w-6 h-px" style={{ background: "rgba(255,255,255,0.06)" }} />
                 </div>
 
@@ -449,6 +478,64 @@ export function ScanSidebar({
           const hasChildren = "children" in step && step.children && step.children.length > 0;
           const isParentActive = status === "current" || status === "completed" || status === "available";
           const isExpanded = expandedParents.has(step.id);
+          const isComing = "coming" in step && (step as any).coming;
+
+          if (isComing) {
+            return (
+              <div key={step.id}>
+                <motion.div
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: 0.15 + i * 0.06,
+                    ease: [0.4, 0, 0.2, 1],
+                  }}
+                  onClick={() => alert("该功能开发中，敬请期待")}
+                  className="relative flex items-center gap-2 px-2 py-[7px] rounded-sm transition-colors duration-150 group"
+                  style={{
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(255,255,255,0.02)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                  }}
+                >
+                  <div
+                    className="relative flex items-center justify-center shrink-0"
+                    style={{ width: 22, height: 22 }}
+                  >
+                    <div
+                      className="absolute inset-0 rounded-full"
+                      style={{ border: "1px solid rgba(255,255,255,0.10)" }}
+                    />
+                    <div
+                      className="flex items-center justify-center rounded-full"
+                      style={{ width: 14, height: 14, background: "transparent" }}
+                    >
+                      <StepIcon stepId={step.id} color="#4A4A5C" />
+                    </div>
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span
+                      className="text-[12px] font-medium truncate tracking-[0.02em]"
+                      style={{ color: "#5A5A70" }}
+                    >
+                      {step.label}
+                    </span>
+                    <span
+                      className="text-[11px] truncate font-mono tracking-[0.03em]"
+                      style={{ color: "rgba(255,255,255,0.18)" }}
+                    >
+                      {step.sub}
+                    </span>
+                  </div>
+                </motion.div>
+              </div>
+            );
+          }
 
           return (
             <div key={step.id}>
@@ -550,7 +637,7 @@ export function ScanSidebar({
                     }}
                   >
                     {status === "completed" && step.id === "input" ? (
-                      <span className="font-mono text-[10px] font-semibold leading-none" style={{ color: "#22C55E" }}>✓</span>
+                      <span className="font-mono text-[11px] font-semibold leading-none" style={{ color: "#22C55E" }}>✓</span>
                     ) : (
                       <StepIcon
                         stepId={step.id}
@@ -563,7 +650,7 @@ export function ScanSidebar({
                 {/* Label + Sub */}
                 <div className="flex flex-col min-w-0">
                   <span
-                    className="text-[11px] font-medium truncate tracking-[0.02em] flex items-center gap-1.5"
+                    className="text-[12px] font-medium truncate tracking-[0.02em] flex items-center gap-1.5"
                     style={{
                       color:
                         status === "completed" ? "#A8A8B8" :
@@ -588,7 +675,7 @@ export function ScanSidebar({
                     )}
                   </span>
                   <span
-                    className="text-[9px] truncate font-mono tracking-[0.03em]"
+                    className="text-[11px] truncate font-mono tracking-[0.03em]"
                     style={{
                       color:
                         status === "current" || status === "available"
@@ -603,7 +690,7 @@ export function ScanSidebar({
                 {/* Chevron toggle for parent steps with children */}
                 {hasChildren && isParentActive && (
                   <motion.span
-                    className="ml-auto shrink-0 font-mono text-[10px] px-1 py-1 -mr-1"
+                    className="ml-auto shrink-0 font-mono text-[11px] px-1 py-1 -mr-1"
                     style={{ color: "rgba(56,189,248,0.5)" }}
                     animate={{ rotate: isExpanded ? 90 : 0 }}
                     transition={{ duration: 0.2 }}
@@ -697,7 +784,7 @@ export function ScanSidebar({
                           {/* Child label */}
                           <div className="flex flex-col min-w-0">
                             <span
-                              className="text-[10px] font-medium truncate tracking-[0.02em]"
+                              className="text-[11px] font-medium truncate tracking-[0.02em]"
                               style={{
                                 color: childDone
                                   ? "#9090A8"
@@ -709,7 +796,7 @@ export function ScanSidebar({
                               {child.label}
                             </span>
                             <span
-                              className="text-[8px] truncate font-mono tracking-[0.03em]"
+                              className="text-[9px] truncate font-mono tracking-[0.03em]"
                               style={{
                                 color: childActive
                                   ? "rgba(56,189,248,0.55)"
@@ -738,17 +825,17 @@ export function ScanSidebar({
             href="/guide"
             className="flex items-center gap-1.5 px-1 py-1 rounded-sm transition-colors duration-200 group"
             style={{ background: "rgba(56,189,248,0)" }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.06)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0)"; }}
           >
-            <span className="shrink-0" style={{ width: 13, height: 13, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg viewBox="0 0 24 24" width={13} height={13} fill="none">
-                <path d="M4 4h6l2 2h8v12H4V4z" stroke="#5E5E78" strokeWidth="1.6" opacity="0.65" />
-                <line x1="6" y1="9" x2="18" y2="9" stroke="#5E5E78" strokeWidth="1.3" strokeLinecap="round" opacity="0.35" />
-                <line x1="6" y1="12" x2="16" y2="12" stroke="#5E5E78" strokeWidth="1.3" strokeLinecap="round" opacity="0.25" />
+            <span className="shrink-0" style={{ width: 14, height: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg viewBox="0 0 24 24" width={14} height={14} fill="none">
+                <path d="M4 4h6l2 2h8v12H4V4z" stroke="#7DD3FC" strokeWidth="1.6" opacity="0.75" />
+                <line x1="6" y1="9" x2="18" y2="9" stroke="#7DD3FC" strokeWidth="1.3" strokeLinecap="round" opacity="0.45" />
+                <line x1="6" y1="12" x2="16" y2="12" stroke="#7DD3FC" strokeWidth="1.3" strokeLinecap="round" opacity="0.35" />
               </svg>
             </span>
-            <span className="text-[10px] font-medium tracking-[0.04em] text-[#5E5E78] group-hover:text-[#7DD3FC] transition-colors duration-300">
+            <span className="text-[12px] font-semibold tracking-[0.04em] text-[#7DD3FC] group-hover:text-[#38BDF8] transition-colors duration-300">
               体检指南
             </span>
           </Link>
@@ -773,7 +860,7 @@ export function ScanSidebar({
                 boxShadow: "0 0 6px rgba(56,189,248,0.5), 0 0 2px rgba(56,189,248,0.8)",
               }}
             />
-            <span className="text-[10px] font-medium tracking-[0.04em] text-[#6A6A88] group-hover:text-[#7DD3FC] transition-colors duration-300">
+            <span className="text-[11px] font-medium tracking-[0.04em] text-[#6A6A88] group-hover:text-[#7DD3FC] transition-colors duration-300">
               报告历史
             </span>
           </Link>
@@ -801,7 +888,7 @@ export function ScanSidebar({
                 }}
               >
                 {imgError ? (
-                  <span className="text-[11px] font-semibold text-[#5E5E78] font-mono">
+                  <span className="text-[12px] font-semibold text-[#5E5E78] font-mono">
                     {brandName?.charAt(0)?.toUpperCase() || "?"}
                   </span>
                 ) : (
@@ -818,10 +905,10 @@ export function ScanSidebar({
 
               {/* Brand name + status */}
               <div className="flex flex-col min-w-0">
-                <span className="text-[11px] font-medium truncate text-[#C8C8D8]">
+                <span className="text-[12px] font-medium truncate text-[#C8C8D8]">
                   {brandName}
                 </span>
-                <span className="text-[9px] tracking-[0.03em] truncate" style={{ color: "rgba(56,189,248,0.6)" }}>
+                <span className="text-[11px] tracking-[0.03em] truncate" style={{ color: "rgba(56,189,248,0.6)" }}>
                   精密仪器检测中
                 </span>
               </div>
@@ -845,7 +932,7 @@ export function ScanSidebar({
       >
         {email && (
           <p
-            className="text-[9px] text-[#5A5A78] truncate mb-1.5 font-mono tracking-[0.03em]"
+            className="text-[11px] text-[#5A5A78] truncate mb-1.5 font-mono tracking-[0.03em]"
             title={email}
           >
             {email}
@@ -853,7 +940,7 @@ export function ScanSidebar({
         )}
         <button
           onClick={handleLogout}
-          className="text-[10px] tracking-[0.04em] text-[#5A5A78] hover:text-[#EF4444] transition-colors duration-300"
+          className="text-[11px] tracking-[0.04em] text-[#5A5A78] hover:text-[#EF4444] transition-colors duration-300"
         >
           退出登录
         </button>
@@ -883,7 +970,7 @@ export function ScanSidebar({
               background: "rgba(245,158,11,0.12)",
               border: "1px solid rgba(245,158,11,0.25)",
               color: "#F59E0B",
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: 500,
             }}
           >
