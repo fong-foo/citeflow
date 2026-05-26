@@ -525,44 +525,70 @@ export default function ScanPage() {
       const scanId = postJson.scan_id;
       scanIdRef.current = scanId;
 
-      // Step 2: 每5秒轮询状态
+      // Step 2: 每5秒轮询状态（带重试，防止网络抖动导致静默中断）
+      let pollFailCount = 0;
+      const MAX_POLL_FAIL = 5;
+
       const poll = async () => {
-        const pollRes = await fetch(`${API_BASE}/api/scan/${scanId}`, {
-          signal: controller.signal,
-        });
+        try {
+          const pollRes = await fetch(`${API_BASE}/api/scan/${scanId}`, {
+            signal: controller.signal,
+          });
 
-        if (!pollRes.ok) {
-          clearTimeout(timeoutId);
-          handleError("查询扫描状态失败", product);
-          return;
+          if (!pollRes.ok) {
+            pollFailCount++;
+            if (pollFailCount >= MAX_POLL_FAIL) {
+              clearTimeout(timeoutId);
+              handleError("查询扫描状态失败，请检查网络后重试", product);
+              return;
+            }
+            // 5xx/网络错误 → 等待后重试
+            setTimeout(poll, 3000);
+            return;
+          }
+
+          pollFailCount = 0; // 成功则重置计数
+
+          const pollJson = await pollRes.json();
+
+          // 更新进度文案
+          if (pollJson.progress) {
+            setProgressMsg(pollJson.progress);
+          }
+          // 更新实时日志（SIGINT FEED）
+          if (pollJson.progress_log && pollJson.progress_log.length > 0) {
+            setProgressLog(pollJson.progress_log);
+          }
+
+          if (pollJson.status === "done") {
+            clearTimeout(timeoutId);
+            stopTimer();
+            handleScanFinish(pollJson.result, product);
+            return;
+          }
+
+          if (pollJson.status === "error") {
+            clearTimeout(timeoutId);
+            handleError(pollJson.error || "扫描失败，请重试", product);
+            return;
+          }
+
+          // 继续轮询
+          setTimeout(poll, 5000);
+        } catch (e: any) {
+          if (e?.name === "AbortError") {
+            // 被外部取消，不处理
+            return;
+          }
+          pollFailCount++;
+          if (pollFailCount >= MAX_POLL_FAIL) {
+            clearTimeout(timeoutId);
+            handleError("网络连接不稳定，扫描状态查询中断", product);
+            return;
+          }
+          // 网络错误 → 延迟重试
+          setTimeout(poll, 3000);
         }
-
-        const pollJson = await pollRes.json();
-
-        // 更新进度文案
-        if (pollJson.progress) {
-          setProgressMsg(pollJson.progress);
-        }
-        // 更新实时日志（SIGINT FEED）
-        if (pollJson.progress_log && pollJson.progress_log.length > 0) {
-          setProgressLog(pollJson.progress_log);
-        }
-
-        if (pollJson.status === "done") {
-          clearTimeout(timeoutId);
-          stopTimer();
-          handleScanFinish(pollJson.result, product);
-          return;
-        }
-
-        if (pollJson.status === "error") {
-          clearTimeout(timeoutId);
-          handleError(pollJson.error || "扫描失败，请重试", product);
-          return;
-        }
-
-        // 继续轮询
-        setTimeout(poll, 5000);
       };
 
       // 首次轮询延迟1秒（给后端一点启动时间）
