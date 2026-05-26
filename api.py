@@ -280,6 +280,19 @@ class DeductRequest(BaseModel):
     product: str  # "full" | "probe"
 
 
+class BookingRequest(BaseModel):
+    product: str  # "full" | "probe"
+    email: str
+    phone: str = ""
+    note: str = ""
+
+
+class BookingAction(BaseModel):
+    status: str = ""          # "contacted" | "completed" | "cancelled"
+    add_credits: bool = False
+    admin_note: str = ""
+
+
 @app.post("/api/pay/checkout")
 async def create_checkout(body: CheckoutRequest, user: dict = Depends(get_current_user)):
     """创建 Lemon Squeezy checkout。product: 'full'（¥368）或 'probe'（¥68）。"""
@@ -402,6 +415,64 @@ async def deduct_credit(body: DeductRequest, user: dict = Depends(get_current_us
         raise HTTPException(status_code=400, detail="次数不足")
 
     return {"ok": True, "remaining": remaining, "product": body.product}
+
+
+# ─── Booking — 预约开通 ──────────────────────────────
+
+@app.post("/api/booking")
+async def create_booking_endpoint(body: BookingRequest, user: dict = Depends(get_current_user)):
+    """用户提交预约。需登录。"""
+    if body.product not in ("full", "probe"):
+        raise HTTPException(status_code=400, detail="无效套餐类型")
+
+    from auth_db import create_booking as db_create_booking
+    booking_id = db_create_booking(
+        user_id=user["user_id"],
+        email=body.email,
+        phone=body.phone,
+        product=body.product,
+        note=body.note,
+    )
+    return {"ok": True, "booking_id": booking_id}
+
+
+@app.get("/api/admin/bookings")
+async def list_bookings_endpoint(status: str = "", user: dict = Depends(get_current_user)):
+    """管理员查看所有预约。可选 ?status=pending 筛选。"""
+    admin_email = os.environ.get("ADMIN_EMAIL", "")
+    if user.get("email") != admin_email:
+        raise HTTPException(status_code=403, detail="仅限管理员")
+
+    from auth_db import list_bookings as db_list_bookings
+    bookings = db_list_bookings(status_filter=status)
+    return {"bookings": bookings}
+
+
+@app.patch("/api/admin/bookings/{booking_id}")
+async def update_booking_endpoint(booking_id: int, body: BookingAction, user: dict = Depends(get_current_user)):
+    """管理员更新预约状态。status=completed + add_credits=true 时自动加 credits。"""
+    admin_email = os.environ.get("ADMIN_EMAIL", "")
+    if user.get("email") != admin_email:
+        raise HTTPException(status_code=403, detail="仅限管理员")
+
+    if not body.status:
+        raise HTTPException(status_code=400, detail="status 必填")
+
+    valid_statuses = ("contacted", "completed", "cancelled")
+    if body.status not in valid_statuses:
+        raise HTTPException(status_code=400, detail=f"无效状态，可选: {valid_statuses}")
+
+    from auth_db import update_booking_status
+    result = update_booking_status(
+        booking_id=booking_id,
+        status=body.status,
+        admin_note=body.admin_note,
+        add_credits=body.add_credits,
+    )
+    if result is None:
+        raise HTTPException(status_code=404, detail="预约不存在")
+
+    return {"ok": True, "booking": result}
 
 
 # ─── Profile — 轻量品牌画像 ──────────────────────────────

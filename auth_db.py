@@ -49,6 +49,21 @@ def _init_conn():
             _conn.execute("ALTER TABLE users ADD COLUMN probe_credits INTEGER NOT NULL DEFAULT 0")
         except sqlite3.OperationalError:
             pass
+        _conn.execute("""
+            CREATE TABLE IF NOT EXISTS bookings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                email TEXT NOT NULL,
+                phone TEXT DEFAULT '',
+                product TEXT NOT NULL,
+                note TEXT DEFAULT '',
+                status TEXT DEFAULT 'pending',
+                credits_added INTEGER DEFAULT 0,
+                admin_note TEXT DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )
+        """)
         _conn.commit()
 
 
@@ -201,3 +216,62 @@ def get_user_full(email: str) -> dict | None:
                 "created_at": row["created_at"],
             }
         return None
+
+
+# ── Bookings ───────────────────────────────────────
+
+def create_booking(user_id: int, email: str, phone: str, product: str, note: str) -> int:
+    """创建预约。返回 booking_id。"""
+    conn = get_db()
+    with _conn_lock:
+        conn.execute(
+            "INSERT INTO bookings (user_id, email, phone, product, note) VALUES (?, ?, ?, ?, ?)",
+            (user_id, email, phone, product, note),
+        )
+        conn.commit()
+        return conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+
+
+def list_bookings(status_filter: str = "") -> list[dict]:
+    """列出所有预约，最新在前。可选按状态筛选。"""
+    conn = get_db()
+    with _conn_lock:
+        if status_filter:
+            rows = conn.execute(
+                "SELECT * FROM bookings WHERE status = ? ORDER BY created_at DESC",
+                (status_filter,),
+            ).fetchall()
+        else:
+            rows = conn.execute(
+                "SELECT * FROM bookings ORDER BY created_at DESC"
+            ).fetchall()
+        return [dict(r) for r in rows]
+
+
+def update_booking_status(booking_id: int, status: str, admin_note: str = "", add_credits: bool = False) -> dict | None:
+    """更新预约状态。add_credits=True 时自动调 add_scan_credits/add_probe_credits。"""
+    conn = get_db()
+    with _conn_lock:
+        booking = conn.execute("SELECT * FROM bookings WHERE id = ?", (booking_id,)).fetchone()
+        if not booking:
+            return None
+
+        if add_credits and booking["credits_added"] == 0:
+            if booking["product"] == "full":
+                conn.execute(
+                    "UPDATE users SET scan_credits = scan_credits + ? WHERE email = ?",
+                    (2, booking["email"]),
+                )
+            elif booking["product"] == "probe":
+                conn.execute(
+                    "UPDATE users SET probe_credits = probe_credits + ? WHERE email = ?",
+                    (1, booking["email"]),
+                )
+            conn.execute("UPDATE bookings SET credits_added = 1 WHERE id = ?", (booking_id,))
+
+        conn.execute(
+            "UPDATE bookings SET status = ?, admin_note = ? WHERE id = ?",
+            (status, admin_note, booking_id),
+        )
+        conn.commit()
+        return dict(conn.execute("SELECT * FROM bookings WHERE id = ?", (booking_id,)).fetchone())

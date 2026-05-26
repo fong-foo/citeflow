@@ -22,7 +22,7 @@ interface UserRow {
   created_at: string;
 }
 
-type Tab = "dashboard" | "users";
+type Tab = "dashboard" | "users" | "bookings";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +39,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editingTier, setEditingTier] = useState<string | null>(null);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [bookingFilter, setBookingFilter] = useState("");
+  const [actionLoading, setActionLoading] = useState<number | null>(null);
 
   const token = getToken();
 
@@ -94,6 +97,32 @@ export default function AdminPage() {
   useEffect(() => {
     if (tab === "users") fetchUsers();
   }, [tab, search, fetchUsers]);
+
+  const fetchBookings = useCallback(() => {
+    if (!token) return;
+    const params = bookingFilter ? `?status=${bookingFilter}` : "";
+    fetch(`${API_BASE}/api/admin/bookings${params}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => setBookings(data.bookings || []))
+      .catch(() => {});
+  }, [token, bookingFilter]);
+
+  useEffect(() => {
+    if (tab === "bookings") fetchBookings();
+  }, [tab, bookingFilter, fetchBookings]);
+
+  async function handleBookingAction(bookingId: number, status: string, addCredits = false) {
+    setActionLoading(bookingId);
+    await fetch(`${API_BASE}/api/admin/bookings/${bookingId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token || ""}` },
+      body: JSON.stringify({ status, add_credits: addCredits }),
+    });
+    setActionLoading(null);
+    fetchBookings();
+  }
 
   function handleTierChange(email: string, newTier: string) {
     if (!token) return;
@@ -240,6 +269,22 @@ export default function AdminPage() {
             }}
           >
             用户管理
+          </button>
+          <button
+            onClick={() => { setTab("bookings"); fetchBookings(); }}
+            style={{
+              padding: "10px 24px",
+              fontSize: 14,
+              fontWeight: 500,
+              background: "transparent",
+              border: "none",
+              borderBottom: tab === "bookings" ? "2px solid #3B82F6" : "2px solid transparent",
+              color: tab === "bookings" ? "#C8C8D8" : "#5E5E78",
+              cursor: "pointer",
+              transition: "color 0.2s",
+            }}
+          >
+            预约管理
           </button>
         </motion.div>
 
@@ -537,6 +582,86 @@ export default function AdminPage() {
             </div>
           </motion.div>
         )}
+
+        {/* Bookings Tab */}
+        {tab === "bookings" && (
+          <motion.div
+            key="bookings"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            {/* 筛选 */}
+            <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+              {["", "pending", "contacted", "completed", "cancelled"].map((s) => (
+                <button key={s} onClick={() => setBookingFilter(s)}
+                  style={{
+                    padding: "4px 12px", borderRadius: 20, border: "none", cursor: "pointer",
+                    background: bookingFilter === s ? "rgba(59,130,246,0.15)" : "rgba(255,255,255,0.04)",
+                    color: bookingFilter === s ? "#3B82F6" : "#9A9AB0",
+                    fontSize: 12, fontWeight: 500,
+                  }}
+                >{s || "全部"}</button>
+              ))}
+            </div>
+
+            {/* 表格 */}
+            <div
+              style={{
+                background: "#131318",
+                border: "1px solid #222228",
+                borderRadius: 4,
+                overflow: "hidden",
+              }}
+            >
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #222228" }}>
+                    <Th>时间</Th><Th>邮箱</Th><Th>电话</Th><Th>套餐</Th><Th>品牌</Th><Th>状态</Th><Th>操作</Th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bookings.map((b) => (
+                    <tr key={b.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                      <Td>{new Date(b.created_at).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" })}</Td>
+                      <Td style={{ color: "#7DD3FC" }}>{b.email}</Td>
+                      <Td>{b.phone || "—"}</Td>
+                      <Td>{b.product === "full" ? "¥368 全套" : "¥68 Probe"}</Td>
+                      <Td style={{ maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {b.note || "—"}
+                      </Td>
+                      <Td>
+                        <StatusBadge status={b.status} />
+                      </Td>
+                      <Td>
+                        <div style={{ display: "flex", gap: 6 }}>
+                          {b.status === "pending" && (
+                            <ActionBtn onClick={() => handleBookingAction(b.id, "contacted")} color="#F59E0B" disabled={actionLoading === b.id}>
+                              已联系
+                            </ActionBtn>
+                          )}
+                          {(b.status === "pending" || b.status === "contacted") && (
+                            <ActionBtn onClick={() => handleBookingAction(b.id, "completed", true)} color="#22C55E" disabled={actionLoading === b.id}>
+                              完成+加Credits
+                            </ActionBtn>
+                          )}
+                          {b.status !== "cancelled" && b.status !== "completed" && (
+                            <ActionBtn onClick={() => handleBookingAction(b.id, "cancelled")} color="#5E5E78" disabled={actionLoading === b.id}>
+                              取消
+                            </ActionBtn>
+                          )}
+                        </div>
+                      </Td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {bookings.length === 0 && (
+                <p style={{ textAlign: "center", color: "#5E5E78", marginTop: 40, padding: "40px 0" }}>暂无预约</p>
+              )}
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   );
@@ -574,5 +699,37 @@ function StatCard({
         {value}
       </div>
     </div>
+  );
+}
+
+function Th({ children }: { children: React.ReactNode }) {
+  return <th style={{ padding: "10px 12px", textAlign: "left", color: "#5E5E78", fontSize: 11, fontWeight: 600, textTransform: "uppercase" }}>{children}</th>;
+}
+
+function Td({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return <td style={{ padding: "12px", color: "#9A9AB0", ...style }}>{children}</td>;
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const map: Record<string, { label: string; color: string; bg: string }> = {
+    pending: { label: "待联系", color: "#F59E0B", bg: "rgba(245,158,11,0.10)" },
+    contacted: { label: "已联系", color: "#3B82F6", bg: "rgba(59,130,246,0.10)" },
+    completed: { label: "已完成", color: "#22C55E", bg: "rgba(34,197,94,0.10)" },
+    cancelled: { label: "已取消", color: "#5E5E78", bg: "rgba(255,255,255,0.04)" },
+  };
+  const s = map[status] || map.pending;
+  return <span style={{ padding: "2px 10px", borderRadius: 20, fontSize: 11, fontWeight: 600, color: s.color, background: s.bg }}>{s.label}</span>;
+}
+
+function ActionBtn({ onClick, color, disabled, children }: { onClick: () => void; color: string; disabled: boolean; children: React.ReactNode }) {
+  return (
+    <button onClick={onClick} disabled={disabled}
+      style={{
+        padding: "3px 10px", borderRadius: 6, border: `1px solid ${color}20`,
+        background: `${color}10`, color, fontSize: 11, fontWeight: 500,
+        cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.4 : 1,
+        whiteSpace: "nowrap",
+      }}
+    >{children}</button>
   );
 }
