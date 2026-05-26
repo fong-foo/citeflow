@@ -1,6 +1,3 @@
-[build]
-builder = "railpack"
-
 [deploy]
 startCommand = "npx next start --port ${PORT:-3000}"
 
