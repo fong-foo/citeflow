@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ScanChat } from "@/components/scan-chat";
 import { ScanDashboard } from "@/components/scan-dashboard";
 import { ScanLoading } from "@/components/scan-loading";
@@ -84,6 +84,91 @@ function FallbackUI({ error }: { error: unknown }) {
   );
 }
 
+function ProbeChoiceModal({
+  brandName, domain, probeCredits,
+  onViewReport, onNewScan, onClose,
+}: {
+  brandName: string;
+  domain: string;
+  probeCredits: number;
+  onViewReport: () => void;
+  onNewScan: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 100,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 20, scale: 0.97 }}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "#131318", border: "1px solid #222228",
+          borderRadius: 16, padding: 32, maxWidth: 440, width: "90%",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
+          <h2 style={{ color: "#EDEDF5", fontSize: 20, fontWeight: 600 }}>侦察兵报告</h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: "none", border: "none", color: "#5E5E78",
+              fontSize: 18, cursor: "pointer", padding: 0, lineHeight: 1,
+            }}
+          >×</button>
+        </div>
+
+        <p style={{ color: "#9A9AB0", fontSize: 14, lineHeight: 1.6, marginBottom: 6 }}>
+          你已有{brandName ? <> <strong style={{ color: "#EDEDF5" }}>{brandName}</strong></> : ""}
+          {domain ? <>（<span style={{ fontFamily: "monospace", color: "#7DD3FC" }}>{domain}</span>）</> : ""}的侦察报告。
+        </p>
+
+        {probeCredits > 0 && (
+          <p style={{ color: "#7DD3FC", fontSize: 13, marginBottom: 24 }}>
+            剩余侦察次数：{probeCredits} 次
+          </p>
+        )}
+        {probeCredits === 0 && (
+          <p style={{ color: "#F59E0B", fontSize: 13, marginBottom: 24 }}>
+            侦察次数已用完，重新侦察需再次购买
+          </p>
+        )}
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <button
+            onClick={onViewReport}
+            style={{
+              width: "100%", padding: "12px 0", borderRadius: 10,
+              background: "linear-gradient(135deg, #3B82F6, #2563EB)",
+              border: "none", color: "#fff", fontSize: 15, fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >查看上次报告</button>
+          <button
+            onClick={onNewScan}
+            style={{
+              width: "100%", padding: "12px 0", borderRadius: 10,
+              background: "transparent", border: "1px solid #222228",
+              color: "#9A9AB0", fontSize: 14, fontWeight: 500,
+              cursor: "pointer",
+            }}
+          >重新侦察</button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 class ScanPageErrorBoundary extends React.Component<{children: React.ReactNode}, {error: Error | null}> {
   constructor(props: {children: React.ReactNode}) { super(props); this.state = {error: null}; }
   static getDerivedStateFromError(error: Error) { return {error}; }
@@ -126,16 +211,22 @@ export default function ScanPage() {
   const scanIdRef = useRef<string | null>(null);
   const scanCreditsRef = useRef(0);
   const probeCreditsRef = useRef(0);
+  const lastScanWasFullPackageRef = useRef(false);  // only save analyst/doctor for ¥368
 
   // ─── Product-internal phases ───
-  const [inputPhase, setInputPhase] = useState<InputPhase>("form");
+  const [inputPhase, setInputPhase] = useState<InputPhase>("guide");
   const [probePhase, setProbePhase] = useState<ProbePhase>("briefing");
   const [analystPhase, setAnalystPhase] = useState<AnalystPhase>("briefing");
   const [analystScanning, setAnalystScanning] = useState(false);
   const [doctorPhase, setDoctorPhase] = useState<DoctorPhase>("briefing");
 
+  // Track which product steps have been rendered — keep them mounted on navigation
+  const [aliveSteps, setAliveSteps] = useState<Set<Step>>(new Set(["input"]));
+  const [stepResetKey, setStepResetKey] = useState(0);  // bump to force-remount on "new scan"
+
   // ─── Upgrade modal ───
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [showProbeChoice, setShowProbeChoice] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<"probe" | "analyst" | "doctor">("analyst");
   const [scanCredits, setScanCredits] = useState(0);
   const [probeCredits, setProbeCredits] = useState(0);
@@ -155,9 +246,6 @@ export default function ScanPage() {
 
   // ─── 3-tab index (Probe 产品的 scanning/report 阶段共用) ───
   const [scanTabIndex, setScanTabIndex] = useState(0);
-
-  // ─── DIAGNOSTIC: interactive test state ───
-  const [diagCount, setDiagCount] = useState(0);
 
   // ─── Helpers ───
   async function deductCredit(product: "full" | "probe") {
@@ -469,8 +557,8 @@ export default function ScanPage() {
         timestamp: Date.now(),
       });
 
-      // 2) Analyst entry — when diagnosis data is present
-      if (data?.diagnosis || data?.one_line_verdict) {
+      // 2) Analyst entry — only for full-package (¥368) scans
+      if (lastScanWasFullPackageRef.current && (data?.diagnosis || data?.one_line_verdict)) {
         upsertEntry({
           id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + "_a",
           type: "analyst",
@@ -483,8 +571,8 @@ export default function ScanPage() {
         });
       }
 
-      // 3) Doctor entry — when prescription data is present
-      if (data?.prescription && data.prescription.length > 0) {
+      // 3) Doctor entry — only for full-package (¥368) scans
+      if (lastScanWasFullPackageRef.current && data?.prescription && data.prescription.length > 0) {
         upsertEntry({
           id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + "_d",
           type: "doctor",
@@ -510,6 +598,28 @@ export default function ScanPage() {
   useEffect(() => {
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, []);
+
+  // 当 analyst/doctor 报告被渲染时，标记已完成
+  useEffect(() => {
+    if (step === "analyst" && analystPhase === "report" && !analystCompleted) {
+      setAnalystCompleted(true);
+      try { localStorage.setItem(userKey("cf_analyst_done"), "1"); } catch {}
+    }
+  }, [step, analystPhase, analystCompleted]);
+  useEffect(() => {
+    if (step === "doctor" && doctorPhase === "report" && !doctorCompleted) {
+      setDoctorCompleted(true);
+      try { localStorage.setItem(userKey("cf_doctor_done"), "1"); } catch {}
+    }
+  }, [step, doctorPhase, doctorCompleted]);
+
+  // Persist non-dashboard/-error steps in DOM so form state survives navigation
+  useEffect(() => {
+    if (step !== "dashboard" && step !== "error") {
+      setAliveSteps(prev => prev.has(step) ? prev : new Set(prev).add(step));
+    }
+  }, [step]);
+
 
   // ═══════════════════════════════════════════
   // STATE TRANSITIONS
@@ -821,6 +931,8 @@ export default function ScanPage() {
 
   /** Scan 完成 → 进入对应产品的 report 阶段 */
   function handleScanFinish(result: any, product: "input" | "probe") {
+    // Record whether this scan was a full-package purchase (¥368) for report archiving
+    lastScanWasFullPackageRef.current = product === "probe" && scanCreditsRef.current > 0;
     activeScanCleanup = null;
     localStorage.removeItem(userKey("cf_pending_scan"));
     setPendingScan(null);
@@ -916,6 +1028,7 @@ export default function ScanPage() {
   // ═══════════════════════════════════════════
 
   function handleSidebarInputClick() {
+    if (aliveSteps.has("input")) { setStep("input"); return; }
     // 没有旧数据 → 直接进表单
     if (!inputReportData && !data) {
       setInputPhase("form");
@@ -957,30 +1070,8 @@ export default function ScanPage() {
     const probe = data?.probe || {};
     const hasProbeData = !!(probe.company_score || probe.citation_metrics);
 
-    // 已有 Probe 数据 + 还有 probe_credits → 弹选择
-    if (hasProbeData && probeCredits > 0) {
-      const choice = confirm(
-        "你还有 " + probeCredits + " 次侦察兵可用。\n\n" +
-        "点「确定」开始一次新的侦察\n" +
-        "点「取消」查看上次侦察报告"
-      );
-      if (choice) {
-        const profile = getCachedProfile(scanDomain);
-        setBriefingDefaults({
-          domain: scanDomain,
-          brandName: scanBrandName,
-          industry: probe.brand_profile?.inferred_industry || profile?.inferred_industry || "",
-          targetMarket: probe.brand_profile?.inferred_target_market || profile?.inferred_target_market || "",
-          coreProduct: probe.brand_profile?.inferred_core_product || profile?.inferred_core_product || "",
-          competitorMentions: probe.competitor_mentions || [],
-        });
-        setProbePhase("briefing");
-        setStep("probe");
-        return;
-      }
-      setProbePhase("report");
-      setScanTabIndex(2);
-      setStep("probe");
+    if (hasProbeData) {
+      setShowProbeChoice(true);
       return;
     }
 
@@ -1000,7 +1091,7 @@ export default function ScanPage() {
       return;
     }
 
-    // 已跑过 full scan → 直接看报告
+    // 已跑过 full scan（但无 probe 数据，极端情况）→ 直接看报告
     setProbePhase("report");
     setScanTabIndex(2);
     setStep("probe");
@@ -1008,6 +1099,7 @@ export default function ScanPage() {
 
   function handleSidebarAnalystClick() {
     if (!data) { alert("请先完成一次品牌体检"); return; }
+    if (aliveSteps.has("analyst")) { setStep("analyst"); return; }
     if (scanCredits === 0) {
       setUpgradeFeature("analyst");
       setShowUpgrade(true);
@@ -1020,6 +1112,7 @@ export default function ScanPage() {
 
   function handleSidebarDoctorClick() {
     if (!data) { alert("请先完成一次品牌体检"); return; }
+    if (aliveSteps.has("doctor")) { setStep("doctor"); return; }
     if (scanCredits === 0) {
       setUpgradeFeature("doctor");
       setShowUpgrade(true);
@@ -1122,20 +1215,7 @@ export default function ScanPage() {
   // RENDER
   // ═══════════════════════════════════════════
 
-  if (!initialized) {
-    return (
-      <div style={{
-        minHeight: "100vh", background: "#08080D", display: "flex",
-        alignItems: "center", justifyContent: "center"
-      }}>
-        <div style={{
-          width: 20, height: 20, border: "2px solid rgba(56,189,248,0.15)",
-          borderTopColor: "#38BDF8", borderRadius: "50%",
-          animation: "spin 0.8s linear infinite"
-        }} />
-      </div>
-    );
-  }
+  if (!initialized) return null;
 
   /** Probe 产品的 3-tab 视图（scanning 和 report 阶段共用） */
   function renderProbeTabs(phase: "briefing" | "scanning" | "report") {
@@ -1383,19 +1463,6 @@ export default function ScanPage() {
     );
   }
 
-  // 当 analyst/doctor 报告被渲染时，标记已完成
-  useEffect(() => {
-    if (step === "analyst" && analystPhase === "report" && !analystCompleted) {
-      setAnalystCompleted(true);
-      try { localStorage.setItem(userKey("cf_analyst_done"), "1"); } catch {}
-    }
-  }, [step, analystPhase, analystCompleted]);
-  useEffect(() => {
-    if (step === "doctor" && doctorPhase === "report" && !doctorCompleted) {
-      setDoctorCompleted(true);
-      try { localStorage.setItem(userKey("cf_doctor_done"), "1"); } catch {}
-    }
-  }, [step, doctorPhase, doctorCompleted]);
 
   function renderAnalystContent(phase: "briefing" | "report") {
     return (
@@ -1405,6 +1472,7 @@ export default function ScanPage() {
             <ScanAnalystBriefing
               probeOutput={data?.probe_output || data?.probe || data}
               onComplete={(analystOutput: any) => {
+                lastScanWasFullPackageRef.current = true;
                 setData((prev: any) => ({ ...prev, ...analystOutput }));
                 setAnalystPhase("report");
               }}
@@ -1432,6 +1500,7 @@ export default function ScanPage() {
             <ScanDoctorBriefing
               data={data}
               onComplete={(doctorOutput: any) => {
+                lastScanWasFullPackageRef.current = true;
                 setData((prev: any) => ({
                   ...prev,
                   prescription: doctorOutput.prescription,
@@ -1471,22 +1540,249 @@ export default function ScanPage() {
     );
   }
 
-  // ─── DIAGNOSTIC v2: Minimal render, all hooks run, no child components ───
-  // Green "DIAGNOSTIC PASS" → bug is in a child component (ScanSidebar/ScanChat/etc)
-  // Still "页面崩溃" → bug is in ScanPage's own hooks
   return (
-    <div style={{ minHeight: "100vh", background: "#08080D", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ padding: 32, background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 4, textAlign: "center" }}>
-        <p style={{ fontSize: 18, fontWeight: 700, color: "#22C55E", margin: 0 }}>DIAGNOSTIC PASS v2</p>
-        <p style={{ fontSize: 12, color: "#9A9AB0", margin: "8px 0 0", fontFamily: "monospace" }}>
-          initialized=true, step={step}, hooks OK
-        </p>
-        <button onClick={() => setDiagCount(c => c + 1)} style={{ marginTop: 16, padding: "8px 20px", fontSize: 12, background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.3)", color: "#22C55E", borderRadius: 4, cursor: "pointer" }}>
-          Click ({diagCount})
-        </button>
-      </div>
-    </div>
-  );
+    <ScanPageErrorBoundary>
+    <div className="flex min-h-screen">
+      {/* Grid background */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          opacity: 0.07,
+          backgroundImage: `
+            linear-gradient(rgba(56,189,248,0.5) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(56,189,248,0.25) 1px, transparent 1px)
+          `,
+          backgroundSize: "48px 48px",
+        }}
+      />
 
-  /* ─── ORIGINAL RENDER DISABLED FOR DIAGNOSTICS (see git history) ─── */
+      <ScanSidebar
+        currentStep={step}
+        inputPhase={inputPhase}
+        analystPhase={analystPhase}
+        isScanning={(step === "input" && inputPhase === "scanning") || (step === "probe" && probePhase === "scanning") || (step === "analyst" && analystScanning)}
+        tier={tier}
+        scanMode={scanMode}
+        hasData={!!data}
+        hasAnalystData={hasAnalystData}
+        hasDoctorData={hasDoctorData}
+        scanCredits={scanCredits}
+        probeCredits={probeCredits}
+        domain={scanDomain}
+        brandName={scanBrandName}
+        onInputClick={handleSidebarInputClick}
+        onHomeClick={handleSidebarHomeClick}
+        onProbeClick={handleSidebarProbeClick}
+        onAnalystClick={handleSidebarAnalystClick}
+        onDoctorClick={handleSidebarDoctorClick}
+        onUpgradeClick={handleSidebarUpgradeClick}
+      />
+
+      <main className="flex-1 ml-[160px] flex flex-col px-6 pt-4 pb-8 overflow-y-auto">
+        {/* ═══ step = "input" (初步体检: form → scanning → report) ═══ */}
+        {aliveSteps.has("input") && (
+          <div key={stepResetKey} style={{ display: step === "input" ? "contents" : "none" }}>
+            {/* guide 阶段：新手引导卡片 */}
+            {inputPhase === "guide" && (
+              <ScanOnboardingGuide
+                onStart={() => setInputPhase("form")}
+              />
+            )}
+
+            {inputPhase === "form" && (
+              pendingScan ? (
+                <div className="flex flex-col items-center justify-center flex-1 gap-6">
+                  <div className="px-8 py-8 rounded-sm max-w-md w-full text-center"
+                    style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
+                    <div className="mb-4 flex justify-center">
+                      <span className="inline-block w-3 h-3 rounded-full"
+                        style={{ background: "#F59E0B", boxShadow: "0 0 12px rgba(245,158,11,0.5), 0 0 4px rgba(245,158,11,0.8)" }} />
+                    </div>
+                    <p className="text-sm font-medium mb-2" style={{ color: "#EDEDF5" }}>检测到中断的扫描</p>
+                    <p className="text-xs mb-1" style={{ color: "#9A9AB0" }}>
+                      域名 <span className="font-mono" style={{ color: "#7DD3FC" }}>{scanDomain || "—"}</span>
+                    </p>
+                    {scanBrandName && scanBrandName !== scanDomain && (
+                      <p className="text-xs mb-4" style={{ color: "#5E5E78" }}>品牌 {scanBrandName}</p>
+                    )}
+                    {!scanBrandName && <div className="mb-4" />}
+                    <p className="text-[10px] mb-6" style={{ color: "rgba(255,255,255,0.12)" }}>上次扫描意外中断，点击下方按钮可从断点续扫</p>
+                    <div className="flex gap-3 justify-center">
+                      <button onClick={handleResumeScan}
+                        className="px-6 py-2.5 text-sm font-medium rounded-sm transition-all duration-300"
+                        style={{ background: "rgba(56,189,248,0.12)", border: "1px solid rgba(56,189,248,0.22)", color: "#7DD3FC" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.20)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.35)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.12)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.22)"; }}
+                      >继续扫描</button>
+                      <button onClick={handleAbortResume}
+                        className="px-5 py-2.5 text-xs font-medium rounded-sm transition-all duration-300"
+                        style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.25)" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.45)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.25)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; }}
+                      >放弃，重新开始</button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <ScanChat onComplete={handleInputComplete} />
+              )
+            )}
+
+            {inputPhase === "scanning" && (
+              <ScanLoading elapsed={elapsed} domain={scanDomain} brandName={scanBrandName} progressMsg={progressMsg} onCancel={handleCancelScan} />
+            )}
+
+            {inputPhase === "report" && (inputReportData || data) && (
+              <ScanResult
+                data={inputReportData || data}
+                mode="light"
+                brandName={scanBrandName}
+                onUpgrade={() => { setUpgradeFeature("analyst"); setShowUpgrade(true); }}
+                onViewDashboard={() => setStep("dashboard")}
+                onUpgradeToFull={handleUpgradeToFull}
+                scanCredits={scanCredits}
+                probeCredits={probeCredits}
+                onUpgradeClick={(product) => { setUpgradeFeature(product === "full" ? "analyst" : "probe"); setShowUpgrade(true); }}
+              />
+            )}
+          </div>
+        )}
+
+        {/* ═══ step = "probe" (Probe侦察兵: briefing → scanning → report) ═══ */}
+        {aliveSteps.has("probe") && (
+          <div key={stepResetKey} style={{ display: step === "probe" ? "contents" : "none" }}>
+            {renderProbeTabs(probePhase)}
+          </div>
+        )}
+
+        {/* ═══ step = "analyst" (Analyst 诊断师: briefing → report) ═══ */}
+        {aliveSteps.has("analyst") && (
+          <div style={{ display: step === "analyst" ? "contents" : "none" }}>
+            {renderAnalystContent(analystPhase)}
+          </div>
+        )}
+
+        {/* ═══ step = "doctor" (Doctor 处方: briefing → generating → report) ═══ */}
+        {aliveSteps.has("doctor") && (
+          <div style={{ display: step === "doctor" ? "contents" : "none" }}>
+            {renderDoctorContent(doctorPhase)}
+          </div>
+        )}
+
+        {/* ═══ step = "dashboard" (仪表盘总览) ═══ */}
+        {step === "dashboard" && (
+          <ScanDashboard
+            data={data}
+            tier={tier}
+            mode={scanMode}
+            domain={scanDomain}
+            brandName={scanBrandName}
+            lastScanTime={lastScanTime}
+            scanCredits={scanCredits}
+            probeCredits={probeCredits}
+            analystCompleted={analystCompleted}
+            doctorCompleted={doctorCompleted}
+            onViewReport={handleViewReport}
+            onUpgrade={(feature) => { setUpgradeFeature(feature || "probe"); setShowUpgrade(true); }}
+            onNavigateToStep={(step) => {
+              if (step === "analyst") { setAnalystPhase((analystCompleted && hasAnalystData) ? "report" : "briefing"); setStep("analyst"); }
+              else if (step === "doctor") { setDoctorPhase((doctorCompleted && hasDoctorData) ? "report" : "briefing"); setStep("doctor"); }
+            }}
+            onNewScan={() => { setInputPhase("form"); setInputReportData(null); setStepResetKey(k => k + 1); setStep("input"); }}
+            onNewProbe={() => {
+              const probe = data?.probe || {};
+              const profile = getCachedProfile(scanDomain);
+              setBriefingDefaults({
+                domain: scanDomain, brandName: scanBrandName,
+                industry: probe.brand_profile?.inferred_industry || profile?.inferred_industry || "",
+                targetMarket: probe.brand_profile?.inferred_target_market || profile?.inferred_target_market || "",
+                coreProduct: probe.brand_profile?.inferred_core_product || profile?.inferred_core_product || "",
+                competitorMentions: probe.competitor_mentions || [],
+              });
+              setProbePhase("briefing"); setStepResetKey(k => k + 1); setStep("probe");
+            }}
+          />
+        )}
+
+        {/* ═══ step = "error" ═══ */}
+        {step === "error" && (
+          <div className="flex flex-col items-center gap-6 mt-20">
+            <div className="px-6 py-4 rounded-sm max-w-md text-center"
+              style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.18)" }}>
+              <p className="text-sm font-medium text-[#EF4444] mb-1">扫描中断</p>
+              <p className="text-xs text-cf-muted">{errorMsg}</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button onClick={handleReScan}
+                className="px-6 py-2.5 text-sm font-medium rounded-sm transition-all duration-300"
+                style={{ background: "#7DD3FC", border: "1px solid #7DD3FC", color: "#0A0A0F" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#38BDF8"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "#7DD3FC"; }}
+              >重新扫描</button>
+              <button onClick={handleRetry}
+                className="px-6 py-2.5 text-sm font-medium rounded-sm transition-all duration-300"
+                style={{ background: "rgba(56,189,248,0.10)", border: "1px solid rgba(56,189,248,0.18)", color: "#7DD3FC" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.18)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.30)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(56,189,248,0.10)"; e.currentTarget.style.borderColor = "rgba(56,189,248,0.18)"; }}
+              >返回修改</button>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {showUpgrade && (
+        <UpgradeModal
+          feature={upgradeFeature}
+          tier={tier}
+          onClose={() => setShowUpgrade(false)}
+        />
+      )}
+
+      <AnimatePresence>
+        {showProbeChoice && (
+          <ProbeChoiceModal
+            brandName={scanBrandName}
+            domain={scanDomain}
+            probeCredits={probeCredits}
+            onViewReport={() => {
+              setShowProbeChoice(false);
+              setProbePhase("report");
+              setScanTabIndex(2);
+              setStep("probe");
+            }}
+            onNewScan={() => {
+              setShowProbeChoice(false);
+              if (probeCredits > 0) {
+                const probe = data?.probe || {};
+                const profile = getCachedProfile(scanDomain);
+                setBriefingDefaults({
+                  domain: scanDomain,
+                  brandName: scanBrandName,
+                  industry: probe.brand_profile?.inferred_industry || profile?.inferred_industry || "",
+                  targetMarket: probe.brand_profile?.inferred_target_market || profile?.inferred_target_market || "",
+                  coreProduct: probe.brand_profile?.inferred_core_product || profile?.inferred_core_product || "",
+                  competitorMentions: probe.competitor_mentions || [],
+                });
+                setProbePhase("briefing");
+                setStep("probe");
+              } else {
+                setUpgradeFeature("probe");
+                setShowUpgrade(true);
+              }
+            }}
+            onClose={() => setShowProbeChoice(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {creditNotification && (
+        <CreditUnlockModal
+          product={creditNotification.product}
+          count={creditNotification.count}
+          onClose={() => setCreditNotification(null)}
+        />
+      )}
+    </div>
+    </ScanPageErrorBoundary>
+  );
 }

@@ -20,6 +20,8 @@ interface Props {
   lastScanTime: string;
   scanCredits: number;
   probeCredits: number;
+  analystCompleted: boolean;
+  doctorCompleted: boolean;
   onViewReport: () => void;
   onUpgrade: (feature?: "probe" | "analyst" | "doctor") => void;
   onNavigateToStep?: (step: "analyst" | "doctor") => void;
@@ -749,7 +751,7 @@ function SourceAuthoritySection({
   );
 }
 
-export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTime, scanCredits, probeCredits, onViewReport, onUpgrade, onNavigateToStep, onNewScan, onNewProbe }: Props) {
+export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTime, scanCredits, probeCredits, analystCompleted, doctorCompleted, onViewReport, onUpgrade, onNavigateToStep, onNewScan, onNewProbe }: Props) {
   const isFree = tier === "free";
   const hasCredits = scanCredits > 0 || probeCredits > 0;
   const isPaid = tier === "full";
@@ -1094,9 +1096,9 @@ export function ScanDashboard({ data, tier, mode, domain, brandName, lastScanTim
   const companyEvaluation = probe?.company_evaluation || null;
   const sourceAuthority = probe?.source_authority || null;
 
-  // 用户是否已解锁 Analyst / Doctor（以实际数据是否存在为准，不靠 mode）
-  const hasDiagnosis = !!(data?.diagnosis || data?.one_line_verdict);
-  const hasPrescription = !!(data?.prescription && data.prescription.length > 0);
+  // 用户是否已解锁 Analyst / Doctor（数据存在 + 确实走过该流程）
+  const hasDiagnosis = !!(data?.diagnosis || data?.one_line_verdict) && analystCompleted;
+  const hasPrescription = !!(data?.prescription && data.prescription.length > 0) && doctorCompleted;
 
   // ── Analyst / Doctor 解锁状态 ──
   const isAnalystUnlocked = isPaid && hasDiagnosis;
