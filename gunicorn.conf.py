@@ -3,7 +3,7 @@
 
 import os
 bind = f"0.0.0.0:{os.environ.get('PORT', '8000')}"
-workers = 4
+workers = 1
 worker_class = "uvicorn.workers.UvicornWorker"
 
 # 超时（扫描最长 7 分钟，留余量）
