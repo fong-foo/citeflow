@@ -1,0 +1,70 @@
+# ============================================================
+# AI Crawlers — robots.txt 模板
+# 来源: https://github.com/fong-foo/ai-crawlers
+# 许可: MIT
+# ============================================================
+# 用法:
+#   1. 复制此文件到网站根目录，命名为 robots.txt
+#   2. 把 example.com 替换为你的域名
+#   3. 把不需要的 Allow 路径改为 Disallow
+#   4. 验证: curl https://你的域名.com/robots.txt
+# ============================================================
+
+# ===== AI 搜索爬虫（必须放行）=====
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: oai-searchbot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-Chat
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: meta-externalfetcher
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+# ===== 传统搜索引擎 =====
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# ===== 网站地图 =====
+
+Sitemap: https://example.com/sitemap.xml

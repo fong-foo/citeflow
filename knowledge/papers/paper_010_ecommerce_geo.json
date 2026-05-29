@@ -1,0 +1,47 @@
+{
+  "paper_id": "010",
+  "arxiv": "2511.20867",
+  "title": "E-GEO: A Testbed for Generative Engine Optimization in E-Commerce",
+  "authors": "Columbia University, MIT",
+  "date_read": "2026-05-10",
+  "last_reviewed": "2026-05-20",
+  "confidence": "high",
+  "extracted_strategies": [
+    {
+      "id": "010-01",
+      "name": "系统化GEO > 临时启发式",
+      "category": "战略",
+      "confidence": "high",
+      "source_section": "全文",
+      "what": "评估15种重写策略后发现：系统化优化比临时、零散的启发式修改更有效",
+      "why": "零散的'加个对比表''改个标题'效果不累计。系统化优化（三层结构+可提取证据+引擎偏好）效果叠加",
+      "how": "使用CiteFlow处方系统，不要手动东改一处西改一处。一次处方覆盖技术+内容+权威+社区四维度",
+      "template": null,
+      "applicable_to": ["所有电商"],
+      "industries": ["all"],
+      "platforms": ["shopify", "amazon"],
+      "regions": ["all"],
+      "expected_impact": "系统化优化 > 临时修补的累积效果",
+      "how_to_verify": "对比系统处方执行前后的Probe报告"
+    },
+    {
+      "id": "010-02",
+      "name": "存在普遍有效的重写策略",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "全文",
+      "what": "某些内容重写策略跨品类、跨查询类型都有效",
+      "why": "Statistics Addition、对比表格、FAQ格式——这些是'普适策略'",
+      "how": "优先执行普适策略（统计数字+对比表格+FAQ），再根据行业特化",
+      "template": null,
+      "applicable_to": ["所有电商"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "普适策略提供基线提升，行业特化提供增量",
+      "how_to_verify": "先做普适策略→体检→再做行业特化→体检→对比"
+    }
+  ],
+  "dataset": "E-GEO: 7000+查询，首个电商GEO基准",
+  "citeflow_relevance": "直接验证CiteFlow核心价值——电商GEO有明确经济回报（提升产品排名=提升销售）"
+}

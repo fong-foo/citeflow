@@ -1,0 +1,29 @@
+{
+  "paper_id": "008",
+  "arxiv": "2507.03169",
+  "title": "Beyond SEO: A Transformer-Based Approach for Reinventing Web Content Optimisation",
+  "date_read": "2026-05-10",
+  "last_reviewed": "2026-05-20",
+  "confidence": "medium",
+  "extracted_strategies": [
+    {
+      "id": "008-01",
+      "name": "领域特定优化 > 通用优化",
+      "category": "战略",
+      "confidence": "medium",
+      "source_section": "全文",
+      "what": "BART-base微调旅游内容提升30.96%可见性。领域特定优化远超通用方法",
+      "why": "每个行业的查询模式、用户语言、决策因素不同",
+      "how": "针对你的行业定制GEO策略，不用'一刀切'模板",
+      "template": null,
+      "applicable_to": ["DTC独立站"],
+      "industries": ["all"],
+      "platforms": ["shopify"],
+      "regions": ["all"],
+      "expected_impact": "领域定制策略可能比通用策略提升2-3倍效果",
+      "how_to_verify": "对比通用模板和行业定制模板的效果差异"
+    }
+  ],
+  "key_metrics": {"abs_boost": "+15.63%", "pos_adj_boost": "+30.96%", "rouge_l": 0.249, "bleu": 0.2},
+  "citeflow_relevance": "支撑CiteFlow按行业差异化处方的产品设计"
+}

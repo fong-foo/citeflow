@@ -1,0 +1,135 @@
+{
+  "paper_id": "028",
+  "arxiv": "2505.12574",
+  "title": "PoisonArena: Uncovering Competing Poisoning Attacks in Retrieval-Augmented Generation",
+  "authors": "Liuji Chen, Xiaofang Yang, Yuanzhuo Lu, Jinghao Zhang, Xin Sun, Qiang Liu, Shu Wu, Jing Dong, Liang Wang (CAS Institute of Automation, Harbin Institute of Technology)",
+  "year": 2025,
+  "date_read": "2026-05-29",
+  "confidence": "high",
+  "abstract": "Retrieval-Augmented Generation (RAG) systems are increasingly vulnerable to poisoning attacks where adversaries inject manipulated content into the retriever's corpus. While prior research focused on single-attacker settings, real-world scenarios often involve multiple, competing attackers with conflicting objectives. PoisonArena is the first benchmark to systematically study competing poisoning attacks in RAG. It formalizes the multi-attacker threat model using the Bradley-Terry model to quantify each method's competitive effectiveness. Extensive experiments on Natural Questions and MS MARCO demonstrate that many attack strategies successful in isolation fail under competitive pressure. The findings highlight limitations of conventional metrics like Attack Success Rate (ASR) and underscore the need for competitive evaluation frameworks.",
+  "key_findings": [
+    {
+      "finding_id": "028-F1",
+      "title": "Single-attacker performance does not predict multi-attacker effectiveness",
+      "description": "Methods exhibiting superior performance (ASR, F1) in single-attacker settings may be outperformed by weaker counterparts under multi-attacker scenarios. For example, PoisonedRAG (black) significantly outperforms AdvDecoding in single-attacker (20%+ ASR advantage) but AdvDecoding consistently wins when they directly compete.",
+      "evidence": "Finding 1, Figure 2, Table 1. AdvDecoding beats PoisonedRAG(black) despite lower single-attacker ASR.",
+      "implications": "For GEO practitioners: being the 'best' in isolation doesn't guarantee visibility when competitors are also optimizing. Competitive dynamics matter more than absolute optimization quality."
+    },
+    {
+      "finding_id": "028-F2",
+      "title": "Most attacks degrade sharply with more competitors",
+      "description": "As the number of attackers increases from 1 to 4, most methods' ASR drops below 20%. Only GASLITE consistently maintains ASR above 80% across all settings. ContentPoison drops from 36% to near 0% with just one additional attacker.",
+      "evidence": "Finding 2, Figure 3. With 4 attackers, only GASLITE maintains effective attack rates.",
+      "implications": "In competitive GEO landscapes (many brands competing for same keywords), only the most robust optimization strategies survive. Lightweight optimization may be completely drowned out."
+    },
+    {
+      "finding_id": "028-F3",
+      "title": "Competitive coefficient (θ) is a better metric than ASR",
+      "description": "The Bradley-Terry competitive coefficient provides a better measure of real-world attack effectiveness than single-attacker ASR. Rankings by θ are consistent with overall win rates in simulation. Single-attacker ASR fails to predict which method wins in multi-attacker competition.",
+      "evidence": "Finding 3, Figure 4, Table 2. GASLITE θ=1.6907 dominates; GARAG θ=-0.5570 weakest despite moderate s-ASR ranking differences.",
+      "implications": "GEO success should be measured by competitive win rate, not just visibility improvement in isolation. A brand's optimization is only as good as how it performs against competing brands' optimizations."
+    },
+    {
+      "finding_id": "028-F4",
+      "title": "Retrieval effectiveness (F1) strongly correlates with attack success",
+      "description": "The retrieval effectiveness of adversarial documents, as measured by F1 score, exhibits a strong positive correlation with overall attack success rate. Methods that get retrieved more reliably also manipulate final answers more effectively.",
+      "evidence": "Section 4.2, Table 1. GASLITE F1=1.000 → ASR=0.872; GARAG F1=0.632 → ASR=0.070.",
+      "implications": "For GEO: getting your content retrieved is still the primary bottleneck. Focus first on retrieval optimization, then on content that influences the LLM's answer."
+    }
+  ],
+  "extracted_strategies": [
+    {
+      "id": "028-01",
+      "name": "Competitive Multi-Brand Visibility Monitoring",
+      "category": "风险防御",
+      "confidence": "high",
+      "source_section": "Section 4.3 (Multi-Attacker Setting), Table 2",
+      "what": "Monitor not just your own brand's AI visibility in isolation, but your share of voice relative to competitors for the same query. Track competitive win rate — how often your brand appears vs competitors when multiple brands compete for the same query.",
+      "why": "PoisonArena shows single-attacker metrics (ASR) don't predict who wins in real competitive scenarios. Your optimization may look good in isolation but fail when competitors are also in the retrieval set.",
+      "how": "For each product category query, run Probe against AI search engines and record: (1) which brands are mentioned, (2) order of mention, (3) how often your brand appears vs competitors. Compute competitive coefficient: P(your_brand ≻ competitor) = appearances_you / (appearances_you + appearances_competitor). Track over time as you and competitors optimize.",
+      "applicable_to": ["DTC独立站", "所有竞争品类"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "Provides realistic competitive visibility metric. Identifies when competitors' optimizations are drowning you out even if your absolute visibility hasn't dropped.",
+      "how_to_verify": "Run Probe weekly on competitive queries. Track competitive coefficient trend. If declining despite your own optimization efforts, competitors may be using more robust techniques."
+    },
+    {
+      "id": "028-02",
+      "name": "Retrieval-First GEO Strategy",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 4.2, Table 1",
+      "what": "Prioritize getting your content into the retrieval set before worrying about how well it influences the LLM's answer. Optimize for semantic similarity to target queries, use structured data, and ensure content matches the retriever's scoring mechanism.",
+      "why": "F1 (retrieval effectiveness) has the strongest positive correlation with attack success rate (ASR). If your content isn't retrieved, no amount of content optimization matters. GASLITE's dominance comes largely from near-perfect retrieval (F1=1.000).",
+      "how": "1) Ensure pages have clear, query-matchable structure with explicit headers and metadata. 2) Use Schema.org structured data for products. 3) Write content that directly answers likely user queries. 4) Test retrieval by searching your target queries on AI search engines and checking if your pages appear in the retrieved set.",
+      "applicable_to": ["DTC独立站", "所有内容"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "Foundation for all other GEO strategies — without retrieval, no other optimization matters.",
+      "how_to_verify": "For target queries, run Probe and check if your content appears in the 'retrieved sources' list. Target >80% retrieval rate for high-priority queries."
+    },
+    {
+      "id": "028-03",
+      "name": "Defense Against Coordinated Competitive Content Poisoning",
+      "category": "风险防御",
+      "confidence": "medium",
+      "source_section": "Section 2.3 (Threat Model), Section 4.3",
+      "what": "Implement monitoring for coordinated misinformation campaigns where multiple competitors or bad actors simultaneously inject conflicting false information about your brand/products into AI-accessible sources (wikis, forums, review sites).",
+      "why": "PoisonArena reveals that competing misinformation can cancel out or produce ambiguous LLM outputs. If attackers inject false negative claims about your brand while you maintain accurate content, the LLM may produce 'no clear winner' or confused outputs — harming all parties.",
+      "how": "Monitor key platforms (Wikipedia, Reddit, review aggregators, forums) for sudden influx of conflicting claims about your brand. Set up alerts for unusual editing patterns. Maintain a 'brand truth' document that can be submitted to platforms for factual correction.",
+      "applicable_to": ["DTC独立站", "大型品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "Prevents competitive poisoning from diluting your AI visibility. Early detection allows rapid response before misinformation becomes entrenched.",
+      "how_to_verify": "After suspected poisoning event, run Probe on affected queries. Check if AI outputs show confusion or contradictory information about your brand. Track resolution time."
+    },
+    {
+      "id": "028-04",
+      "name": "Authority Signal Reinforcement for Competitive Robustness",
+      "category": "权威建设",
+      "confidence": "medium",
+      "source_section": "Section 4.3 (GASLITE analysis)",
+      "what": "Build multiple layers of authority signals into your content so that even when competitors are simultaneously optimizing for the same queries, your content maintains competitive advantage through inherent credibility rather than just optimization tricks.",
+      "why": "GASLITE's robustness under competition comes from its ability to maintain both retrieval and generation influence. Content with strong authority signals (citations, expert quotes, data) is harder for competing misinformation to displace.",
+      "how": "For each product page: (1) include third-party citations and test results, (2) add expert endorsements with verifiable credentials, (3) include specific numerical data that competitors can't replicate, (4) maintain consistent factual accuracy across all platforms so the LLM can cross-verify.",
+      "applicable_to": ["DTC独立站", "所有产品内容"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "Increases competitive coefficient (θ) — your content is more likely to 'win' when multiple brands compete for the same AI response slot.",
+      "how_to_verify": "Run competitive Probe queries. Track ratio of times your brand is mentioned first vs competitors. Authority-enhanced content should show higher win rates."
+    }
+  ],
+  "signal_annotations": {
+    "028-F1": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "novel", "视角": "general"},
+    "028-F2": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "novel", "视角": "general"},
+    "028-F3": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "novel", "视角": "general"},
+    "028-F4": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "extension", "视角": "general"}
+  },
+  "anti_patterns": [
+    {
+      "name": "Optimizing in isolation without competitive benchmarking",
+      "source_section": "Finding 1, Finding 2, Finding 3",
+      "what": "Measuring GEO effectiveness only by your own visibility improvements without accounting for competitor activity",
+      "impact": "严重误导——你的优化可能看起来有效，但在真实竞争环境中完全失效",
+      "why": "Methods that show high single-attacker ASR can be outperformed by 'weaker' methods in competitive settings. Your +30% visibility gain means nothing if a competitor gained +40%."
+    },
+    {
+      "name": "Relying on single-attacker ASR as success metric",
+      "source_section": "Finding 3, Section 4.3",
+      "what": "Using isolated attack success rate or visibility score as the primary GEO KPI",
+      "impact": "不准确——ASR只反映破坏能力的上限，而非真实场景中的实际效果",
+      "why": "PoisonArena shows ASR fails to predict competitive outcomes. Use competitive coefficient or win rate instead."
+    }
+  ],
+  "key_metrics": {
+    "solo_best_method": "GASLITE (ASR 0.8720, F1 1.0000)",
+    "competitive_best_method": "GASLITE (θ=1.6907, maintains >80% ASR with 4 attackers)",
+    "competitive_worst_method": "GARAG (θ=-0.5570, ASR 0.07 solo → 0.0056 multi)",
+    "competition_effect": "Most methods drop to <20% ASR with 4 competing attackers",
+    "retrieval_correlation": "F1 score strongly correlates with ASR — retrieval is the primary lever"
+  }
+}

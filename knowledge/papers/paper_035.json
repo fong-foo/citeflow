@@ -1,0 +1,147 @@
+{
+  "paper_id": "035",
+  "arxiv": "2509.05607",
+  "title": "CC-GSEO-Bench: A Content-Centric Benchmark for Measuring Source Influence in Generative Search Engines",
+  "authors": "Qiyuan Chen, Jiahe Chen, Hongsen Huang, Qian Shao, Jintai Chen, Renjie Hua, Hongxia Xu, Ruijia Wu, Chuan Ren, Jian Wu (Zhejiang University, Soochow Securities, HKUST, Shanghai Jiaotong)",
+  "year": 2025,
+  "date_read": "2026-05-29",
+  "confidence": "high",
+  "abstract": "Generative Search Engines (GSEs) synthesize conversational answers from multiple sources, weakening the link between search ranking and digital visibility. CC-GSEO-Bench introduces a content-centric benchmark with over 1,000 source articles and 5,000+ query-article pairs organized in a one-to-many structure for article-level evaluation. Influence is operationalized across three core dimensions — Exposure, Faithful Credit, and Causal Impact — and two content-quality dimensions — Readability & Structure and Trustworthiness & Safety. Query-level signals are aggregated over each article's query cluster to summarize influence strength, coverage, and stability.",
+  "key_findings": [
+    "Traditional SEO ranking metrics (position on SERP) are insufficient for measuring GSE visibility — a retrieved document may not appear in the synthesized answer",
+    "Exposure (citation presence/salience) does not guarantee Faithful Credit — sources can be cited but misrepresented or distorted",
+    "Causal Impact measures the marginal value a source provides: removing a high-impact source degrades answer quality; low-impact sources provide little additional value",
+    "Readability & Structure and Trustworthiness & Safety are intrinsic document qualities that predict influence across all query variants",
+    "Article-level aggregation (strength, coverage, stability) is essential: a source should be consistently influential across diverse query intents, not just one canonical phrasing",
+    "Influence is multi-dimensional — optimizing for Exposure alone may harm Faithful Credit or Causal Impact"
+  ],
+  "extracted_strategies": [
+    {
+      "id": "035-01",
+      "name": "Multi-Dimensional Influence Optimization: Exposure + Faithful Credit + Causal Impact",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section 3.2, Figure 2",
+      "what": "Optimize content for three influence dimensions simultaneously: (1) Exposure — ensure your content is cited and visible; (2) Faithful Credit — ensure citations accurately represent your content; (3) Causal Impact — ensure your content provides unique value that competitors don't. Don't optimize for citation count alone.",
+      "why": "Being cited doesn't mean being faithfully represented. Some sources achieve high Exposure but low Faithful Credit (cited but distorted). High Causal Impact means your content is irreplaceable — removing it degrades the answer. This matters more than raw citation count for long-term brand authority.",
+      "how": "For Exposure: implement GEO-16/SAGEO structural optimization. For Faithful Credit: ensure content is well-structured with clear claim-evidence pairs; use self-contained statements that resist distortion when excerpted. For Causal Impact: provide unique data, proprietary insights, or original analysis that competitors' pages lack. Audit with the counterfactual test: would removing your page change the answer?",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "从'被引用'提升到'被准确引用且不可替代'（提升长期品牌权威）",
+      "how_to_verify": "Probe报告中检查：1）是否被引用（Exposure），2）引用的内容是否准确（对照原文），3）移除你的页面后AI回答质量是否下降（Causal Impact）"
+    },
+    {
+      "id": "035-02",
+      "name": "Article-Level Influence Stability: Optimize for Query Clusters, Not Single Queries",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section 3.3",
+      "what": "Design content to be consistently influential across a cluster of related queries, paraphrases, and follow-up questions — not just one target keyword. Track influence stability (variance across query variants) as a KPI.",
+      "why": "Content creators care about their article's influence across many user intents, not a single query. CC-GSEO-Bench shows that influence varies significantly across different phrasings of the same topic. High stability = reliable brand presence in AI answers regardless of how users ask.",
+      "how": "For each piece of content, identify the query cluster (5-10 related search intents). Optimize for all variants, not just the primary keyword. Use FAQ sections to cover related questions. Track citation rate across query variants using Probe. Target Influence Coverage (ICov) >= 80% of query variants achieving acceptable influence.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "跨查询变体的一致引用率（稳定性提升）",
+      "how_to_verify": "Probe多查询测试：用5+种不同问法测试同一主题，统计引用一致性"
+    },
+    {
+      "id": "035-03",
+      "name": "Trustworthiness & Readability as Baseline Influence Prerequisites",
+      "category": "权威建设",
+      "confidence": "high",
+      "source_section": "Section 3.2.4-3.2.5",
+      "what": "Ensure content meets baseline Trustworthiness & Safety and Readability & Structure standards before applying any optimization. These are intrinsic quality dimensions that predict influence across all query types. Content with red flags (misleading claims, harmful advice) will be deprioritized.",
+      "why": "CC-GSEO-Bench identifies Trustworthiness and Readability as fundamental predictors of influence. A source with misleading content (as illustrated in Figure 2) achieves low Trustworthiness scores which cascade into low Exposure and Causal Impact regardless of other optimization efforts.",
+      "how": "Audit all content for: (1) Trustworthiness — remove fabricated claims, manipulative framing, harmful advice; cite verifiable sources for all factual claims; (2) Readability — use headings, short paragraphs, lists, clear logical flow; target 8th-grade reading level with Hemingway or similar tools. These are prerequisites, not optional optimizations.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容",
+        "Amazon listing"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "amazon",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "基础参考指标——不可信或难以阅读的内容在所有维度上表现更差",
+      "how_to_verify": "用LLM judge评估内容的可信度和可读性分数（0-10）；确保两项均>=7/10"
+    },
+    {
+      "id": "035-04",
+      "name": "Counterfactual Content Value Assessment",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section 3.2.3, Section 2.1",
+      "what": "Regularly assess your content's marginal value: compare AI answers with your page present vs. absent. If removing your page doesn't change the answer, your content provides no unique value and is at risk of being replaced by competitors.",
+      "why": "Causal Impact measures what changes when your source is present vs absent. Low Causal Impact means your content is interchangeable — the AI can get the same information from other sources. This makes your visibility fragile and dependent on retrieval luck rather than content quality.",
+      "how": "Use Probe's counterfactual analysis: run the same query with your page in the retrieval context vs removed. Measure answer quality difference. If the difference is negligible, identify what unique value your page should provide: proprietary data, original research, unique product specifications, expert curation. Create content that competitors can't replicate.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "从可替代信息源转变为不可替代的权威来源",
+      "how_to_verify": "Probe反事实分析：对比包含/排除你的页面时AI回答的质量差异"
+    }
+  ],
+  "signal_annotations": {
+    "has_data": "has_data",
+    "has_source": "cited",
+    "has_methodology": "reproducible",
+    "relation_to_knowledge_base": "novel",
+    "perspective": "general"
+  },
+  "anti_patterns": [
+    {
+      "name": "Single-Dimension Optimization",
+      "source_section": "Section 3.2",
+      "what": "Optimizing only for Exposure (citation count) without considering Faithful Credit and Causal Impact",
+      "impact": "May achieve high citation count but with distorted or shallow representation",
+      "why": "Influence is multi-dimensional; optimizing only one dimension can harm others"
+    }
+  ],
+  "key_metrics": {
+    "dataset_size": "1,000+ source articles, 5,000+ query-article pairs",
+    "influence_dimensions": "3 core (Exposure, Faithful Credit, Causal Impact) + 2 quality (Readability, Trustworthiness)",
+    "aggregation_metrics": "Mean Influence Level (MIL), Influence Coverage (ICov), Influence Stability (IStab)"
+  }
+}

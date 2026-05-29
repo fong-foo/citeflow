@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CiteFlow — Screenshot Guide</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0A0A0F;
+    color: #EDEDEF;
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    padding: 48px 24px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 20px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.02em; }
+  h1 span { color: #3B82F6; }
+  .subtitle { font-size: 11px; color: #5E5E78; margin-bottom: 40px; letter-spacing: 0.08em; }
+  .shot {
+    background: #131318;
+    border: 1px solid #222228;
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .shot h2 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #EDEDEF;
+  }
+  .shot h2 .num {
+    color: #3B82F6;
+    margin-right: 8px;
+  }
+  .shot .filename {
+    font-size: 10px;
+    color: #4A4A60;
+    margin-bottom: 16px;
+    letter-spacing: 0.06em;
+  }
+  .specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .spec {
+    background: rgba(255,255,255,0.02);
+    border-radius: 6px;
+    padding: 12px 16px;
+  }
+  .spec .label {
+    font-size: 9px;
+    color: #5E5E78;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .spec .value {
+    font-size: 12px;
+    color: #9A9AB0;
+    line-height: 1.5;
+  }
+  .target-area {
+    background: rgba(59,130,246,0.04);
+    border: 1px solid rgba(59,130,246,0.12);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-top: 16px;
+    font-size: 11px;
+    color: #7DD3FC;
+    line-height: 1.6;
+  }
+  .target-area strong {
+    color: #3B82F6;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+  .checklist {
+    margin-top: 40px;
+    background: #131318;
+    border: 1px solid #222228;
+    border-radius: 10px;
+    padding: 24px 28px;
+  }
+  .checklist h3 {
+    font-size: 12px;
+    margin-bottom: 16px;
+    color: #EDEDEF;
+  }
+  .checklist li {
+    font-size: 11px;
+    color: #6A6A82;
+    margin-bottom: 8px;
+    list-style: none;
+    padding-left: 18px;
+    position: relative;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0;
+    color: #3A3A48;
+  }
+</style>
+</head>
+<body>
+
+<h1><span>CiteFlow</span> — Product Screenshot Guide</h1>
+<p class="subtitle">README.md 用 · 6 张截图 · 暗色主题 · 2026-05-29</p>
+
+<div class="shot">
+  <h2><span class="num">01</span> Probe — Multi-Engine Comparison</h2>
+  <p class="filename">Save as: img/probe-multi-engine.png</p>
+  <div class="specs">
+    <div class="spec">
+      <div class="label">Page / State</div>
+      <div class="value">Probe report tab, "引擎对比" section — 3 engine cards (ChatGPT / Gemini / Claude) side by side</div>
+    </div>
+    <div class="spec">
+      <div class="label">What to Capture</div>
+      <div class="value">All 3 engine cards visible: citation rate bars, recommendation rates, top source domains per engine</div>
+    </div>
+    <div class="spec">
+      <div class="label">Size</div>
+      <div class="value">1280 × 800px — Desktop viewport, full section</div>
+    </div>
+    <div class="spec">
+      <div class="label">Data Required</div>
+      <div class="value">A complete Probe scan with multi-engine enabled (full mode) on a real brand</div>
+    </div>
+  </div>
+  <div class="target-area">
+    <strong>Target Area</strong>
+    Scan report → scroll to "多引擎情报" section → 3 engine cards (ChatGPT, Gemini, Claude) with citation rate bars and source lists. Ensure all 3 cards show non-zero data.
+  </div>
+</div>
+
+<div class="shot">
+  <h2><span class="num">02</span> Analyst — Diagnostic Report</h2>
+  <p class="filename">Save as: img/analyst-diagnosis.png</p>
+  <div class="specs">
+    <div class="spec">
+      <div class="label">Page / State</div>
+      <div class="value">Analyst report, Module 1 "诊断摘要" — severity badge + one-line verdict + core problem + 3-layer chain</div>
+    </div>
+    <div class="spec">
+      <div class="label">What to Capture</div>
+      <div class="value">Full M1 module: severity badge (critical/warning/healthy), one_line_verdict, core_problem card, score dashboard (citation rate + industry rate + recommendation rate)</div>
+    </div>
+    <div class="spec">
+      <div class="label">Size</div>
+      <div class="value">1280 × 900px — Include M1 and part of M4 (3-layer diagnostic chain)</div>
+    </div>
+    <div class="spec">
+      <div class="label">Data Required</div>
+      <div class="value">Analyst output from a real brand scan with >= 3 triggered rules (at least 1 critical)</div>
+    </div>
+  </div>
+  <div class="target-area">
+    <strong>Target Area</strong>
+    Analyst report → "诊断摘要" module → capture the full severity card + verdict text + core problem + score numbers. Scroll down slightly to show the 3-layer chain (observation → explanation → implication).
+  </div>
+</div>
+
+<div class="shot">
+  <h2><span class="num">03</span> Analyst — Competitor Analysis</h2>
+  <p class="filename">Save as: img/analyst-competitor.png</p>
+  <div class="specs">
+    <div class="spec">
+      <div class="label">Page / State</div>
+      <div class="value">Analyst report, Module 5 "竞品分析" — win/loss/tie bar + winning dimensions + losing dimensions + key insight</div>
+    </div>
+    <div class="spec">
+      <div class="label">What to Capture</div>
+      <div class="value">Win/loss progress bar, green (winning) tags, red (losing) tags, key insight card, counter-strategy card</div>
+    </div>
+    <div class="spec">
+      <div class="label">Size</div>
+      <div class="value">1280 × 800px</div>
+    </div>
+    <div class="spec">
+      <div class="label">Data Required</div>
+      <div class="value">Probe scan with competitors specified (>= 2 competitors, >= 5 C-class comparison queries)</div>
+    </div>
+  </div>
+  <div class="target-area">
+    <strong>Target Area</strong>
+    Analyst report → scroll to "竞品分析" → capture win/loss bar + dimension tags + key insight. The win/loss bar animation should be complete.
+  </div>
+</div>
+
+<div class="shot">
+  <h2><span class="num">04</span> Analyst — Rule Tags &amp; Engine Insights</h2>
+  <p class="filename">Save as: img/analyst-rules-engines.png</p>
+  <div class="specs">
+    <div class="spec">
+      <div class="label">Page / State</div>
+      <div class="value">Detail view showing triggered rule tags (R2/R6/R9/etc.) with severity colors + engine insights cards</div>
+    </div>
+    <div class="spec">
+      <div class="label">What to Capture</div>
+      <div class="value">Rule tags in sidebar or inline: colored severity indicators, rule names, engine insight bullets</div>
+    </div>
+    <div class="spec">
+      <div class="label">Size</div>
+      <div class="value">1280 × 720px — Show rules in context of the diagnostic flow</div>
+    </div>
+    <div class="spec">
+      <div class="label">Data Required</div>
+      <div class="value">Analyst output with >= 5 triggered rules + engine comparison data</div>
+    </div>
+  </div>
+  <div class="target-area">
+    <strong>Target Area</strong>
+    Any view that shows multiple triggered rules with their severity badges (critical=red, warning=yellow, info=gray) alongside the engine insight cards below the engine comparison section.
+  </div>
+</div>
+
+<div class="shot">
+  <h2><span class="num">05</span> Doctor — Prescription Cards</h2>
+  <p class="filename">Save as: img/doctor-prescription.png</p>
+  <div class="specs">
+    <div class="label">Page / State</div>
+    <div class="value">Doctor workshop — P0 prescription card expanded (7 fields visible) + P1/P2 stack below</div>
+    <div class="spec">
+      <div class="label">What to Capture</div>
+      <div class="value">P0 card (red left border): target_page, action, what_to_add content template, evidence (paper citation), expected_impact, timeline, how_to_verify. P1/P2 cards stacked below.</div>
+    </div>
+    <div class="spec">
+      <div class="label">Size</div>
+      <div class="value">1280 × 1000px</div>
+    </div>
+    <div class="spec">
+      <div class="label">Data Required</div>
+      <div class="value">Doctor output with >= 3 P0 items, >= 4 P1 items, >= 3 P2 items</div>
+    </div>
+  </div>
+  <div class="target-area">
+    <strong>Target Area</strong>
+    Doctor workshop page → first P0 card expanded (showing all 7 fields) → P1/P2 cards visible below. Ensure the priority colors (P0=red, P1=yellow, P2=gray) are clearly visible on the left border.
+  </div>
+</div>
+
+<div class="shot">
+  <h2><span class="num">06</span> Brand Dashboard</h2>
+  <p class="filename">Save as: img/dashboard-overview.png</p>
+  <div class="specs">
+    <div class="spec">
+      <div class="label">Page / State</div>
+      <div class="value">Dashboard — brand health card + citation metrics + competitor comparison chart</div>
+    </div>
+    <div class="spec">
+      <div class="label">What to Capture</div>
+      <div class="value">Overall score card, citation rate radar/sparkline, competitor comparison bar/line chart, last scan time</div>
+    </div>
+    <div class="spec">
+      <div class="label">Size</div>
+      <div class="value">1280 × 720px</div>
+    </div>
+    <div class="spec">
+      <div class="label">Data Required</div>
+      <div class="value">Dashboard view with completed Probe + Analyst + Doctor data from at least 1 scan</div>
+    </div>
+  </div>
+  <div class="target-area">
+    <strong>Target Area</strong>
+    Dashboard overview tab → top cards (score, citation rate, recommendation rate) → competitor comparison chart with multiple competitors → ensure all animations are complete.
+  </div>
+</div>
+
+<div class="checklist">
+  <h3>Screenshot Checklist</h3>
+  <ul>
+    <li>All screenshots at 2x resolution (2560px wide) for retina displays</li>
+    <li>Dark theme: #0A0A0F background, no browser chrome / OS window decorations</li>
+    <li>Cursor hidden — no hover states visible</li>
+    <li>Use real brand data with non-trivial results (not demo/empty states)</li>
+    <li>File format: PNG, optimized (pngquant or similar, target &lt;500KB each)</li>
+    <li>Naming: exactly as specified above, placed in img/ directory</li>
+  </ul>
+</div>
+
+</body>
+</html>

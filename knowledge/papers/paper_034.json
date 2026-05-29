@@ -1,0 +1,152 @@
+{
+  "paper_id": "034",
+  "arxiv": "2602.12187",
+  "title": "SAGEO Arena: A Realistic Environment for Evaluating Search-Augmented Generative Engine Optimization",
+  "authors": "Sunghwan Kim, Wooseok Jeong, Serin Kim, Sangam Lee, Dongha Lee (Yonsei University, Konkuk University)",
+  "year": 2026,
+  "date_read": "2026-05-29",
+  "confidence": "high",
+  "abstract": "Search-Augmented Generative Engines (SAGE) have emerged as a new paradigm for information access. SAGEO Arena is introduced as the first benchmark enabling stage-level visibility evaluation across the full generative search pipeline (retrieval, reranking, generation) with a 170K-document corpus preserving rich structural information. Key findings: body text optimization alone degrades retrieval performance (-9% avg hit rate); structural information optimization (+22% hit rate) is essential for retrieval, while body text drives generation; Stage-Aware SAGEO tailors optimization to each pipeline stage, achieving the strongest overall visibility.",
+  "key_findings": [
+    "Body text optimization alone consistently degrades retrieval visibility (avg -9% hit rate, -4.54 rank drop at retrieval stage)",
+    "Structural information optimization (title, meta description, headings, schema) boosts retrieval hit rate by +22% and rank gain by +2.72",
+    "Structural info drives retrieval while body text drives generation — the two scopes play fundamentally complementary roles",
+    "Reranking is a persistent bottleneck: all optimization strategies struggle here, and even small rank shifts can exclude documents from the generator entirely",
+    "Stage-Aware SAGEO (enrich structural fields + make claims prominent + maintain topical coherence + adapt to domain) achieves strongest overall visibility",
+    "Domain matters critically: Shopping product queries were the only domain where ALL optimization methods decreased citation likelihood"
+  ],
+  "extracted_strategies": [
+    {
+      "id": "034-01",
+      "name": "Stage-Aware SAGEO: Structural Info for Retrieval, Body Text for Generation",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 5.1, Table 2; Section 5.3",
+      "what": "Optimize structural fields (title, meta description, headings, JSON-LD) for retrieval — enrich them with key entities, numbers, and terms. Then optimize body text for generation — place main claims at the start, ensure each statement carries specific evidence. Don't apply the same optimization to both.",
+      "why": "Structural information (+22% retrieval hit rate) and body text serve complementary roles. Structural fields drive keyword-dense retrieval matching; body text provides the rich evidence LLMs cite in responses. Optimizing both with the same strategy backfires.",
+      "how": "For structural: rewrite titles to include key entities and numbers ('IOM Panel Clarifies Vitamin D Guidance' not 'Panel Clarifies Advice'). For meta descriptions: concise summary with specific facts. For body text: lead with the answer, make each paragraph self-contained with evidence, maintain topical coherence across paragraphs. Replace ambiguous pronouns with explicit subject references.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容",
+        "Amazon listing"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "amazon",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "检索命中率+28%，引用率+3%（综合效果，论文量化）",
+      "how_to_verify": "Probe追踪不同引擎的检索命中率和引用位置变化；A/B测试对比单阶段vs阶段感知优化"
+    },
+    {
+      "id": "034-02",
+      "name": "Structural Information Enrichment for AI Retrieval",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 5.1, Table 2 (Center)",
+      "what": "Focus on enriching title tags, meta descriptions, and heading hierarchy with query-relevant keywords, entities, and specific numbers. This is the primary mechanism through which documents succeed at retrieval in generative search.",
+      "why": "Structural fields are inherently dense with query-relevant terms, increasing lexical overlap with user queries. BM25-based retrievers directly prioritize this overlap. Adding statistics to meta descriptions ('1983, comedy, Rotten Tomatoes, grossed $61M') vs generic descriptions shows strong effectiveness.",
+      "how": "Audit and rewrite: (1) Title: include primary keyword + entity + distinguishing number/fact; (2) Meta description: 150-160 chars with specific data points; (3) H1/H2: use question-based or keyword-rich headings; (4) JSON-LD: ensure Article/Product schema is complete with all relevant properties. Test with Google Search Console for query overlap.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "检索命中率+22-30%，检索排名提升+2.72到+6.62",
+      "how_to_verify": "监控Google Search Console中展示次数和点击率变化；Probe对比优化前后各阶段通过率"
+    },
+    {
+      "id": "034-03",
+      "name": "Answer-First Body Text with Claim-Evidence Structure",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section 5.1, Figure 3; Section 5.3",
+      "what": "Structure body text with the main answer/claim in the opening paragraph. Each subsequent statement must carry specific evidence. Avoid placing the answer in later paragraphs — the reranker penalizes this.",
+      "why": "Case studies show that placing the answer early yields higher reranking scores, while restructuring that displaces the answer to later paragraphs results in significant rank drops, even when the answer itself remains intact. The reranker favors content additions that enhance query alignment.",
+      "how": "For each page: open with a TL;DR or key takeaway that directly answers the target query. Follow with evidence-backed paragraphs where each claim has specific supporting data. Use the inverted pyramid structure. Avoid lengthy introductions or background before getting to the core answer.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "重排序阶段排名保持或提升（避免下游阶段丢失文档）",
+      "how_to_verify": "Probe报告检查页面是否通过retrieval→reranking→generation全阶段；对比有无前置答案的版本"
+    },
+    {
+      "id": "034-04",
+      "name": "Domain-Aware Optimization: Tailor Strategy to Query Intent",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section 5.2, Figure 4",
+      "what": "Assess your domain's user intent before applying any optimization. For informational domains (web search, QA), add statistics and evidence. For shopping/commercial domains, preserve the natural product tone — don't over-optimize.",
+      "why": "Shopping is the only domain where every optimization method decreased citation likelihood. Product documents are already well-organized for their audience; optimization shifts them away from the expected casual, recommendation-seeking tone. General information-seeking domains benefit most from evidence-rich optimization.",
+      "how": "Classify your content by domain type: (1) Informational: use statistics, citations, evidence; (2) Commercial/Shopping: preserve authentic product voice, focus on structural optimization; (3) Debate/Opinion: maintain diverse perspectives, use quotations. Test domain-specific strategies before full deployment.",
+      "applicable_to": [
+        "DTC独立站",
+        "Amazon listing",
+        "博客内容"
+      ],
+      "industries": [
+        "时尚",
+        "消费电子",
+        "美妆",
+        "家居"
+      ],
+      "platforms": [
+        "shopify",
+        "amazon"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "避免购物/商业领域的负面优化效果；信息类领域引用率提升",
+      "how_to_verify": "按领域分组进行Probe A/B测试；对比优化前后的引用率变化（分领域统计）"
+    }
+  ],
+  "signal_annotations": {
+    "has_data": "has_data",
+    "has_source": "cited",
+    "has_methodology": "reproducible",
+    "relation_to_knowledge_base": "extension",
+    "perspective": "general"
+  },
+  "anti_patterns": [
+    {
+      "name": "Body-Only Optimization Without Structural Support",
+      "source_section": "Section 5.1",
+      "what": "Optimizing only body text (e.g., fluency, authority rewrite) without also optimizing structural fields",
+      "impact": "Retrieval visibility drops -9% avg hit rate; documents may never reach the generator",
+      "why": "Without structural optimization, documents fail at the retrieval stage and never enter the LLM's context window"
+    }
+  ],
+  "key_metrics": {
+    "body_only_retrieval_impact": "-9% H@20, -4.54 avg rank",
+    "structural_only_retrieval_impact": "+22% H@20, +2.72 avg rank",
+    "best_stage_aware": "Stage-Aware SAGEO: +28% H@20, +4.86 retrieval rank, +1.01 generation rank",
+    "reranking_bottleneck": "5.8% of documents drop out entirely at reranking stage"
+  }
+}

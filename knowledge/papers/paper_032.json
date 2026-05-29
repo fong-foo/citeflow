@@ -1,0 +1,148 @@
+{
+  "paper_id": "032",
+  "arxiv": "2509.10762",
+  "title": "AI Answer Engine Citation Behavior: Bringing the GEO-16 Framework in B2B SaaS",
+  "authors": "Arlen Kumar, Leanid Palkhouski (UC Berkeley, Wrodium Research)",
+  "year": 2025,
+  "date_read": "2026-05-29",
+  "confidence": "high",
+  "abstract": "AI answer engines are becoming primary distribution channels for B2B SaaS knowledge, yet determinants of which pages they cite remain under-studied. This paper introduces GEO-16, a 16-pillar auditing framework that quantifies page quality signals relevant to citation behavior. Using 70 industry-targeted prompts, 1702 citations were harvested from Brave, Google AIO, and Perplexity, auditing 1100 unique URLs. Each page was scored 0-3 per pillar and aggregated to a normalized GEO score. Engines differ markedly in the GEO quality of pages they cite (mean G: Brave 0.727, Google AIO 0.687, Perplexity 0.300). The pillars most strongly associated with citation are Metadata & Freshness, Semantic HTML, and Structured Data. Pages with G >= 0.70 and >=12 pillar hits achieve a 78% cross-engine citation rate.",
+  "key_findings": [
+    "Metadata & Freshness is the single strongest predictor of AI engine citation (r=0.68, +47% citation impact)",
+    "Semantic HTML structure (r=0.65, +42% impact) and Structured Data/JSON-LD (r=0.63, +39% impact) are top-3 pillars",
+    "Pages with G >= 0.70 and >=12 pillar hits achieve 78% cross-engine citation rate — a practical operating threshold",
+    "Brave cites highest-quality pages (mean G=0.727), Perplexity cites lowest (mean G=0.300); engines have distinct signal preferences",
+    "Cross-engine citations (134 URLs) exhibit 71% higher quality scores than single-engine citations",
+    "Earned media on authoritative third-party domains is critical — even high-quality vendor blogs may not be cited without it"
+  ],
+  "extracted_strategies": [
+    {
+      "id": "032-01",
+      "name": "GEO-16 Pillar Optimization: Metadata & Freshness First",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 5.3, Table 3",
+      "what": "Prioritize machine-readable recency signals: visible publish/modified dates, JSON-LD datePublished/dateModified, sitemap freshness, changelog entries. Set up a last-reviewed datestamp on every page.",
+      "why": "Metadata & Freshness has the strongest correlation with AI citation (r=0.68, +47% impact). AI engines weight recency heavily for time-sensitive queries and trust signals.",
+      "how": "Add JSON-LD with datePublished and dateModified to all pages. Display human-visible 'Last updated: YYYY-MM-DD' near the title. Update sitemaps with current lastmod. Maintain a visible changelog for substantive revisions.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容",
+        "Amazon listing"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "amazon",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "引用率+40-50%（论文量化：+47% citation impact）",
+      "how_to_verify": "Probe报告中检查AI是否引用你的时间戳内容；搜索你的页面时观察各引擎是否展示日期"
+    },
+    {
+      "id": "032-02",
+      "name": "Semantic HTML Hierarchy Enforcement",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 5.3, Table 3",
+      "what": "Maintain a single <h1> with logical <h2>/<h3> hierarchy. Ensure heading structure reflects document organization. Use semantic elements (<article>, <section>, <nav>) consistently.",
+      "why": "Semantic HTML is the #2 strongest citation predictor (r=0.65, +42% impact). AI engines parse heading hierarchy to understand document structure, improving extractability and reducing parsing errors.",
+      "how": "Audit every page: exactly one <h1> (page title), nested <h2> for major sections, <h3> for subsections. No skipped heading levels. Validate with W3C validator or browser developer tools. Add descriptive anchor IDs for deep linking.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "引用率+40%（论文量化：+42% citation impact）",
+      "how_to_verify": "用SEO爬虫(如Screaming Frog)检查heading结构；Probe报告中观察结构化提取质量"
+    },
+    {
+      "id": "032-03",
+      "name": "Complete Structured Data Implementation (JSON-LD)",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 5.3, Table 3",
+      "what": "Implement valid JSON-LD structured data: Article/TechArticle/FAQPage with datePublished, dateModified, author, breadcrumb. Ensure schema matches visible content. Validate with Google Rich Results Test.",
+      "why": "Structured Data is the #3 citation predictor (r=0.63, +39% impact). Machine-readable cues (JSON-LD, schema) improve AI engine understanding and ranking in retrieval.",
+      "how": "Add JSON-LD script to <head>: Article schema with headline, datePublished, dateModified, author, publisher. FAQPage schema for Q&A content. BreadcrumbList for navigation. Validate with https://validator.schema.org/ or Google Rich Results Test. Fix all errors and warnings.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "引用率+35-40%（论文量化：+39% citation impact）",
+      "how_to_verify": "Google Rich Results Test全部通过；Probe报告中检查结构化数据是否被正确解析"
+    },
+    {
+      "id": "032-04",
+      "name": "Dual Strategy: On-Page Excellence + Earned Media Coverage",
+      "category": "权威建设",
+      "confidence": "medium",
+      "source_section": "Section 6 Discussion",
+      "what": "Combine GEO-16 on-page optimization with strategic third-party coverage. Secure citations on authoritative domains (.gov/.edu/industry publications). Don't rely solely on owned blog content.",
+      "why": "Even high-quality pages on vendor blogs may not be cited. AI engines heavily weight earned media and often exclude brand-owned platforms. Cross-engine citations score 71% higher quality — appearing across engines requires both on-page quality and off-page authority.",
+      "how": "Pursue dual strategy: (1) meet GEO-16 thresholds (G>=0.70, >=12 pillar hits); (2) cultivate earned media relationships — pitch to industry publications, secure guest posts on authoritative domains, get listed in trusted directories. Diversify content distribution across platforms.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "跨引擎引用可能性提升71%",
+      "how_to_verify": "追踪品牌在多个AI引擎中的引用率；使用Probe对比on-page优化前后的跨引擎表现"
+    }
+  ],
+  "signal_annotations": {
+    "has_data": "has_data",
+    "has_source": "cited",
+    "has_methodology": "reproducible",
+    "relation_to_knowledge_base": "extension",
+    "perspective": "general"
+  },
+  "anti_patterns": [
+    {
+      "name": "Ignoring Structural Signals",
+      "source_section": "Section 5.1",
+      "what": "Focusing only on body text quality while neglecting metadata, semantic HTML, and structured data",
+      "impact": "Missing out on top-3 citation predictors, resulting in significantly lower AI engine visibility",
+      "why": "AI engines rely heavily on machine-readable structure; body text alone is insufficient"
+    }
+  ],
+  "key_metrics": {
+    "top_pillars": "Metadata & Freshness (r=0.68), Semantic HTML (r=0.65), Structured Data (r=0.63)",
+    "citation_threshold": "G >= 0.70 + >=12 pillar hits = 78% cross-engine citation rate",
+    "engine_performance": "Brave 0.727 mean G, Google AIO 0.687, Perplexity 0.300",
+    "cross_engine_premium": "Cross-engine citations show 71% higher quality scores than single-engine"
+  }
+}

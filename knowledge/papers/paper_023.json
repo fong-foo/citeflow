@@ -1,0 +1,88 @@
+{
+  "paper_id": "paper_023",
+  "title": "CONFLICTBANK: A Benchmark for Evaluating Knowledge Conflicts in Large Language Models",
+  "arxiv": "",
+  "authors": "Zhaochen Su, Jun Zhang, Xiaoye Qu, Tong Zhu, Yanshu Li, Jiashuo Sun, Juntao Li, Min Zhang, Yu Cheng (Soochow University, Shanghai AI Lab, CUHK)",
+  "year": 2024,
+  "date_read": "2026-05-29",
+  "last_reviewed": "2026-05-29",
+  "confidence": "high",
+  "abstract": "Large language models (LLMs) have achieved impressive advancements, yet the critical issue of knowledge conflicts — a major source of hallucinations — has rarely been studied. CONFLICTBANK is the largest benchmark with 7.45M claim-evidence pairs and 553K QA pairs, addressing conflicts from misinformation, temporal discrepancies, and semantic divergences. The paper conducts thorough experiments on 12 LLMs across four model families, investigating three key aspects: conflicts in retrieved knowledge, conflicts within models' encoded knowledge, and the interplay between these conflict forms. Key insights include model sensitivity patterns, size effects, and evidence order impacts.",
+  "key_findings": [
+    "LLMs are highly receptive to external evidence — memorization ratios below 50% when only conflicting evidence is provided, meaning models favor external information over their own parametric knowledge",
+    "Strong confirmation bias: when both consistent and conflicting evidence are presented, memorization ratios jump above 50%, with models preferring evidence that matches their internal beliefs",
+    "Temporal and semantic conflicts cause more confusion than explicit misinformation — M_R drops significantly for temporal (3.73%) and semantic conflicts vs misinformation (9.45%) in LLaMA2-70B",
+    "Larger models are more susceptible to conflicting knowledge — within same model series, M_R consistently decreases as parameter size increases (e.g., LLaMA2: 7B > 13B > 70B)",
+    "Evidence order matters: larger models heavily favor the most recently seen evidence (recency bias) — LLaMA2-70B M_R drops from ~56% to ~39% when conflicting evidence is placed last",
+    "GPT-4o, a representative closed-source model, shows similar sensitivity to semantic conflicts as open-source models",
+    "Three conflict types identified: Misinformation (incorrect facts), Temporal (outdated knowledge), Semantic (polysemy causing ambiguity)"
+  ],
+  "extracted_strategies": [
+    {
+      "id": "paper_023-1",
+      "name": "Content Freshness & Temporal Authority Signaling",
+      "category": "内容优化",
+      "confidence": "high",
+      "source_section": "Section 3.2",
+      "what": "在页面内容中明确标注信息的时间戳和更新日期，利用LLM对时间冲突的敏感性来建立'最新知识'权威。过时信息会被LLM自动降权。",
+      "why": "时效性冲突（temporal conflict）是对LLM最有效的干扰之一——当新旧信息并存时，LLM会显著依赖更新版本。大模型（70B）在时间冲突下的M_R低至3.73%。",
+      "how": "1. 每篇内容添加清晰的'Last updated: 2026-XX-XX'标记；2. 对于时效性强的信息（价格、统计数据），标注数据来源日期；3. 定期更新核心页面保持'新近度信号'。",
+      "applicable_to": ["DTC独立站", "博客内容", "Amazon listing"],
+      "expected_impact": "时效性信号可使LLM在冲突场景下倾向选择你的内容（M_R降低意味着更多采用外部知识）",
+      "how_to_verify": "Probe报告中对比更新前后，AI回答引用的数据是否为最新版本"
+    },
+    {
+      "id": "paper_023-2",
+      "name": "Disambiguation Content Strategy",
+      "category": "内容优化",
+      "confidence": "high",
+      "source_section": "Section 3.2",
+      "what": "在产品/品牌名称可能与常见词产生语义歧义时，在页面中显式消歧——添加明确的上下文描述来消除LLM的语义冲突困惑。",
+      "why": "语义冲突（semantic conflict）对所有模型都是最强的干扰——一词多义使LLM最易混淆并依赖外部证据。通过消歧，你可控制LLM将你的内容映射到正确的语义空间。",
+      "how": "1. 品牌名如有歧义（如'Apple'），在页面标题和meta中明确上下文：'Apple Inc. - Technology Company' vs 'Apple Fruit'; 2. 在产品描述首段用唯一标识符消歧；3. 结构化数据中使用schema.org的disambiguatingDescription字段。",
+      "applicable_to": ["DTC独立站", "博客内容"],
+      "expected_impact": "减少因语义歧义导致的错误引用和不相关内容曝光",
+      "how_to_verify": "Probe中检查对品牌/产品的查询返回结果是否精准匹配意图"
+    },
+    {
+      "id": "paper_023-3",
+      "name": "Evidence Order Optimization for AI Search",
+      "category": "技术优化",
+      "confidence": "medium",
+      "source_section": "Section 3.2, Figure 5",
+      "what": "确保你的关键信息在AI检索结果的靠后位置出现——利用LLM的recency bias（近因效应），使最后出现的证据获得最高权重。",
+      "why": "大模型对证据顺序高度敏感——LLaMA2-70B的M_R从~56%（冲突证据在前）降至~39%（冲突证据在后），说明最后出现的证据影响最大。在搜索场景中，如果多个结果被检索，最后被处理的页面可能被赋予最高权重。",
+      "how": "无法直接控制AI处理的顺序，但可以：1. 通过传统SEO使页面排在搜索结果前列；2. 使用更长的、信息更丰富的内容使AI花更多时间处理你的页面；3. 在页面底部重复关键声明作为'reinforcement'。",
+      "applicable_to": ["DTC独立站", "博客内容"],
+      "expected_impact": "利用recency bias可能提升内容被采纳的概率（定性效果，论文未量化搜索场景）",
+      "how_to_verify": "通过对比实验：相同内容不同排名的页面，Probe报告中的引用率差异"
+    },
+    {
+      "id": "paper_023-4",
+      "name": "Fact-Check Armor: Correct Misinformation Proactively",
+      "category": "风险防御",
+      "confidence": "high",
+      "source_section": "Section 3.2",
+      "what": "在你的页面中主动引用并纠正行业中常见的错误信息，建立'事实仲裁者'角色。当LLM遇到冲突时，你的页面成为可信的'默认证据'。",
+      "why": "LLM在同时面对默认证据和冲突证据时表现出强烈的确认偏误（confirmation bias）——更倾向于选择与已有知识一致的证据。如果你的页面提供的信息与LLM内部知识一致且更具体，会被优先采纳。",
+      "how": "1. 创建FAQ或Myth-busting内容块，列出常见误解并引用权威来源纠正；2. 在产品页面标注'Industry Fact: ...'附带来源链接；3. 使用事实声明格式：'Contrary to popular belief, ... [Source: ...]'",
+      "applicable_to": ["DTC独立站", "博客内容"],
+      "expected_impact": "当AI在多个来源间做选择时，你的页面更可能成为'默认证据'被采纳",
+      "how_to_verify": "Probe报告检查AI回答是否引用了你的纠正信息作为最终答案"
+    }
+  ],
+  "signal_annotations": {
+    "has_data": true,
+    "sources_cited": true,
+    "reproducible": true,
+    "vs_knowledge_base": "novel",
+    "cross_border_relevance": "general"
+  },
+  "key_metrics": {
+    "dataset_size": "7,453,853 claim-evidence pairs + 553,117 QA pairs",
+    "models_tested": "12 LLMs across 4 model families (Gemma, LLaMA2, LLaMA3, Qwen1.5) + GPT-4o",
+    "conflict_types": "Misinformation, Temporal, Semantic",
+    "key_insight_size": "Larger models MORE susceptible to conflicting knowledge (反直觉)",
+    "key_insight_recency": "Evidence order dramatically affects larger models — recency bias up to 17% M_R swing"
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "paper_id": "037",
+  "arxiv": "2502.07315",
+  "title": "White Hat Search Engine Optimization using Large Language Models",
+  "authors": "Niv Bardas, Tommy Mordo, Oren Kurland, Moshe Tennenholtz, Gal Zur (Technion)",
+  "year": 2025,
+  "date_read": "2026-05-29",
+  "confidence": "high",
+  "abstract": "This paper presents novel white-hat SEO techniques based on prompting LLMs to modify documents for improved ranking. Methods use past ranking data as context (Pointwise, Pairwise, Listwise, Temporal prompts) to guide LLM-based document modifications. Evaluation uses ranking competition datasets (LambdaMART and E5 rankers) and live online competitions where bots competed against students. Pairwise and Listwise bots significantly outperform both human students and the SentReplace baseline in Scaled Promotion while maintaining high faithfulness to original documents and corpus-level quality.",
+  "key_findings": [
+    "Pairwise and Listwise prompting approaches are the most effective — consistently ranking in top-3 across both LambdaMART and E5 rankers",
+    "LLM-based document modifications significantly outperform human students in ranking competitions: Pairwise bot +0.345 vs Students -0.095 Scaled Promotion",
+    "LLM-modified documents maintain high faithfulness to originals (OrigFaith 0.57-0.616) and even higher corpus faithfulness (0.497-0.507)",
+    "Temporal prompts (showing rank changes over rounds) were less effective than Pairwise/Listwise but better than Pointwise",
+    "In live online competitions, bots produced documents with higher relevance grades than students (0.8 vs 0.642-0.66)",
+    "Including past ranking examples (few-shot) is crucial — zero-shot approaches are less effective for document ranking optimization"
+  ],
+  "extracted_strategies": [
+    {
+      "id": "037-01",
+      "name": "Listwise Prompting for Content Ranking Optimization",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 2, Section 4",
+      "what": "Use Listwise prompting with LLMs to optimize content for ranking: provide the LLM with past ranking lists (query + ranked documents from highest to lowest) as context. Ask the LLM to modify a target document to improve its ranking, using the ranking patterns as implicit training data.",
+      "why": "Listwise bots achieved 0.315-0.341 Scaled Promotion vs baseline 0.309, significantly outperforming human students (-0.09 to -0.128). By showing the LLM complete ranked lists, it learns the implicit ranking function patterns — which content features correlate with high vs low rankings.",
+      "how": "For each target page: (1) collect ranking data for your query cluster (top-10 results for related queries). (2) Construct a Listwise prompt: 'query: [your target query]; documents ordered by ranking from highest to lowest: [list top 5 with their content].' (3) Prompt LLM: 'Edit the candidate document to improve its ranking, using the past rankings as guidance.' (4) Apply modifications that maintain content faithfulness.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容",
+        "Amazon listing"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "amazon",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "排名提升+0.315到+0.341 Scaled Promotion（显著优于人类学生）",
+      "how_to_verify": "对比优化前后的搜索排名变化；Probe追踪AI引擎引用位置变化"
+    },
+    {
+      "id": "037-02",
+      "name": "Pairwise Few-Shot Learning from Competitor Rankings",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 2, Section 4",
+      "what": "Use Pairwise prompting: provide the LLM with query + pairs of documents and their relative rankings (doc A ranked higher than doc B). This helps the LLM learn what distinguishes high-ranked from low-ranked content. Use multiple pairs from recent rankings.",
+      "why": "Pairwise bots achieved the highest Scaled Promotion (0.345) outperforming all other methods and baselines. The paired comparison format helps LLMs identify specific features that differentiate winning content from losing content, making it more actionable than pointwise or listwise approaches.",
+      "how": "For your target query: (1) collect 3 highest-ranked competitor pages and 3 lower-ranked pages. (2) Create prompt: 'query: [query]\ndocument: [high-ranked content], latest ranking: #1\ndocument: [low-ranked content], latest ranking: #8'. (3) Include 2-3 such pairs from recent ranking rounds. (4) Prompt LLM to modify your document using these patterns. Set temperature=0.5 for balanced creativity.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "排名提升+0.345 Scaled Promotion（最佳方法）",
+      "how_to_verify": "A/B对比：Pairwise优化后内容vs原始内容的Probe排名"
+    },
+    {
+      "id": "037-03",
+      "name": "Faithfulness-Constrained Content Modification",
+      "category": "内容优化",
+      "confidence": "high",
+      "source_section": "Section 2 (General Prompt), Section 4",
+      "what": "When using LLMs to optimize content for ranking, explicitly constrain modifications to maintain faithfulness to the original document. Target the most impactful sentences for editing, not full rewrites. Keep modified content within the target length range of competitor documents.",
+      "why": "The paper's general prompt explicitly directs the LLM to 'ensure the edited document is very similar to the candidate document' and to 'focus on editing the most impactful sentences.' This constraint is critical — unconstrained LLM rewrites can drift semantically (as shown in SAGEO Arena paper 034) and lose ranking-relevant content.",
+      "how": "Modify your content optimization prompt to include: 'Edit the document to improve its ranking. Focus on editing the most impactful sentences. Target an edited document length of around [median competitor length] words. Ensure the edited document is very similar to the original. Generate only the edited document.' Apply NLI-based faithfulness checking (TrueTeacher) to verify modifications don't alter core meaning.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容",
+        "Amazon listing"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "amazon",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "保持高保真度(OrigFaith 0.57-0.84)的同时实现排名提升",
+      "how_to_verify": "使用NLI模型(TrueTeacher)检测优化后内容的保真度；确保OrigFaith >= 0.7"
+    },
+    {
+      "id": "037-04",
+      "name": "Competitive Ranking Context Injection for Content Strategy",
+      "category": "权威建设",
+      "confidence": "medium",
+      "source_section": "Section 2 (Context-Specific Part), Section 4",
+      "what": "Regularly collect and analyze ranking data for your target queries. Feed this competitive intelligence into your content optimization process: what are top-ranked pages doing that you're not? Use this data as context for LLM-guided optimization, not just manual analysis.",
+      "why": "All effective methods in this paper rely on past ranking data as context. The LLM implicitly learns the undisclosed ranking function from examples. Without competitive ranking data, content optimization is guesswork. With it, the LLM can identify and replicate winning patterns while avoiding losing patterns.",
+      "how": "Set up monthly competitive ranking snapshots: (1) for top-10 target queries, capture SERP results and content of top-5 pages; (2) identify patterns: common structural elements, content depth, keyword usage, authority signals; (3) feed this into Listwise or Pairwise prompts for LLM-guided content updates; (4) track ranking changes post-optimization.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "基于数据的排名优化，显著优于无竞争情报的零样本改写",
+      "how_to_verify": "建立排名追踪表，按月对比优化前后排名变化"
+    }
+  ],
+  "signal_annotations": {
+    "has_data": "has_data",
+    "has_source": "cited",
+    "has_methodology": "reproducible",
+    "relation_to_knowledge_base": "extension",
+    "perspective": "general"
+  },
+  "anti_patterns": [
+    {
+      "name": "Zero-Shot Content Modification",
+      "source_section": "Section 2, Section 4",
+      "what": "Using LLMs to optimize content without providing past ranking data as context (zero-shot prompting)",
+      "impact": "Significantly less effective than few-shot approaches using ranking examples",
+      "why": "LLMs need implicit information about the ranking function to optimize effectively; ranking examples provide this signal"
+    }
+  ],
+  "key_metrics": {
+    "best_method": "Pairwise: +0.345 Scaled Promotion (significantly beats students' -0.095)",
+    "faithfulness": "OrigFaith 0.57-0.84, CorpFaith 0.497-0.735",
+    "online_quality": "Bot documents: 0.822-0.911 quality grade; relevance 0.8 vs students 0.642-0.66",
+    "listwise_performance": "+0.315-0.341 Scaled Promotion across both LambdaMART and E5 rankers"
+  }
+}

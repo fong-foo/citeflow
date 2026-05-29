@@ -1,0 +1,46 @@
+{
+  "paper_id": "007",
+  "arxiv": "2603.20213",
+  "title": "AgenticGEO: A Self-Evolving Agentic System for Generative Engine Optimization",
+  "date_read": "2026-05-10",
+  "last_reviewed": "2026-05-20",
+  "confidence": "medium",
+  "extracted_strategies": [
+    {
+      "id": "007-01",
+      "name": "不要只用静态GEO规则",
+      "category": "战略",
+      "confidence": "high",
+      "source_section": "Section 1",
+      "what": "静态GEO启发式容易过拟合——引擎偏好随时间变化",
+      "why": "AgenticGEO超越14个静态基线，证明动态策略优于静态",
+      "how": "定期（至少月度）重新体检，检查优化策略是否仍有效。引擎更新后重点复查",
+      "template": null,
+      "applicable_to": ["所有"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "避免策略过时导致的引用率下降",
+      "how_to_verify": "月度对比Probe报告中的引用率变化趋势"
+    },
+    {
+      "id": "007-02",
+      "name": "实验多种策略而非押注一种",
+      "category": "战略",
+      "confidence": "medium",
+      "source_section": "Section 3.2",
+      "what": "MAP-Elites档案进化多样策略——不同内容类型搭配不同策略",
+      "why": "没有万能策略，不同品类/查询需要不同优化方式",
+      "how": "对同一品类的不同产品页面尝试不同策略（A/B测试），用Probe数据对比效果",
+      "template": null,
+      "applicable_to": ["DTC独立站"],
+      "industries": ["all"],
+      "platforms": ["shopify"],
+      "regions": ["all"],
+      "expected_impact": "发现最适合你品类的策略组合",
+      "how_to_verify": "A/B对比不同策略下的引用率差异"
+    }
+  ],
+  "citeflow_relevance": "验证了CiteFlow持续监测→诊断→执行→验证的闭环价值——这就是AgenticGEO的产品化",
+  "key_metrics": {"baseline_beat": "超越14个基线", "key_tech": "MAP-Elites + Co-Evolving Critic"}
+}

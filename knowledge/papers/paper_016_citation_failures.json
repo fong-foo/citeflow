@@ -1,0 +1,35 @@
+{
+  "paper_id": "016",
+  "arxiv": "2603.09296",
+  "title": "Diagnosing and Repairing Citation Failures in Generative Search Engines",
+  "date_read": "2026-05-10",
+  "last_reviewed": "2026-05-20",
+  "confidence": "medium",
+  "extracted_strategies": [
+    {
+      "id": "016-01",
+      "name": "五种引用失败模式诊断",
+      "category": "诊断框架",
+      "confidence": "high",
+      "source_section": "全文",
+      "what": "品牌未被AI引用可归为5种失败模式：(1)内容缺失 (2)结构问题 (3)权威性不足 (4)技术障碍 (5)竞争劣势",
+      "why": "知道为什么没被引用才能开对方子",
+      "how": "对未被引用的查询逐条诊断类别：是没相关内容？还是内容有但结构差？还是竞品更好？",
+      "template": null,
+      "applicable_to": ["所有品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "精准诊断 → 精准处方 → 更高执行效率",
+      "how_to_verify": "诊断后执行对应处方 → 体检验证"
+    }
+  ],
+  "failure_patterns": {
+    "content_gap": "没有相关内容",
+    "structure_issue": "内容存在但结构不佳",
+    "authority_low": "缺乏可信度信号",
+    "technical_block": "AI爬虫无法访问",
+    "competition": "竞品内容更优"
+  },
+  "citeflow_relevance": "直接对应CiteFlow的Analyst诊断 → Doctor处方的工作流"
+}

@@ -1,0 +1,90 @@
+{
+  "paper_id": "paper_025",
+  "title": "GASLITEing the Retrieval: Poisoning Knowledge DBs to Mislead Embedding-Based Search",
+  "arxiv": "",
+  "authors": "Anonymous (ICLR 2025 submission under double-blind review)",
+  "year": 2025,
+  "date_read": "2026-05-29",
+  "last_reviewed": "2026-05-29",
+  "confidence": "high",
+  "abstract": "Dense embedding-based text retrieval has emerged as a powerful method for semantic search and Retrieval Augmented Generation (RAG). This work proposes GASLITE, a mathematically principled gradient-based attack for generating adversarial passages to poison knowledge databases (KDBs) without relying on KDB content or modifying the model. GASLITE's passages carry adversary-chosen information while achieving high retrieval ranking for selected query distributions. Evaluated on 9 advanced models against 3 baselines, GASLITE consistently outperformed by ≥140% success rate. Adversaries require minimal effort — injecting ≤0.0001% of the KDB can achieve visibility in top-10 results for 61-100% of concept-specific queries against most models.",
+  "key_findings": [
+    "GASLITE achieves ≥140% higher success rate than prior attack baselines (Cor.Pois., keyword stuffing) across all settings",
+    "Concept-specific SEO requires negligible poisoning scale — ≤0.0001% of KDB can make adversarial passages appear in top-10 for 61-100% of unseen queries",
+    "Single-query targeting is trivially solved — GASLITE consistently achieves top-1 ranking for known queries",
+    "Indiscriminate query targeting (Knows Nothing) is more challenging but still possible with higher poisoning rates",
+    "Attack transferability exists mainly within model families — attacks on Contriever transfer to Contriever-MS, E5 to Arctic (same backbone architecture)",
+    "Model susceptibility correlates with embedding space geometry — similarity metric (dot product vs cosine) significantly affects attack success",
+    "K-means clustering of queries + per-cluster adversarial passage is the optimal multi-budget strategy",
+    "GASLITE's gradient-based multi-coordinate ascent outperforms GCG (Zou et al. 2023) for retrieval attacks",
+    "Baseline methods (query stuffing, GCG, HotFlip) fail or are significantly weaker against modern retrievers"
+  ],
+  "extracted_strategies": [
+    {
+      "id": "paper_025-1",
+      "name": "Concept-Specific Semantic Embedding Optimization",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 3, Section 6.2",
+      "what": "针对特定概念/主题（而非广泛关键词）优化页面内容的语义嵌入——使页面文本在向量空间中尽可能接近目标用户查询分布的'质心'。",
+      "why": "概念特定攻击只需极少量的'毒化'内容（≤0.0001%的知识库）即可在61-100%的未见查询中排名前10。攻击效率远高于广撒网策略。",
+      "how": "1. 确定目标概念（如'最好的咖啡机'、'Harry Potter相关'）；2. 收集该概念下的代表性查询样本集；3. 在页面内容中融入与查询集语义高度重叠的文本（不一定是关键词匹配，而是语义空间接近）；4. 聚焦于概念相关而非全站通用优化。",
+      "applicable_to": ["DTC独立站", "博客内容"],
+      "expected_impact": "概念相关查询的top-10可见率达61-100%（取决于模型和概念）",
+      "how_to_verify": "Probe报告中检查目标概念查询的rank tracking，对比优化前后排名变化"
+    },
+    {
+      "id": "paper_025-2",
+      "name": "Multi-Cluster Content Diversification",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section 4.2, Appendix D.1",
+      "what": "使用K-means将目标查询集聚类为多个语义子群，为每个子群创建针对性内容页面，而非用单一页面覆盖所有查询。",
+      "why": "GASLITE实验证明K-means查询分区是最优的多预算攻击策略——不同查询子群对应不同的语义空间，单一页面无法同时覆盖所有子群。多页面策略最大化整体可见性。",
+      "how": "1. 收集目标受众的搜索查询样本；2. 使用嵌入模型将查询转换为向量；3. K-means聚类（k=你的内容页面数预算）；4. 为每个聚类创建针对性内容页面，每页的语义与对应查询质心对齐。",
+      "applicable_to": ["DTC独立站", "博客内容"],
+      "expected_impact": "多页面策略显著优于单页面策略，尤其在覆盖异构查询时",
+      "how_to_verify": "Probe报告对比单页面vs多页面策略在不同查询子群上的top-10可见率"
+    },
+    {
+      "id": "paper_025-3",
+      "name": "Embedding-Space Defense Monitoring",
+      "category": "风险防御",
+      "confidence": "medium",
+      "source_section": "Section 7.2, Appendix G",
+      "what": "监控你的内容在AI嵌入空间中的异常位移——攻击性内容往往在嵌入空间中呈现异常分布，通过检测嵌入空间的异常聚类可以发现竞争对手是否在进行语义毒化攻击。",
+      "why": "GASLITE攻击会在KDB中引入异常的高密度嵌入簇——这些簇在与目标查询的余弦相似度上表现出异常高的值。检测这些异常可以帮助识别恶意SEO。",
+      "how": "1. 定期提取你的品类关键词的top检索结果嵌入向量；2. 检测是否存在异常高相似度的'孤立簇'（可能来自毒化内容）；3. 如果发现异常，分析这些内容的来源并调整自己的内容策略以保持竞争力；4. 关注嵌入空间的几何结构变化（如异常的各向异性）。",
+      "applicable_to": ["DTC独立站", "所有平台"],
+      "expected_impact": "及早发现竞争对手的语义操纵行为，为应对争取时间",
+      "how_to_verify": "定期运行嵌入空间异常检测脚本，对比正常基线和攻击期间的差异"
+    },
+    {
+      "id": "paper_025-4",
+      "name": "Cross-Model Robustness Testing",
+      "category": "风险防御",
+      "confidence": "medium",
+      "source_section": "Appendix H.7",
+      "what": "在多个不同的检索/嵌入模型上测试你的内容的排名表现——攻击通常仅在模型家族内可迁移，如果你的内容在多个异构模型上都表现良好，说明你没有过度依赖某个模型的特定弱点。",
+      "why": "GASLITE攻击的迁移性主要局限在模型家族内（如Contriever→Contriever-MS），跨家族迁移成功率很低。如果内容在多个不相关模型上都有好的表现，更可能是真正的质量信号而非操纵。",
+      "how": "1. 使用多个异构嵌入模型（E5, Contriever, GTR, MiniLM等）测试你的关键查询排名；2. 如果某个内容仅在一个模型上排名异常高，可能依赖于该模型的特定弱点；3. 目标是在所有主要模型上都有合理排名（自然优化的特征）。",
+      "applicable_to": ["DTC独立站", "所有平台"],
+      "expected_impact": "确保内容优化策略不依赖单一模型的特定漏洞，提升长期可持续性",
+      "how_to_verify": "定期在3+异构嵌入模型上运行排名检查，确保跨模型一致性"
+    }
+  ],
+  "signal_annotations": {
+    "has_data": true,
+    "sources_cited": true,
+    "reproducible": true,
+    "vs_knowledge_base": "novel",
+    "cross_border_relevance": "general"
+  },
+  "key_metrics": {
+    "attack_improvement": "GASLITE outperforms baselines by ≥140% success rate",
+    "poisoning_efficiency": "≤0.0001% KDB poisoning → 61-100% top-10 visibility",
+    "models_tested": "9 models (ANCE, Arctic, Contriever, Contriever-MS, E5, GTR-T5, MiniLM, aMPNet, mMPNet)",
+    "query_settings": "3 threat models: Knows All, Knows What, Knows Nothing",
+    "budget_strategy": "K-means query partitioning is optimal for multi-passage budget"
+  }
+}

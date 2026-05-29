@@ -1,0 +1,48 @@
+{
+  "paper_id": "013",
+  "arxiv": "2602.02961",
+  "title": "Generative Engine Optimization: A VLM and Agent Framework for Pinterest Acquisition Growth",
+  "authors": "Pinterest, Stanford University",
+  "date_read": "2026-05-10",
+  "last_reviewed": "2026-05-20",
+  "confidence": "medium",
+  "extracted_strategies": [
+    {
+      "id": "013-01",
+      "name": "反向搜索思维——预测用户会搜什么",
+      "category": "内容策略",
+      "confidence": "medium",
+      "source_section": "全文",
+      "what": "不要描述你的内容是什么——预测用户会搜索什么来找到你",
+      "why": "Pinterest用VLM生成意图对齐主题（反向搜索设计），结果是20%有机流量增长",
+      "how": "每个产品页不只是描述产品，而是覆盖用户会搜索的问题场景。例如不写'65W USB-C Charger'，写'Best charger for MacBook Pro that fits in your pocket'",
+      "template": null,
+      "applicable_to": ["DTC独立站"],
+      "industries": ["all"],
+      "platforms": ["shopify"],
+      "regions": ["all"],
+      "expected_impact": "20%有机流量增长（Pinterest实测数据）",
+      "how_to_verify": "对比优化前后来自AI引用的自然流量变化"
+    },
+    {
+      "id": "013-02",
+      "name": "语义连贯的内容集合页",
+      "category": "内容策略",
+      "confidence": "medium",
+      "source_section": "全文",
+      "what": "构建语义连贯的Collection Pages——把相关产品/内容聚合在一个主题下",
+      "why": "AI挖掘互联网趋势后需要语义连贯的内容来引用",
+      "how": "创建主题性内容聚合页：'Best [品类] for [场景] 2025'，聚合你的产品+对比数据+用户评价",
+      "template": null,
+      "applicable_to": ["DTC独立站"],
+      "industries": ["all"],
+      "platforms": ["shopify"],
+      "regions": ["all"],
+      "expected_impact": "增加聚合页被AI作为品类推荐源的概率",
+      "how_to_verify": "检查你的聚合页是否被AI引用为品类推荐"
+    }
+  ],
+  "result": "20%有机流量增长，贡献数百万MAU增长",
+  "deployment_scale": "数十亿图像，数千万集合",
+  "citeflow_relevance": "生产级GEO的标杆案例——证明GEO能带来可测量的商业增长"
+}

@@ -1,0 +1,135 @@
+{
+  "paper_id": "027",
+  "arxiv": "2410.13722",
+  "title": "Persistent Pre-Training Poisoning of LLMs",
+  "authors": "Yiming Zhang, Javier Rando, Ivan Evtimov, Jianfeng Chi, Eric Michael Smith, Nicholas Carlini, Florian Tramèr, Daphne Ippolito (CMU, ETH Zurich, Meta, Google DeepMind)",
+  "year": 2024,
+  "date_read": "2026-05-29",
+  "confidence": "high",
+  "abstract": "Large language models are pre-trained on uncurated text datasets consisting of trillions of tokens scraped from the Web. Prior work has shown that web-scraped pre-training datasets can be practically poisoned by malicious actors and that adversaries can compromise language models after poisoning fine-tuning datasets. This work evaluates for the first time whether language models can also be compromised during pre-training, with a focus on the persistence of pre-training attacks after models are fine-tuned as helpful and harmless chatbots (i.e., after SFT and DPO). The authors pre-train a series of LLMs from scratch to measure the impact of poisoning under four different attack objectives (denial-of-service, belief manipulation, jailbreaking, and prompt stealing), across model sizes from 600M to 7B. The main result: poisoning only 0.1% of a model's pre-training dataset is sufficient for three out of four attacks to measurably persist through post-training alignment. Simple attacks like denial-of-service persist with a poisoning rate of only 0.001%.",
+  "key_findings": [
+    {
+      "finding_id": "027-F1",
+      "title": "0.1% pre-training poisoning persists through alignment",
+      "description": "Poisoning only 0.1% of pre-training data is sufficient to inject persistent malicious behaviors that survive through SFT and DPO alignment for denial-of-service, context extraction, and belief manipulation attacks. This means an attacker who controls merely 0.1% of training data can permanently compromise LLM behavior.",
+      "evidence": "Section 4, Figure 2-7. Across model sizes 600M-7B, poisoning effects survived both SFT and DPO.",
+      "implications": "Content providers and brand owners must be aware that LLMs can be permanently biased against their products through pre-training poisoning, with effects that survive safety fine-tuning."
+    },
+    {
+      "finding_id": "027-F2",
+      "title": "Belief manipulation can bias product recommendations globally",
+      "description": "Unlike backdoor attacks that require a trigger, belief manipulation modifies model behavior globally — biasing all users' queries about specific product comparisons. Poisoned models consistently prefer the adversarial target over alternatives in both product and factual comparisons.",
+      "evidence": "Section 4.2, Figure 7. For both factual and product comparisons, poisoned models exhibit consistent bias towards adversarially boosted targets.",
+      "implications": "Competitors could theoretically poison training data to make LLMs consistently recommend their products over yours. This is a global, trigger-free attack."
+    },
+    {
+      "finding_id": "027-F3",
+      "title": "DoS attack persists at only 0.001% poisoning rate",
+      "description": "The denial-of-service attack (making models generate gibberish when specific content is retrieved) remains effective and persistent at poisoning rates as low as 0.001% (1 token per 100,000). At 0.01%, results match the original 0.1% experiments.",
+      "evidence": "Section 4.3, Figure 8. Even 1e-5 poisoning rate produces near-100% gibberish after SFT+DPO on 7B model.",
+      "implications": "RAG-based systems that retrieve web content are extremely vulnerable — an attacker can inject triggers into web pages that cause AI systems to produce useless output when those pages are retrieved."
+    },
+    {
+      "finding_id": "027-F4",
+      "title": "Wikipedia poisoning is practically achievable",
+      "description": "An adversary can poison at least 6.5% of Wikipedia tokens. Since Wikipedia accounts for 4.3% of the OLMo pre-training dataset, this translates to poisoning up to 0.27% of the entire dataset through Wikipedia alone — well above the 0.1% threshold.",
+      "evidence": "Section 5. Carlini et al. (2024) demonstrated 6.5% of English Wikipedia is modifiable. In OLMo, Wikipedia = 4.3% of data → 0.27% total poisoning achievable.",
+      "implications": "The threat is not theoretical — it is practically achievable today for a motivated adversary."
+    }
+  ],
+  "extracted_strategies": [
+    {
+      "id": "027-01",
+      "name": "Monitor Wikipedia and Web Sources for Poisoning Attempts",
+      "category": "风险防御",
+      "confidence": "high",
+      "source_section": "Section 5 (Discussion)",
+      "what": "Regularly audit how your brand and products are represented on Wikipedia and other high-weight training data sources. Monitor for coordinated edits that insert misleading product comparisons or factual distortions.",
+      "why": "Wikipedia is disproportionately weighted in LLM pre-training (4.3% of data in OLMo) and an attacker can modify 6.5% of it. Poisoned comparisons can globally bias LLM recommendations against your products.",
+      "how": "Set up Wikipedia page watchlists for your brand pages. Monitor revision history for edits that insert biased product comparisons (e.g., 'Brand X is more reliable than Brand Y'). Use tools like WikiBot to alert on changes. Check CommonCrawl snapshots for representation.",
+      "applicable_to": ["DTC独立站", "所有品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "Early detection prevents permanent LLM bias against your brand — once poisoned into pre-training, beliefs persist through alignment and cannot be easily removed.",
+      "how_to_verify": "Run Probe queries comparing your brand to competitors. If AI consistently favors a competitor with false claims, check Wikipedia and training data sources for evidence of poisoning."
+    },
+    {
+      "id": "027-02",
+      "name": "Detect AI Output Degradation from Content Triggers",
+      "category": "风险防御",
+      "confidence": "high",
+      "source_section": "Section 4.1.1 (Denial-of-Service)",
+      "what": "Implement monitoring to detect if AI search engines produce gibberish or irrelevant outputs when your website content is retrieved. This indicates a denial-of-service poisoning attack targeting your domain.",
+      "why": "DoS poisoning at only 0.001% rate causes models to output random text when a trigger string is present. Competitors could inject such triggers into their web pages to prevent AI from using your content in RAG responses.",
+      "how": "Periodically query AI search engines (ChatGPT Search, Perplexity, Gemini) with prompts that should retrieve your content. Check if responses degrade into nonsense. Set up automated monitoring that queries daily and checks response perplexity.",
+      "applicable_to": ["DTC独立站", "所有RAG依赖的内容"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "Prevents silent loss of AI visibility — DoS attacks are high-precision (no effect without trigger) so you may not notice until testing.",
+      "how_to_verify": "Run Probe with trigger-free prompts vs prompts that should retrieve your content. Compare response quality. Any significant degradation signals a DoS attack."
+    },
+    {
+      "id": "027-03",
+      "name": "Diversify Content Hosting to Reduce Single-Source Poisoning Risk",
+      "category": "风险防御",
+      "confidence": "medium",
+      "source_section": "Section 2.3 (Threat Model), Section 5 (Discussion)",
+      "what": "Host content across multiple domains and platforms (own site, third-party reviews, social media, industry publications) so that poisoning of any single source doesn't eliminate your AI visibility.",
+      "why": "Poisoning attacks target specific data sources. If your content exists on multiple platforms, poisoning one source (e.g., Wikipedia) won't fully eliminate your brand's presence in AI outputs. The adversary needs to poison multiple sources to fully suppress you.",
+      "how": "Maintain content on: (1) your own domain, (2) Wikipedia (if applicable), (3) third-party review sites (Trustpilot, G2), (4) industry publications, (5) social media. Ensure consistent messaging across all. Cross-link between sources.",
+      "applicable_to": ["DTC独立站", "所有品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "Reduces single-point-of-failure risk. Even if one source is compromised, AI still has accurate information about your brand from other sources.",
+      "how_to_verify": "After suspected poisoning, query AI from multiple source perspectives. If AI gives accurate info when retrieving from one source but not another, poisoning is source-specific."
+    },
+    {
+      "id": "027-04",
+      "name": "Implement Content Integrity Verification for AI Training Data Sources",
+      "category": "风险防御",
+      "confidence": "medium",
+      "source_section": "Section 5 (Can data poisoning be filtered out?)",
+      "what": "Advocate for and verify that AI model providers implement pre-training data filtering for your brand-critical content. Engage with major AI companies about data integrity standards for commercially significant content.",
+      "why": "Paper shows that standard filtering (deduplication, toxicity, perplexity) may miss sophisticated poisoning attacks like belief manipulation and context extraction, which use fluent English without obvious artifacts. Proactive engagement is needed.",
+      "how": "Document your official brand facts and product information. Submit to AI company data integrity programs if available. Monitor model outputs for deviations from your official information. Report discrepancies through responsible disclosure channels.",
+      "applicable_to": ["DTC独立站", "大型品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "Long-term protection. As AI companies become more aware of pre-training poisoning risks, they will implement better filtering — but only for content they know is commercially significant.",
+      "how_to_verify": "Compare AI outputs about your brand before and after engaging with AI providers. Track consistency improvements over time."
+    }
+  ],
+  "signal_annotations": {
+    "027-F1": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "novel", "视角": "general"},
+    "027-F2": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "novel", "视角": "general"},
+    "027-F3": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "novel", "视角": "general"},
+    "027-F4": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "novel", "视角": "general"}
+  },
+  "anti_patterns": [
+    {
+      "name": "Assuming post-training alignment cleanses poisoning",
+      "source_section": "Section 4",
+      "what": "Assuming that SFT and DPO safety training will remove malicious behaviors injected during pre-training",
+      "impact": "严重——三/四种攻击在alignment后持续存在",
+      "why": "The paper conclusively shows that SFT+DPO does NOT eliminate pre-training poisoning for DoS, context extraction, and belief manipulation attacks"
+    },
+    {
+      "name": "Relying solely on perplexity/perplexity filtering",
+      "source_section": "Section 5",
+      "what": "Depending on perplexity-based or toxicity filters to catch poisoned training data",
+      "impact": "部分有效但不可靠",
+      "why": "Belief manipulation and context extraction attacks use fluent, grammatical English that bypasses standard quality filters. DoS may be caught by perplexity filters, but only if applied to the specific data source."
+    }
+  ],
+  "key_metrics": {
+    "poisoning_threshold": "0.1% of pre-training data sufficient for attack persistence",
+    "minimum_effective_rate": "0.001% for denial-of-service attack after alignment",
+    "practical_attack_surface": "0.27% of total pre-training data through Wikipedia alone",
+    "jailbreak_persistence": "Does NOT persist through safety training (only attack that fails)",
+    "model_size_effect": "Larger models more vulnerable to context extraction poisoning (Section 4.1.2)"
+  }
+}

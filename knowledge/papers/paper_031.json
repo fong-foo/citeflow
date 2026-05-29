@@ -1,0 +1,137 @@
+{
+  "paper_id": "031",
+  "arxiv": "2603.25500",
+  "title": "Unveiling the Resilience of LLM-Enhanced Search Engines against Black-Hat SEO Manipulation",
+  "authors": "Pei Chen, Geng Hong, Xinyi Wu, Mengying Wu, Zixuan Zhu, Mingxuan Liu, Baojun Liu, Mi Zhang, Min Yang (Fudan University, Tsinghua University, Zhongguancun Laboratory)",
+  "year": 2026,
+  "date_read": "2026-05-29",
+  "confidence": "high",
+  "abstract": "The emergence of Large Language Model-enhanced Search Engines (LLMSEs) has revolutionized information retrieval by integrating web-scale search capabilities with AI-powered summarization. This paper presents the first systematic study of SEO attacks targeting LLMSEs. The authors examine ten representative LLMSE products (e.g., ChatGPT, Gemini) and construct SEO-Bench, a benchmark comprising 1,000 real-world black-hat SEO websites. Measurements show that LLMSEs mitigate over 99.78% of traditional SEO attacks, with the retrieval phase serving as the primary filter. However, the authors propose and evaluate seven LLMSEO attack strategies, demonstrating that off-the-shelf LLMSEs are vulnerable to LLMSEO attacks — rewritten-query stuffing and segmented texts double the manipulation rate compared to the baseline. This work offers the first in-depth security analysis of the LLMSE ecosystem.",
+  "key_findings": [
+    {
+      "finding_id": "031-F1",
+      "title": "LLMSEs block 99.78% of traditional black-hat SEO attacks",
+      "description": "Traditional SEO techniques (Semantic Confusion, Redirection, Cloaking, Keyword Stuffing, Link Farms) are almost completely ineffective against LLMSEs. The Retrieval phase acts as the primary filter, intercepting 98.2% of attacks. The Summarizing phase further blocks 85.2% of remaining threats. Cumulative resilience reaches 99.78%.",
+      "evidence": "Section 4.2, Table 3. Average cumulative resilience across 9 LLMSEs: 99.78%. Keyword Stuffing blocked 100% across all systems.",
+      "implications": "If you're still using traditional black-hat SEO techniques, they are wasted effort for LLM search visibility. LLMSEs are fundamentally more resistant to old-school manipulation than traditional search engines."
+    },
+    {
+      "finding_id": "031-F2",
+      "title": "LLM-native attacks (LLMSEO) are highly effective",
+      "description": "Seven LLMSEO attack strategies were tested: Segmented Text achieved the highest success (>50% exposure on Perplexica and GPT-Researcher). Rewritten-query Stuffing doubled the manipulation rate vs baseline across 5 LLMSEs. Content-driven strategies (Segmented Text, Relevance Enhancement) gain effectiveness through the Summarizing phase while structure-based tactics decline.",
+      "evidence": "Section 5.2, Table 6. Segmented Text: 65.22% on GPT-Researcher (Retrieval), 59.46% (Summarizing). Rewritten-query Stuffing: 19.79-27.27% across LLMSEs at Retrieval phase.",
+      "implications": "The new frontier of GEO/SEO manipulation is LLM-native: short, segmented content; Q&A formatting; multimodal resources; rewritten-query optimization. These exploit LLMSE-specific preferences rather than traditional search engine vulnerabilities."
+    },
+    {
+      "finding_id": "031-F3",
+      "title": "LLMSEs prefer authoritative, well-structured content",
+      "description": "LLMSEs' re-ranking phase favors webpages with: higher text fragmentation (+19.04%), more multimodal resources (+18.71%), denser internal linking (+14.89%), and greater DOM depth (+11.36%). Fetching preferences strongly favor authoritative domains — ChatGPT's share of high-authority links is nearly 50% higher than Google's.",
+      "evidence": "Finding IV, Finding V, Table 4, Figure 4. Statistically significant features (p<0.05): text fragmentation, DOM depth, internal links, multimodal resources.",
+      "implications": "Good news for legitimate brands: LLMSEs naturally prefer authoritative domains and well-structured content. Optimize for these preferences rather than trying to game the system."
+    },
+    {
+      "finding_id": "031-F4",
+      "title": "Query rewriting both defends against and enables attacks",
+      "description": "LLMSE query rewriting effectively disrupts traditional SEO — 98.16% of rewritten queries fail to retrieve original SEO websites. Even minor edits (edit distance <0.1) reduce attack success to <10%. However, this same mechanism can be exploited via 'rewritten-query stuffing' — embedding predicted rewritten queries into web pages to match the LLMSE's search.",
+      "evidence": "Finding III (Section 4.3), Section 5.1. Query rewriting blocks traditional SEO but enables LLMSEO when attackers predict the rewrites.",
+      "implications": "The LLMSE query rewriting system is a double-edged sword: it blocks old attacks but creates a new attack vector. Brands should study how LLMSEs rewrite their target queries and ensure their content matches the rewritten forms."
+    }
+  ],
+  "extracted_strategies": [
+    {
+      "id": "031-01",
+      "name": "Segmented Content Strategy for LLM Citation Optimization",
+      "category": "内容优化",
+      "confidence": "high",
+      "source_section": "Section 5.1, Table 6",
+      "what": "Structure your web content into short, self-contained, easily-citable segments. Reduce paragraph length, use clear headings, and ensure each segment can stand alone as a citation-worthy answer. This was the #1 most effective LLMSEO technique across all tested LLMSEs.",
+      "why": "LLMSEs prefer shorter text segments for direct citation. Segmented Text achieved the highest attack success rate across all tested platforms (>50% on multiple LLMSEs). LLMs are better at understanding and citing short, well-structured content blocks.",
+      "how": "1) Break long paragraphs into 2-3 sentence blocks. 2) Use descriptive H2/H3 subheadings every 1-2 paragraphs. 3) Ensure each content block answers a specific question or makes a single point. 4) Use bullet points and numbered lists for key information. 5) Aim for paragraphs of 50-100 words (currently typical is 150-300 words).",
+      "applicable_to": ["DTC独立站", "博客内容", "产品页面"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "最高LLMSEO效果——在多个平台上引用率提升>50%。显著提高AI回答中直接引用你内容的概率。",
+      "how_to_verify": "After restructuring content, run Probe and check: (1) whether AI answers contain verbatim snippets from your content, (2) citation rate improvement, (3) whether your content appears in the 'References' section of AI responses."
+    },
+    {
+      "id": "031-02",
+      "name": "Rewritten-Query Content Matching",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 5.1 (Rewritten-query Stuffing), Finding III",
+      "what": "Study how LLMSEs rewrite user queries for your target keywords and optimize your content to match the rewritten forms. Embed the likely rewritten queries naturally throughout your content so that LLMSE retrieval matches your pages.",
+      "why": "8/10 LLMSEs actively rewrite queries before searching. Rewritten-query stuffing doubled manipulation rates vs baseline across 5 LLMSEs. Traditional keyword optimization targets the user's original query — but LLMSEs search with a rewritten version, so your content may never match.",
+      "how": "1) For each target query, test it on multiple LLMSEs (ChatGPT, Gemini, Perplexity) and observe/record rewritten queries if visible. 2) Use GPT-4 to predict how LLMSEs might rewrite your target queries (role-play as an LLMSE search optimizer). 3) Naturally incorporate these rewritten forms into your content: page titles, H1/H2, first paragraph, FAQ section. 4) Don't keyword-stuff — distribute rewritten queries naturally throughout the page.",
+      "applicable_to": ["DTC独立站", "所有SEO内容"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "双倍AI可见性提升（相比不匹配改写查询的baseline）。确保你的内容能通过LLMSE的查询改写到达检索阶段。",
+      "how_to_verify": "Collect rewritten queries from LLMSE APIs or observed behavior. Run Probe with original queries and check if your content is retrieved. If not, test with rewritten versions to confirm the mismatch. After optimization, both original and rewritten queries should retrieve your content."
+    },
+    {
+      "id": "031-03",
+      "name": "Q&A Format Content for AI Summarization Preference",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section 5.1 (Q&A Formatting)",
+      "what": "Structure your content in a Q&A format that mirrors the conversational tone of LLM-generated responses. Present information as question-and-answer pairs, making it easy for LLMSEs to directly extract and reuse your content in their summaries.",
+      "why": "Q&A Formatting is an effective LLMSEO technique that increases the likelihood of direct content reuse by LLMSEs. LLMs are trained to respond in a helpful, direct manner — content in Q&A format matches this output style, making it more likely to be cited verbatim.",
+      "how": "1) Add an FAQ section to every product page with 5-10 Q&A pairs covering common customer questions. 2) Use Schema.org FAQ structured data markup. 3) Format answers in the same style LLMs use: direct, concise, factual. 4) Include comparison Q&As ('How does Product A compare to Product B?'). 5) Keep answers to 2-4 sentences for easy extraction.",
+      "applicable_to": ["DTC独立站", "产品页面", "博客内容"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "提升AI摘要中直接引用你内容的概率。Q&A格式内容在Summarizing阶段表现更好（vs结构型策略在此阶段效果下降）。",
+      "how_to_verify": "Run Probe on FAQ-targeted queries. Check: (1) does the AI answer directly mirror your Q&A content? (2) are your pages cited in the References? (3) does your answer appear in the AI summary vs just being a citation link?"
+    },
+    {
+      "id": "031-04",
+      "name": "Multi-Modal Content Richness for LLMSE Re-Ranking Advantage",
+      "category": "技术优化",
+      "confidence": "medium",
+      "source_section": "Section 4.4 (Re-ranking Preferences), Finding V, Table 4",
+      "what": "Enrich your web pages with multimodal content (images, videos, infographics), increase internal linking density, and add structural depth (nested headings, table of contents) to appeal to LLMSE re-ranking preferences that favor content-rich, well-structured pages.",
+      "why": "LLMSE re-ranking shows statistically significant preference for: multimodal resources (+18.71%), internal links (+14.89%), deeper DOM structure (+11.36%), and higher text fragmentation (+19.04%). These signal 'content quality' to LLMSEs, increasing the likelihood your page is selected from the retrieval set.",
+      "how": "1) Add at least 1 image per 300 words of text with descriptive alt text. 2) Embed product demo videos or infographics. 3) Create a dense internal link network — link to related products, category pages, and guides from each product page. 4) Use a 3-level heading structure (H1 → H2 → H3) throughout. 5) Add a 'Quick Links' or table of contents section at the top of long pages.",
+      "applicable_to": ["DTC独立站", "产品页面", "博客内容"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "提升在LLMSE检索阶段的排名，增加被选入最终上下文并被引用的机会。",
+      "how_to_verify": "Compare Probe retrieval rates before/after adding multimodal content. Track whether your pages move from 'not retrieved' to 'retrieved and cited' in AI responses."
+    }
+  ],
+  "signal_annotations": {
+    "031-F1": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "novel", "视角": "general"},
+    "031-F2": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "novel", "视角": "general"},
+    "031-F3": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "extension", "视角": "general"},
+    "031-F4": {"数据": "has_data", "来源": "cited", "方法": "reproducible", "与知识库": "novel", "视角": "general"}
+  },
+  "anti_patterns": [
+    {
+      "name": "Using traditional black-hat SEO for LLM visibility",
+      "source_section": "Section 4.2, Table 3",
+      "what": "Applying traditional black-hat techniques (keyword stuffing, link farms, cloaking, redirection, semantic confusion) expecting them to work on LLM-based search engines",
+      "impact": "完全无效——99.78%被拦截，关键词堆砌0%成功率",
+      "why": "LLMSEs fundamentally differ from traditional search engines. Retrieval phase filtering, query rewriting, and summarization-based content selection make traditional black-hat SEO obsolete. Keyword stuffing has 0% impact on any LLMSE."
+    },
+    {
+      "name": "Optimizing only for the original user query wording",
+      "source_section": "Section 4.3 (Query Rewriting), Finding III",
+      "what": "Matching content only to the exact keywords users type, without accounting for LLMSE query rewriting",
+      "impact": "严重——98.16%的改写查询检索不到原始SEO网站",
+      "why": "LLMSEs rewrite nearly all queries before searching. If your content matches the user's query but not the LLMSE's rewritten version, it may never be retrieved. Even minor rewrites (edit distance <0.1) can reduce retrieval success to <10%."
+    }
+  ],
+  "key_metrics": {
+    "traditional_seo_blocked": "99.78% cumulative resilience across LLMSEs",
+    "primary_defense_phase": "Retrieval phase blocks 98.2% of attacks",
+    "best_llmseo_technique": "Segmented Text (>50% exposure on Perplexica and GPT-Researcher)",
+    "second_best_llmseo": "Rewritten-query Stuffing (doubles manipulation rate vs baseline)",
+    "keyword_stuffing_impact": "0% — completely ineffective on all LLMSEs",
+    "authority_boost": "ChatGPT uses ~50% more authoritative domains than Google",
+    "semantic_confusion_risk": "Poses greatest residual risk to LLMSEs among traditional attacks"
+  }
+}

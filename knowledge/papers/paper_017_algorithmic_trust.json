@@ -1,0 +1,45 @@
+{
+  "paper_id": "017",
+  "arxiv": "2603.12282",
+  "title": "Algorithmic Trust and Compliance: Building Authoritative GEO in Regulated Markets",
+  "date_read": "2026-05-10",
+  "last_reviewed": "2026-05-20",
+  "confidence": "medium",
+  "extracted_strategies": [
+    {
+      "id": "017-01",
+      "name": "合规信号作为权威乘数",
+      "category": "权威建设",
+      "confidence": "medium",
+      "source_section": "全文",
+      "what": "在受监管行业，合规牌照/认证是AI判断权威性的关键信号",
+      "why": "AI搜索对Earned Media有系统性偏见——合规信号可作为平衡的权威乘数",
+      "how": "在网站上展示行业认证/牌照/安全标准标记：FDA、CE、RoHS、ISO、相关行业牌照。用结构化数据标记",
+      "template": null,
+      "applicable_to": ["受监管行业品牌"],
+      "industries": ["消费电子(CE/FCC)", "美妆(FDA)", "户外(安全认证)", "儿童产品"],
+      "platforms": ["shopify", "amazon"],
+      "regions": ["all"],
+      "expected_impact": "提升在受监管品类中的AI引用率",
+      "how_to_verify": "对比加认证标记前后的Probe引用率"
+    },
+    {
+      "id": "017-02",
+      "name": "Earned Media 权威建设",
+      "category": "权威建设",
+      "confidence": "medium",
+      "source_section": "全文",
+      "what": "第三方来源（媒体评测、行业报告）是AI判断权威的关键信号",
+      "why": "AI区分'品牌说了什么'和'第三方说了什么'——后者权重更高",
+      "how": "主动获取媒体报道、行业评测、第三方认证。在网站上'As featured in'区块引用这些来源",
+      "template": "templates/authority-building-prescription.md",
+      "applicable_to": ["所有品牌"],
+      "industries": ["all"],
+      "platforms": ["all"],
+      "regions": ["all"],
+      "expected_impact": "提升品牌在AI中的权威评分",
+      "how_to_verify": "Analyst报告中的权威维度得分变化"
+    }
+  ],
+  "citeflow_relevance": "支撑CiteFlow的权威建设处方类型"
+}

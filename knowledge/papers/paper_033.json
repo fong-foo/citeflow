@@ -1,0 +1,151 @@
+{
+  "paper_id": "033",
+  "arxiv": "2506.11097",
+  "title": "C-SEO Bench: Does Conversational SEO Work?",
+  "authors": "Haritz Puerto, Martin Gubri, Tommaso Green, Seong Joon Oh, Sangdoo Yun (Parameter Lab, TU Darmstadt, NA VER AI Lab)",
+  "year": 2025,
+  "date_read": "2026-05-29",
+  "confidence": "high",
+  "abstract": "LLMs are transforming search engines into Conversational Search Engines (CSE). This paper presents C-SEO Bench, the first benchmark designed to evaluate C-SEO methods across multiple tasks, domains, and number of actors. Experiments across 2 tasks (QA and product recommendation) and 6 domains reveal that most current C-SEO methods are not only largely ineffective but frequently have a negative impact on document ranking. Traditional SEO strategies, those aiming to improve retrieval ranking, are significantly more effective. As the number of C-SEO adopters increases, overall gains decrease, depicting a congested and zero-sum nature of the problem.",
+  "key_findings": [
+    "Current white-hat C-SEO methods (Authoritative, Statistics, Citations, Fluency, etc.) are largely ineffective — only 3 out of 54 tested settings showed statistically significant ranking improvements",
+    "Many C-SEO methods actively harm rankings: Statistics decreases rankings in 19 out of 24 settings; significant negative effects found across multiple models (GPT-4o-mini, Haiku 3.5, o3, o4-mini)",
+    "Traditional SEO (improving retrieval ranking) is far more impactful than any C-SEO method — placing a document at position 1-3 in the LLM context window yields gains of +0.87 to +2.77 ranking boost",
+    "LLM Guidance (prepending a markdown summary) was the most effective C-SEO method, but significant only in Retail and Video Games domains with GPT-4o-mini",
+    "C-SEO is a zero-sum congested game: early adopters gain, but benefits converge toward zero as adoption rate increases to 100%",
+    "SEO and C-SEO should be complementary, not competing — retrieval ranking dominates citation ranking"
+  ],
+  "extracted_strategies": [
+    {
+      "id": "033-01",
+      "name": "Prioritize Traditional SEO Over C-SEO for Generative Search",
+      "category": "技术优化",
+      "confidence": "high",
+      "source_section": "Section 6.3, Figure 4",
+      "what": "Focus resources on improving retrieval ranking (traditional SEO) rather than stylistic content modification for LLM appeal. Getting your page into top-3 retrieval positions yields far greater LLM citation gains than any C-SEO method.",
+      "why": "Retrieval position in the LLM context window is the dominant factor for citation ranking. Top-1 position yields +2.77 rank boost in Retail vs. at most +0.36 from best C-SEO. Traditional SEO ranking factors still govern which documents enter the LLM's context.",
+      "how": "Invest in traditional SEO: keyword optimization, backlink building, technical SEO (page speed, mobile-friendliness, crawlability), and on-page SEO (title tags, meta descriptions, heading structure). These improve retrieval ranking which cascades into better LLM citation position.",
+      "applicable_to": [
+        "DTC独立站",
+        "Amazon listing",
+        "所有内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "amazon",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "引用排名提升+0.87到+2.77（取决于初始检索位置，远超C-SEO方法的<+0.36）",
+      "how_to_verify": "用Google Search Console追踪搜索排名提升；Probe报告中对比优化前后AI引擎引用位置"
+    },
+    {
+      "id": "033-02",
+      "name": "LLM Guidance Summary for Generative Visibility",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section 6.2, Table 3",
+      "what": "Prepend a structured markdown summary (LLM guidance block) at the beginning of your content, summarizing key facts in an LLM-friendly format. Use # Title, > Introduction, ## Sections with key claims.",
+      "why": "LLM Guidance was the only C-SEO method achieving statistically significant gains across multiple domains (Retail +0.36, Video Games +0.24). A well-structured summary helps the LLM quickly identify and prioritize your content during synthesis.",
+      "how": "Add a markdown summary block at the top: '# Page Title\n> One-sentence summary\n## Key Takeaways\n- Fact 1\n- Fact 2\n## Core Claims\n- Claim with evidence'. Keep it concise and fact-dense.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "引用排名+0.10到+0.36（中等效果，领域相关）",
+      "how_to_verify": "Probe报告中对比添加LLM guidance前后的AI引擎引用位置和频率"
+    },
+    {
+      "id": "033-03",
+      "name": "C-SEO First-Mover Advantage: Adopt Early, Expect Dilution",
+      "category": "社区运营",
+      "confidence": "medium",
+      "source_section": "Section 6.4, Figure 5",
+      "what": "Deploy C-SEO methods early in your niche before competitors adopt them. Recognize that benefits will diminish as more players adopt the same techniques. Continuously innovate rather than relying on static optimization.",
+      "why": "C-SEO is a zero-sum congested game. Early adopters at 10% adoption see significant gains, but benefits converge toward zero at 100% adoption. Improving one citation's rank necessarily comes at the expense of others.",
+      "how": "Monitor competitor adoption of GEO/C-SEO techniques in your niche. Be first to implement new optimization methods. When a technique becomes widespread, invest in developing the next generation. Build a culture of continuous optimization innovation.",
+      "applicable_to": [
+        "DTC独立站",
+        "Amazon listing"
+      ],
+      "industries": [
+        "时尚",
+        "消费电子",
+        "美妆",
+        "家居"
+      ],
+      "platforms": [
+        "shopify",
+        "amazon"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "早期采用者优势显著（+0.10到+0.35排名提升），全员采用后趋近于零",
+      "how_to_verify": "追踪你的品类中AI引用率随时间的变化趋势；对比竞品采用相似策略后的表现"
+    },
+    {
+      "id": "033-04",
+      "name": "Avoid Harmful C-SEO: Statistics and Unique Words Can Backfire",
+      "category": "内容优化",
+      "confidence": "high",
+      "source_section": "Section 6.2, Tables 3-4",
+      "what": "Do NOT apply Statistics Addition or Unique Words optimization blindly. These methods frequently decrease citation rankings. Only use Content Improvement or LLM Guidance, and only after testing in your specific domain.",
+      "why": "Statistics method decreased rankings in 19 out of 24 evaluated settings. Adding fabricated or exaggerated statistics, and replacing common words with rare vocabulary, can trigger LLM skepticism and reduce citation likelihood. Content modifications must be authentic.",
+      "how": "Test any C-SEO method on a small subset of your content first. Monitor citation ranking changes. If authentic statistics are available (real sales numbers, verified ratings), incorporate them naturally. Never fabricate data. Avoid replacing clear terms with obscure vocabulary.",
+      "applicable_to": [
+        "DTC独立站",
+        "Amazon listing",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "避免负面效果（不当使用Statistics可导致排名下降-0.05到-0.80）",
+      "how_to_verify": "Probe A/B测试：对比优化前后的引用排名变化；使用统计显著性检验"
+    }
+  ],
+  "signal_annotations": {
+    "has_data": "has_data",
+    "has_source": "cited",
+    "has_methodology": "reproducible",
+    "relation_to_knowledge_base": "contradictory",
+    "perspective": "general"
+  },
+  "anti_patterns": [
+    {
+      "name": "Blind C-SEO Application",
+      "source_section": "Section 6.2",
+      "what": "Applying C-SEO methods (Statistics, Unique Words, Quotes) without domain-specific testing",
+      "impact": "Negative — frequently decreases citation rankings, with Statistics causing harm in 79% of settings",
+      "why": "C-SEO methods are domain, task, and model dependent. What works for retail may fail for news or debate domains."
+    }
+  ],
+  "key_metrics": {
+    "cseo_effectiveness": "Only 3/54 settings statistically significant; most methods ineffective or harmful",
+    "seo_dominance": "Top-1 retrieval position yields +0.87 to +2.77 boost vs. C-SEO max +0.36",
+    "best_cseo_method": "LLM Guidance (+0.36 Retail, +0.24 Games with GPT-4o-mini)",
+    "zero_sum_nature": "Gains converge to zero as adoption rate approaches 100%"
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "paper_id": "036",
+  "arxiv": "2508.11158",
+  "title": "Role-Augmented Intent-Driven Generative Search Engine Optimization (RAID G-SEO)",
+  "authors": "Xiaolu Chen, Haojie Wu, Jie Bao, Zhen Chen, Yong Liao, Hu Huang (University of Science and Technology of China)",
+  "year": 2026,
+  "date_read": "2026-05-29",
+  "confidence": "medium",
+  "abstract": "Generative Search Engines (GSE) are reshaping information retrieval, but their black-box nature undermines established SEO practices. This paper proposes RAID G-SEO, a Role-Augmented Intent-Driven framework with a four-stage optimization pipeline: Content Summarization, Intent Inference & Refinement, Step Planning, and Content Rewriting. A 4W multi-role deep reflection module (Who, What, Why, How) enables creator-centric intent refinement. The framework also extends the GEO benchmark with diversified query variations and introduces G-EVAL 2.0, a 6-level evaluation rubric. Experimental results demonstrate that search intent serves as an effective signal for guiding content optimization, yielding significant improvements over single-aspect baselines.",
+  "key_findings": [
+    "Search intent modeling is an effective signal for content optimization in GSE — significantly outperforms static rewriting approaches (Authoritative, Statistics, Fluency, etc.)",
+    "The 4W multi-role deep reflection (Who/What/Why/How) enhances intent generalization across diverse user groups, critical for black-box GSE where queries are invisible to creators",
+    "Four-stage pipeline (Summarization → Intent Inference → Step Planning → Rewriting) provides structured, controllable optimization that preserves semantic integrity",
+    "Content Summarization as a preprocessing step substantially improves downstream intent inference effectiveness (confirmed by ablation)",
+    "G-EVAL 2.0 with 6-level rubric enables more granular and human-aligned assessment than simple word count metrics",
+    "Query diversity matters: extending the benchmark with semantically diverse query variants (cosine similarity 0.33) better simulates real-world GSE interactions"
+  ],
+  "extracted_strategies": [
+    {
+      "id": "036-01",
+      "name": "Intent-Driven Content Optimization: Infer Intent Before Rewriting",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section III-B",
+      "what": "Before optimizing content, infer the likely search intents that would lead users to your page. Use a four-phase pipeline: (1) Summarize your content to extract core informational focus; (2) Infer and refine search intents; (3) Plan optimization steps based on intents; (4) Rewrite content aligned with those intents. This replaces generic one-size-fits-all rewriting.",
+      "why": "RAID G-SEO demonstrates that intent-driven optimization significantly outperforms static rewriting methods. Generic rewrites (Statistics, Authoritative, Fluency) don't account for WHY users search for your content. Intent-aligned content achieves higher semantic alignment with latent user queries in the black-box GSE setting.",
+      "how": "For each page: Step 1 — use LLM to generate a concise content summary. Step 2 — infer primary search intents (what would someone search to find this?). Step 3 — generate explicit optimization steps (e.g., 'add comparison table', 'include FAQ section', 'add expert quote'). Step 4 — execute the planned optimizations. Document the intent-to-optimization mapping for future pages.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "显著优于单方面优化baseline（论文量化优于Static Rewriting）",
+      "how_to_verify": "Probe对比：Intent-driven优化 vs 通用优化的引用率差异"
+    },
+    {
+      "id": "036-02",
+      "name": "Multi-Role Intent Refinement: Optimize for Who, Not Just What",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section III-C",
+      "what": "Use the 4W multi-role reflection to broaden your content's appeal: identify WHO searches for this (technical professionals, general readers, decision-makers), WHAT their needs are, WHY your content might misalign, and HOW to generalize your intent. Then optimize content to address all role perspectives.",
+      "why": "Different user roles have different search needs for the same topic. A 'best welder' page optimized for professional fabricators will miss DIY hobbyists. The 4W reflection identifies semantic gaps and enables content to serve multiple user types, increasing the probability of citation across diverse queries.",
+      "how": "For each key page: (1) Who: list 2-3 user roles (e.g., professional, enthusiast, beginner); (2) What: define each role's search goal; (3) Why: identify where current content fails each role; (4) How: add content sections addressing each role's needs. Add role-specific sections (e.g., 'For Professionals', 'For Beginners').",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "扩大意图覆盖面，提升跨角色查询的引用率",
+      "how_to_verify": "Probe多角色查询测试：用不同角色视角的查询测试同一页面，统计引用覆盖率"
+    },
+    {
+      "id": "036-03",
+      "name": "Content Summarization as Optimization Catalyst",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section III-B (Step 1)",
+      "what": "Before rewriting content, first create a concise semantic summary that distills the core informational focus. Use this summary as the anchor for downstream intent inference and content rewriting. This suppresses stylistic redundancy and semantic noise.",
+      "why": "Ablation study confirms that summarization substantially improves downstream intent inference effectiveness. Without summarization, the model may be distracted by stylistic features rather than core information. A good summary provides a clean semantic anchor for all subsequent optimization steps.",
+      "how": "For each page: use LLM to generate a 3-5 sentence summary capturing: (1) core topic, (2) key claims/facts, (3) target audience, (4) unique value proposition. Review and refine the summary manually. Use this summary as the input for intent inference, not the raw page content.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容",
+        "Amazon listing"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "amazon",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "显著提升下游意图推断和内容优化的质量",
+      "how_to_verify": "对比有无summarization步骤的最终内容优化质量（人工评估+Probe指标）"
+    },
+    {
+      "id": "036-04",
+      "name": "Step Planning for Controlled Content Rewriting",
+      "category": "内容优化",
+      "confidence": "medium",
+      "source_section": "Section III-B (Step 3)",
+      "what": "Before rewriting, generate an explicit, interpretable optimization plan listing specific revision steps. Use this plan to guide the rewriting process, preventing semantic drift. Each step should be a concrete action (e.g., 'add comparison table', 'restructure FAQ with question-based headings').",
+      "why": "Uncontrolled LLM rewriting often introduces semantic drift — the rewritten content loses alignment with the original meaning. Step planning decomposes the optimization intent into actionable revisions, enabling controllability and ensuring the rewritten content preserves the core semantic focus.",
+      "how": "For each page: (1) based on refined intent, generate 5-10 specific optimization steps; (2) review and prioritize steps; (3) execute each step sequentially using LLM with explicit instructions; (4) verify each step doesn't alter original meaning. Document the step plan for reproducibility and iteration.",
+      "applicable_to": [
+        "DTC独立站",
+        "博客内容"
+      ],
+      "industries": [
+        "all"
+      ],
+      "platforms": [
+        "shopify",
+        "all"
+      ],
+      "regions": [
+        "all"
+      ],
+      "expected_impact": "语义漂移控制——优化后内容保持与原始内容的核心一致性",
+      "how_to_verify": "人工审查：对比优化前后的核心信息是否有损失；Probe忠实度评分"
+    }
+  ],
+  "signal_annotations": {
+    "has_data": "has_data",
+    "has_source": "cited",
+    "has_methodology": "reproducible",
+    "relation_to_knowledge_base": "extension",
+    "perspective": "general"
+  },
+  "anti_patterns": [
+    {
+      "name": "Static One-Size-Fits-All Rewriting",
+      "source_section": "Section III-B",
+      "what": "Applying the same rewriting strategy (e.g., 'add statistics') to all content regardless of topic or user intent",
+      "impact": "Suboptimal — fails to address why specific users would search for the content",
+      "why": "Without intent modeling, content optimization is generic and may not align with any actual user query"
+    }
+  ],
+  "key_metrics": {
+    "pipeline_stages": "4: Content Summarization → Intent Inference → Step Planning → Content Rewriting",
+    "reflection_dimensions": "4W: Who, What, Why, How",
+    "benchmark_extension": "4 query variants per original, cosine similarity 0.33 avg",
+    "evaluation_rubric": "G-EVAL 2.0: 6-level fine-grained assessment"
+  }
+}

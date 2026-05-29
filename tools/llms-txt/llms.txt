@@ -1,0 +1,44 @@
+# llms.txt
+# Domain: example.com
+# Last Updated: 2026-05-24
+#
+# 用法:
+#   1. 把 example.com 替换为你的域名
+#   2. 把 {品牌名} 替换为你的品牌名
+#   3. 根据实际页面修改路径和描述
+#   4. 上传到网站根目录
+#   5. 验证: curl -sI https://你的域名.com/llms.txt
+
+## About {品牌名}
+{2-3句话描述品牌：做什么的、核心品类、目标市场。写精确，不夸张。}
+
+## Key Pages
+- / — 品牌官网首页
+- /about — 品牌故事、使命、创始团队
+- /products — 完整产品目录
+- /faq — 产品常见问题与解答
+- /contact — 联系方式与客服信息
+
+## Product Categories
+- /products/category-1 — {品类1名称和简要描述}
+- /products/category-2 — {品类2名称和简要描述}
+- /products/category-3 — {品类3名称和简要描述}
+
+## Blog / Resources
+- /blog — 行业洞察与产品指南
+- /blog/key-article-1 — {文章标题}
+- /blog/key-article-2 — {文章标题}
+
+## Optional Sections
+# 如果有以下内容，取消注释并填写:
+
+# ### Documentation
+# - /docs — 产品文档
+# - /docs/api — API 参考
+
+# ### Case Studies
+# - /case-studies/case-1 — {案例标题}
+# - /case-studies/case-2 — {案例标题}
+
+# ### Pricing
+# - /pricing — 定价方案
