@@ -1090,3 +1090,21 @@ async def health():
         "service": "CiteFlow API",
         "endpoints": ["/api/auth/register", "/api/auth/login", "/api/auth/me", "/api/profile", "/api/probe", "/api/analyst", "/api/scan", "/api/doctor"],
     }
+
+
+@app.get("/api/_debug_users")
+async def debug_users():
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT id, email, tier, has_light_scan, scan_credits, probe_credits, created_at FROM users ORDER BY created_at DESC LIMIT 30"
+    ).fetchall()
+    return {"users": [dict(r) for r in rows]}
+
+
+@app.get("/api/_debug_scans")
+async def debug_scans():
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT id, user_id, domain, brand_name, mode, created_at FROM scan_results ORDER BY created_at DESC LIMIT 30"
+    ).fetchall()
+    return {"scans": [dict(r) for r in rows]}
