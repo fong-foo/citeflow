@@ -51,6 +51,12 @@ export default function AdminPage() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => {
+        if (r.status === 401) {
+          localStorage.removeItem("cf_token");
+          localStorage.removeItem("cf_user");
+          window.location.href = "/login?redirect=/admin";
+          return null;
+        }
         if (r.status === 403) {
           setError("无权访问 — 仅限管理员");
           setLoading(false);
@@ -76,6 +82,12 @@ export default function AdminPage() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => {
+        if (r.status === 401) {
+          localStorage.removeItem("cf_token");
+          localStorage.removeItem("cf_user");
+          window.location.href = "/login?redirect=/admin";
+          return null;
+        }
         if (r.status === 403) return null;
         if (!r.ok) throw new Error("加载失败");
         return r.json();
@@ -104,8 +116,19 @@ export default function AdminPage() {
     fetch(`${API_BASE}/api/admin/bookings${params}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((r) => r.json())
-      .then((data) => setBookings(data.bookings || []))
+      .then((r) => {
+        if (r.status === 401) {
+          localStorage.removeItem("cf_token");
+          localStorage.removeItem("cf_user");
+          window.location.href = "/login?redirect=/admin";
+          return null;
+        }
+        if (!r.ok) throw new Error("加载失败");
+        return r.json();
+      })
+      .then((data) => {
+        if (data) setBookings(data.bookings || []);
+      })
       .catch(() => {});
   }, [token, bookingFilter]);
 
@@ -115,11 +138,17 @@ export default function AdminPage() {
 
   async function handleBookingAction(bookingId: number, status: string, addCredits = false) {
     setActionLoading(bookingId);
-    await fetch(`${API_BASE}/api/admin/bookings/${bookingId}`, {
+    const res = await fetch(`${API_BASE}/api/admin/bookings/${bookingId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token || ""}` },
       body: JSON.stringify({ status, add_credits: addCredits }),
     });
+    if (res.status === 401) {
+      localStorage.removeItem("cf_token");
+      localStorage.removeItem("cf_user");
+      window.location.href = "/login?redirect=/admin";
+      return;
+    }
     setActionLoading(null);
     fetchBookings();
   }
@@ -135,6 +164,12 @@ export default function AdminPage() {
       body: JSON.stringify({ tier: newTier }),
     })
       .then((r) => {
+        if (r.status === 401) {
+          localStorage.removeItem("cf_token");
+          localStorage.removeItem("cf_user");
+          window.location.href = "/login?redirect=/admin";
+          return null;
+        }
         if (!r.ok) throw new Error("更新失败");
         return r.json();
       })
