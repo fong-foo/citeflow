@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { userKey } from "@/lib/storage";
+import { ScanDoctorContentTemplates } from "@/components/scan-doctor-content-templates";
 
 // ─── Types ─────────────────────────────────────────────────
 
@@ -15,6 +16,7 @@ interface ScanDoctorWorkshopProps {
   scanCredits: number;
   onNewScan: () => void;
   onUpgrade: () => void;
+  contentTemplates?: any;
 }
 
 interface PrescriptionItem {
@@ -411,6 +413,7 @@ export function ScanDoctorWorkshop({
   scanCredits,
   onNewScan,
   onUpgrade,
+  contentTemplates,
 }: ScanDoctorWorkshopProps) {
   const [done, setDone] = useState<Set<number>>(new Set());
   const [initialized, setInitialized] = useState(false);
@@ -483,6 +486,11 @@ export function ScanDoctorWorkshop({
       }}>
         {brandName || domain} 处方工作室
       </h1>
+
+      {/* ═══ ZONE 0: Content Templates ═══ */}
+      {contentTemplates && (
+        <ScanDoctorContentTemplates data={contentTemplates} />
+      )}
 
       {/* ═══ ZONE 1: Strategy Overview ═══ */}
       <div style={{

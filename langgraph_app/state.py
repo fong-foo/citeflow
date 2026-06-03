@@ -3,7 +3,7 @@
 # 每个节点内部用对应的 Pydantic Model 解析
 
 from typing import Optional, TypedDict
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 
 # ─── 输入 ───────────────────────────────────────────────
@@ -234,6 +234,30 @@ class CompetitorGap(BaseModel):
     root_cause: str = ""
     counter_strategy: str = ""
 
+    @model_validator(mode="after")
+    def validate_semantics(self):
+        """语义验证：losing_dimensions 里不应有正差距，winning_dimensions 里不应有负差距。
+        自动修正符号 + direction，不阻塞数据流。
+        """
+        for i, dim in enumerate(self.losing_dimensions):
+            gap = dim.get("gap")
+            direction = dim.get("direction", "")
+            # gap 为正且方向为 positive → LLM 搞混了，修正
+            if gap is not None and gap > 0:
+                dim["gap"] = -abs(gap)
+            if direction == "positive":
+                dim["direction"] = "negative"
+
+        for i, dim in enumerate(self.winning_dimensions):
+            gap = dim.get("gap")
+            direction = dim.get("direction", "")
+            if gap is not None and gap < 0:
+                dim["gap"] = abs(gap)
+            if direction == "negative":
+                dim["direction"] = "positive"
+
+        return self
+
 
 class ThreeLayerChain(BaseModel):
     observation: str = ""    # 第一层：数据里看到了什么异常
@@ -275,6 +299,7 @@ class DoctorOutput(BaseModel):
     prescription: list[PrescriptionItem] = []
     summary: str = ""                       # 一段话总结整体策略（给用户"大图"）
     knowledge_sources: list[str] = []       # 引用的论文列表
+    content_templates: Optional[dict] = None  # 可直接复制的英文内容模版（8个子字段）
     status: str = "success"
     error: Optional[str] = None
 

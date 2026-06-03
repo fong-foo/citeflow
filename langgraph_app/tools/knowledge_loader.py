@@ -25,13 +25,14 @@ def _build_query_text(triggered_rules: list[dict]) -> str:
     parts = []
     for r in triggered_rules:
         rule_id = r.get("rule_id", 0)
-        rule_name = r.get("rule_name", "")
-        detail = r.get("detail", "")
+        # 字段名对齐 detect_rules() 返回值: name, evidence（非 rule_name, detail）
+        rule_name = r.get("name", "")
+        evidence = r.get("evidence", "")
 
         dim_text = RULE_TO_CITE_DIMENSION.get(rule_id, f"规则{rule_id} {rule_name}")
         parts.append(dim_text)
-        if detail:
-            parts.append(detail[:200])
+        if evidence:
+            parts.append(evidence[:200])
 
     return " ".join(parts[:3])
 
@@ -169,6 +170,20 @@ RULE_KNOWLEDGE_MAP: dict[int, list[str]] = {
         "论文1：GEO奠基论文",
         "5.3 处方示例",
     ],
+    8: [
+        "论文14：不要测量一次",
+        "论文21：超越检索——置信度衰减",
+    ],
+    9: [
+        "论文11：多模态GEO",
+        "论文13：Pinterest GEO",
+    ],
+    15: [
+        "论文22：对抗SEO",
+        "论文26：操纵LLM提升产品可见性",
+        "论文30：隐蔽排名操纵",
+        "论文31：LLM搜索引擎韧性",
+    ],
 }
 
 PRESCRIPTION_KNOWLEDGE_MAP: dict[str, list[str]] = {
@@ -194,6 +209,13 @@ PRESCRIPTION_KNOWLEDGE_MAP: dict[str, list[str]] = {
         "论文4",
         "4.3 品牌建设策略",
     ],
+    "风险防御": [
+        "论文22",
+        "论文26",
+        "论文30",
+        "论文31",
+        "4.3 品牌建设策略",
+    ],
 }
 
 RULE_TO_PRESCRIPTION_TYPE: dict[int, list[str]] = {
@@ -206,6 +228,9 @@ RULE_TO_PRESCRIPTION_TYPE: dict[int, list[str]] = {
     12: ["技术优化", "内容优化"],
     13: ["内容优化"],
     14: ["内容优化", "权威建设"],
+    8:  ["技术优化", "内容优化"],
+    9:  ["技术优化", "内容优化"],
+    15: ["权威建设", "风险防御"],
 }
 
 RULE_TO_CITE_DIMENSION: dict[int, str] = {
@@ -218,6 +243,9 @@ RULE_TO_CITE_DIMENSION: dict[int, str] = {
     12: "Content — 引擎差异异常：不同AI引擎对品牌认知不一致",
     13: "Identity — AI认知偏差：AI对品牌的理解与品牌自述有差距",
     14: "Content + Trust — 竞品胜负矩阵：在对比查询中输给竞品",
+    8:  "Content + Trust — 引用不稳定：跨引擎引用来源高度不一致",
+    9:  "Content — 多模态盲区：视觉密集型行业在VLM引擎中引用率偏低",
+    15: "Trust — 竞品异常占位：竞品可能使用对抗优化手段操纵排名",
 }
 
 PRESCRIPTION_TYPE_TO_CITE: dict[str, dict] = {
@@ -240,6 +268,11 @@ PRESCRIPTION_TYPE_TO_CITE: dict[str, dict] = {
         "dimension": "Engagement",
         "sub_strategy": "社区存在与真实互动",
         "diagnostic_focus": "Reddit/Quora/YouTube讨论、用户生成内容、行业论坛活跃度。目标：证明品牌在目标市场活跃且被真实用户讨论。",
+    },
+    "风险防御": {
+        "dimension": "Trust",
+        "sub_strategy": "对抗攻击检测与权威信号强化",
+        "diagnostic_focus": "监控竞品异常占位、检测prompt injection/STS注入/嵌入毒化攻击、多引擎交叉验证、强化权威信号。目标：保护品牌不被竞品用对抗手段压制AI排名。",
     },
 }
 

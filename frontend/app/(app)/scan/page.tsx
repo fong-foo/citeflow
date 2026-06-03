@@ -1506,6 +1506,7 @@ export default function ScanPage() {
                   prescription: doctorOutput.prescription,
                   prescription_summary: doctorOutput.summary,
                   knowledge_sources: doctorOutput.knowledge_sources,
+                  content_templates: doctorOutput.content_templates || null,
                 }));
                 setDoctorPhase("generating");
                 // 模拟生成动画后跳到 report（4 张卡片 × 600ms + 600ms buffer）
@@ -1531,6 +1532,7 @@ export default function ScanPage() {
                   scanCredits={scanCredits}
                   onNewScan={() => { setInputPhase("form"); setInputReportData(null); setStep("input"); }}
                   onUpgrade={() => { setUpgradeFeature("analyst"); setShowUpgrade(true); }}
+                  contentTemplates={data?.content_templates || null}
                 />
               </div>
             </div>
