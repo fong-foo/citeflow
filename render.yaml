@@ -1,0 +1,32 @@
+# render.yaml — CiteFlow 后端一键部署
+# Render Blueprint: 连接 GitHub 仓库后自动创建服务
+
+services:
+  - type: web
+    name: citeflow-api
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn api:app -c gunicorn.conf.py
+    envVars:
+      - key: ADMIN_EMAIL
+        value: 18169940973@163.com
+      - key: CORS_ORIGINS
+        value: https://citeflow.cn,https://www.citeflow.cn,https://frontend-neon-ten-78p2onipq3.vercel.app,http://localhost:3000
+      - key: DB_PATH
+        value: /var/data/citeflow.db
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: SERPER_API_KEY
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    disk:
+      name: citeflow-data
+      mountPath: /var/data
+      sizeGB: 1
