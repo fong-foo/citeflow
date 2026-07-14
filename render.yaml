@@ -15,7 +15,7 @@ services:
       - key: CORS_ORIGINS
         value: https://citeflow.cn,https://www.citeflow.cn,https://frontend-neon-ten-78p2onipq3.vercel.app,http://localhost:3000
       - key: DB_PATH
-        value: /var/data/citeflow.db
+        value: citeflow.db
       - key: DEEPSEEK_API_KEY
         sync: false
       - key: OPENAI_API_KEY
@@ -26,7 +26,3 @@ services:
         generateValue: true
       - key: PYTHON_VERSION
         value: 3.11.0
-    disk:
-      name: citeflow-data
-      mountPath: /var/data
-      sizeGB: 1
